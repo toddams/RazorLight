@@ -21,17 +21,14 @@ namespace RazorLight
 		public string ParseString<T>(string content, T model)
 		{
 			string code = GenerateCode(new StringReader(content));
-			Type compiled = compilerService.Compile(code);
+			Type compiledType = compilerService.Compile(code);
 
-			return ActivatePage<T>(compiled, model);
+			string output = ActivatePage(compiledType, model);
+
+			return output;
 		}
 
-		//public string ParseFile<T>(string path, T model)
-		//{
-
-		//}
-
-		private string GenerateCode(TextReader input)
+		public string GenerateCode(TextReader input)
 		{
 			RazorTemplateEngine engine = new RazorTemplateEngine(new LightRazorHost());
 
@@ -61,15 +58,15 @@ namespace RazorLight
 			return generatorResults.GeneratedCode;
 		}
 
-		private string ActivatePage<T>(Type type, T model)
+		public string ActivatePage<T>(Type type, T model)
 		{
-			if(!typeof(LightRazorPage<T>).IsAssignableFrom(type))
+			if (!typeof(LightRazorPage<T>).IsAssignableFrom(type))
 			{
 				throw new RazorLightException("Invalid page type");
 			}
 
 			var page = (LightRazorPage<T>)Activator.CreateInstance(type);
-			using(var stream = new StringWriter())
+			using (var stream = new StringWriter())
 			{
 				page.Model = model;
 				page.Output = stream;

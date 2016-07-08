@@ -45,16 +45,12 @@ namespace RazorLight.Compilation
 
 					if (!result.Success)
 					{
-						IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic =>
-							diagnostic.IsWarningAsError ||
-							diagnostic.Severity == DiagnosticSeverity.Error);
+						var errors = result.Diagnostics
+							.Where(d => d.IsWarningAsError || d.Severity == DiagnosticSeverity.Error)
+							.Select(d => d.GetMessage());
 
-						foreach (Diagnostic diagnostic in failures)
-						{
-							Console.Error.WriteLine("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
-						}
-
-						return null;
+						throw new RazorLightCompilationException(
+							"Failed to compile generated razor view. See CompilationErrors for detailed information", errors);
 					}
 					else
 					{

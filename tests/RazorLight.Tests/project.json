@@ -2,6 +2,10 @@
   "version": "1.0.0-*",
   "testRunner": "xunit",
 
+  "buildOptions": {
+    "preserveCompilationContext": true
+  },
+
   "dependencies": {
     "xunit": "2.2.0-beta2-build3300",
     "RazorLight": "1.0.0-*",

@@ -1,0 +1,28 @@
+namespace RazorLight.GeneratedTemplates
+{
+    using System;
+    using System.Linq;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+
+    public class __RazorLightTemplate : RazorLight.LightRazorPage<Sandbox.TestViewModel>
+    {
+        #line hidden
+        public __RazorLightTemplate()
+        {
+        }
+
+        #pragma warning disable 1998
+        public override async Task ExecuteAsync()
+        {
+            WriteLiteral("<div>Text ");
+#line 3 ""
+     Write(Model.Title);
+
+#line default
+#line hidden
+            WriteLiteral("</div>");
+        }
+        #pragma warning restore 1998
+    }
+}

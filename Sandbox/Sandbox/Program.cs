@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using RazorLight;
 
 namespace Sandbox
@@ -7,14 +8,15 @@ namespace Sandbox
     {
         public static void Main(string[] args)
         {
+			string appRoot = @"D:\MyProjects\RazorLight\sandbox\Sandbox";
+
+			string view = File.ReadAllText(Path.Combine(appRoot, "Views/Test.cshtml"));
+
 			var engine = new RazorLightEngine();
 
-			var text = System.IO.File.ReadAllText(@"D:\MyProjects\RazorLight\sandbox\Sandbox\Views\Test.cshtml");
-			var model = new TestViewModel();
+			string output = engine.ParseString<TestViewModel>(view, new TestViewModel());
 
-			string result = engine.ParseString<TestViewModel>(text, model);
-
-			Console.WriteLine(result);
-        }
-    }
+			Console.WriteLine(output);
+		}
+	}
 }
