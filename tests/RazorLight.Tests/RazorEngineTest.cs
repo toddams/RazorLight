@@ -9,6 +9,35 @@ namespace RazorLight.Tests
 		string appRootPath = @"D:\MyProjects\RazorLight\tests\RazorLight.Tests";
 
 		[Fact]
+		public void ConfigureOptionsHasDefaultValues()
+		{
+			var options = new ConfigurationOptions();
+
+			Assert.NotNull(options.AdditionalCompilationReferences);
+			Assert.Equal(options.AdditionalCompilationReferences.Count, 0);
+			Assert.NotNull(options.LoadDependenciesFromEntryAssembly);
+		}
+
+		[Fact]
+		public void CompilationServiceHasNoMetadataRefs()
+		{
+			var options = ConfigurationOptions.Default;
+			options.LoadDependenciesFromEntryAssembly = false;
+			var compiler = new RoslynCompilerService(options);
+
+			Assert.NotNull(compiler.CompilationReferences);
+			Assert.Equal(compiler.CompilationReferences.Count, 0);
+		}
+
+		[Fact]
+		public void ActivationThrowsWhenPageIsNotRazorLightDescendant()
+		{
+			var engine = new RazorLightEngine();
+
+			Assert.Throws<RazorLightException>(() => engine.ActivatePage<TestViewModel>(typeof(object), new TestViewModel()));
+		}
+
+		[Fact]
 		public void CodeGeneratorGivesCorrectOutput()
 		{
 			//Arrange
@@ -31,7 +60,7 @@ namespace RazorLight.Tests
 							<div>Test @Model123.Title</div>
 						";
 
-			var compiler = new RoslynCompilerService();
+			var compiler = new RoslynCompilerService(ConfigurationOptions.Default);
 			var engine = new RazorLightEngine();
 
 			string code = engine.GenerateCode(new StringReader(view));

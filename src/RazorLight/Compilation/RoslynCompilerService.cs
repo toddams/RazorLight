@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -15,6 +16,34 @@ namespace RazorLight.Compilation
 {
 	public class RoslynCompilerService
 	{
+		private readonly ConfigurationOptions _config;
+
+		private IList<MetadataReference> _compilationReferences;
+		private object _compilationReferencesLock = new object();
+		private bool _compilationReferencesInitialized;
+
+		public IList<MetadataReference> CompilationReferences
+		{
+			get
+			{
+				return LazyInitializer.EnsureInitialized(
+					ref _compilationReferences,
+					ref _compilationReferencesInitialized,
+					ref _compilationReferencesLock,
+					GetMetadataReferences);
+			}
+		}
+
+		public RoslynCompilerService(ConfigurationOptions options)
+		{
+			if(options == null)
+			{
+				throw new ArgumentNullException(nameof(options));
+			}
+
+			this._config = options;
+		}
+
 		public Type Compile(string content)
 		{
 			string assemblyName = Path.GetRandomFileName();
@@ -24,14 +53,12 @@ namespace RazorLight.Compilation
 				sourceText,
 				path: assemblyName);
 
-			List<MetadataReference> metadataReferences = GetMetadataReferences();
-
 			CSharpCompilationOptions compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
 			CSharpCompilation compilation = CSharpCompilation.Create(
 				assemblyName,
 				syntaxTrees: new[] { syntaxTree },
-				references: metadataReferences,
+				references: CompilationReferences,
 				options: compilationOptions);
 
 			using (var assemblyStream = new MemoryStream())
@@ -71,21 +98,28 @@ namespace RazorLight.Compilation
 		{
 			var metadataReferences = new List<MetadataReference>();
 
-			DependencyContext entryAssemblyDependencies = DependencyContext.Load(Assembly.GetEntryAssembly());
-
-			foreach (CompilationLibrary compilationLibrary in entryAssemblyDependencies.CompileLibraries)
+			if (_config.LoadDependenciesFromEntryAssembly)
 			{
-				IEnumerable<string> assemblyPaths = compilationLibrary.ResolveReferencePaths();
-				if (assemblyPaths.Any())
+				DependencyContext entryAssemblyDependencies = DependencyContext.Load(Assembly.GetEntryAssembly());
+				foreach (CompilationLibrary compilationLibrary in entryAssemblyDependencies.CompileLibraries)
 				{
-					metadataReferences.Add(MetadataReference.CreateFromFile(assemblyPaths.First()));
+					IEnumerable<string> assemblyPaths = compilationLibrary.ResolveReferencePaths();
+					if (assemblyPaths.Any())
+					{
+						metadataReferences.Add(MetadataReference.CreateFromFile(assemblyPaths.First()));
+					}
+				}
+
+				if (!metadataReferences.Any())
+				{
+					throw new RazorLightException("Can't load metadata reference from the entry assembly. " +
+						"Make sure preserveCompilationContext is set to true in compilerOptions section of project.json");
 				}
 			}
 
-			if (!metadataReferences.Any())
+			foreach(var metadata in _config.AdditionalCompilationReferences)
 			{
-				throw new RazorLightException("Can't load metadata reference from the entry assembly. " +
-					"Make sure preserveCompilationContext is set to true in compilerOptions section of project.json");
+				metadataReferences.Add(metadata);
 			}
 
 			return metadataReferences;

@@ -11,21 +11,39 @@ namespace RazorLight
 {
 	public class RazorLightEngine
 	{
-		private RoslynCompilerService compilerService;
+		private RoslynCompilerService _compilerService;
+		private readonly ConfigurationOptions _config;
 
-		public RazorLightEngine()
+		public RazorLightEngine() : this(ConfigurationOptions.Default) { }
+
+		public RazorLightEngine(ConfigurationOptions options)
 		{
-			compilerService = new RoslynCompilerService();
+			if (options == null)
+			{
+				throw new ArgumentNullException(nameof(options));
+			}
+
+			this._config = options;
+			_compilerService = new RoslynCompilerService(options);
 		}
 
 		public string ParseString<T>(string content, T model)
 		{
+			if(content == null)
+			{
+				throw new ArgumentNullException(content);
+			}
+
+			if(model == null)
+			{
+				throw new ArgumentNullException();
+			}
+
 			string code = GenerateCode(new StringReader(content));
-			Type compiledType = compilerService.Compile(code);
 
-			string output = ActivatePage(compiledType, model);
+			Type compiledType = _compilerService.Compile(code);
 
-			return output;
+			return ActivatePage(compiledType, model);
 		}
 
 		public string GenerateCode(TextReader input)
@@ -50,7 +68,7 @@ namespace RazorLight
 					throw new RazorLightException(builder.ToString());
 				}
 			}
-			catch (System.Exception ex) when (!(ex is RazorLightException))
+			catch (Exception ex) when (!(ex is RazorLightException))
 			{
 				throw new RazorLightException("Failed to generate a language code. See inner exception", ex);
 			}
