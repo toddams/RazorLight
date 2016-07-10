@@ -1,10 +1,9 @@
 ﻿using Xunit;
-using RazorLight.Compilation;
+using System.IO;
 
 namespace RazorLight.Tests
 {
 	public class RazorEngineTest
     {
-		
 	}
 }

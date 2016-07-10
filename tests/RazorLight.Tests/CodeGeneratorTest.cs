@@ -8,16 +8,6 @@ namespace RazorLight.Tests
 		string appRootPath = @"D:\MyProjects\RazorLight\tests\RazorLight.Tests";
 
 		[Fact]
-		public void ThrowsIfViewsFolderIsNotSet()
-		{
-			var config = ConfigurationOptions.Default;
-
-			var codeGenerator = new RazorLightCodeGenerator(config);
-
-			Assert.Throws<RazorLightException>(() => codeGenerator.GenerateCode("Test.cshtml"));
-		}
-
-		[Fact]
 		public void ThrowsOnInvalidRelativeViewPath()
 		{
 			var confing = new ConfigurationOptions() { ViewsFolder = Path.Combine(appRootPath, "Views") };

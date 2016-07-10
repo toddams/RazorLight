@@ -25,11 +25,6 @@ namespace RazorLight
 
 		public string GenerateCode(string viewRelativePath)
 		{
-			if (string.IsNullOrEmpty(_config.ViewsFolder))
-			{
-				throw new RazorLightException("Can't parse a file. ViewsFolder must be set in ConfigurationOptions");
-			}
-
 			if (string.IsNullOrEmpty(viewRelativePath))
 			{
 				throw new ArgumentNullException(nameof(viewRelativePath));

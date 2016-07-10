@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using RazorLight;
 
@@ -6,17 +7,23 @@ namespace Sandbox
 {
 	public class Program
     {
-        public static void Main(string[] args)
+		public static void Main(string[] args)
         {
-			string appRoot = @"D:\MyProjects\RazorLight\sandbox\Sandbox";
+			string root = @"D:\MyProjects\RazorLight\tests\RazorLight.Tests";
 
-			string view = File.ReadAllText(Path.Combine(appRoot, "Views/Test.cshtml"));
+			var config = new ConfigurationOptions() { ViewsFolder = Path.Combine(root, "Views") };
+			var engine = new RazorLightEngine(config);
 
-			var engine = new RazorLightEngine();
+			var sw = Stopwatch.StartNew();
 
-			string output = engine.ParseString<TestViewModel>(view, new TestViewModel());
-
-			Console.WriteLine(output);
+			string result = engine.ParseFile<TestViewModel>("Test.cshtml", new TestViewModel());
+			sw.Stop();
+			Console.WriteLine(sw.ElapsedTicks);
+			sw.Reset();
+			sw.Start();
+			string result2 = engine.ParseFile<TestViewModel>("Test.cshtml", new TestViewModel());
+			sw.Stop();
+			Console.WriteLine(sw.ElapsedTicks);
 		}
 	}
 }
