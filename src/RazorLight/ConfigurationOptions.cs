@@ -18,7 +18,7 @@ namespace RazorLight
 			{
 				if (value == null || !Directory.Exists(value))
 				{
-					throw new ArgumentException();
+					throw new DirectoryNotFoundException();
 				}
 
 				viewsFolder = value;
