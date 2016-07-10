@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Html;
 
 namespace RazorLight
 {
+	/// <summary>
+	/// Lightweight Razor page with a <see cref="TextWriter"/> for the generated output
+	/// </summary>
 	public abstract class LightRazorPage
 	{
 		private StringWriter _valueBuffer;
@@ -17,6 +20,9 @@ namespace RazorLight
 
 		public HtmlEncoder HtmlEncoder { get; set; } = HtmlEncoder.Default;
 
+		/// <summary>
+		/// ExecuteAsync will write it's output to this stream
+		/// </summary>
 		public virtual TextWriter Output { get; set; }
 
 		/// <summary>
@@ -210,41 +216,6 @@ namespace RazorLight
 			// If the value is just the bool 'true', use the attribute name as the value.
 			return string.IsNullOrEmpty(prefix) &&
 				(value is bool && (bool)value);
-		}
-
-		private struct AttributeInfo
-		{
-			public AttributeInfo(
-				string name,
-				string prefix,
-				int prefixOffset,
-				string suffix,
-				int suffixOffset,
-				int attributeValuesCount)
-			{
-				Name = name;
-				Prefix = prefix;
-				PrefixOffset = prefixOffset;
-				Suffix = suffix;
-				SuffixOffset = suffixOffset;
-				AttributeValuesCount = attributeValuesCount;
-
-				Suppressed = false;
-			}
-
-			public int AttributeValuesCount { get; }
-
-			public string Name { get; }
-
-			public string Prefix { get; }
-
-			public int PrefixOffset { get; }
-
-			public string Suffix { get; }
-
-			public int SuffixOffset { get; }
-
-			public bool Suppressed { get; set; }
 		}
 	}
 

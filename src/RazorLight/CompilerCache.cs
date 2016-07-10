@@ -11,7 +11,7 @@ namespace RazorLight
 	/// <summary>
 	/// Caches the result of runtime compilation of Razor files for the duration of the application lifetime.
 	/// </summary>
-	public class CompilerCache
+	public class CompilerCache : IDisposable
 	{
 		private readonly IFileProvider _fileProvider;
 		private readonly IMemoryCache _cache;
@@ -159,6 +159,14 @@ namespace RazorLight
 			}
 
 			return normalizedPath;
+		}
+
+		public void Dispose()
+		{
+			if(_cache != null)
+			{
+				_cache.Dispose();
+			}
 		}
 	}
 }

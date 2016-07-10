@@ -1,28 +1,22 @@
 ﻿using System;
 using System.IO;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Razor;
 using RazorLight.Host;
 using RazorLight.Compilation;
 using Microsoft.Extensions.FileProviders;
-using System.Diagnostics;
-using System.Text;
 using System.Collections.Concurrent;
 
 namespace RazorLight
 {
-	public class RazorLightEngine
+	public class RazorLightEngine : IDisposable
 	{
 		private readonly ConfigurationOptions _config;
 		private RazorTemplateEngine _templateEngine;
 		private RoslynCompilerService _compilerService;
 		private RazorLightCodeGenerator _codeGenerator;
 
-		private IFileProvider _fileProvider;
+		private PhysicalFileProvider _fileProvider;
 		private CompilerCache compilerCache;
-
-		private readonly ConcurrentDictionary<string, string> _normalizedPathLookup =
-			new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
 
 		public RazorLightEngine() : this(ConfigurationOptions.Default) { }
 
@@ -103,6 +97,12 @@ namespace RazorLight
 
 				return stream.ToString();
 			}
+		}
+
+		public void Dispose()
+		{
+			compilerCache?.Dispose();
+			_fileProvider?.Dispose();
 		}
 	}
 }
