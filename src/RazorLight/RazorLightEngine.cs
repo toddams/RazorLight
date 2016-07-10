@@ -1,7 +1,5 @@
 ﻿using System.IO;
-using System.Text;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.CodeGenerators;
 using RazorLight.Host;
 using RazorLight.Compilation;
 using System;
@@ -12,6 +10,8 @@ namespace RazorLight
 	public class RazorLightEngine
 	{
 		private RoslynCompilerService _compilerService;
+		private RazorTemplateEngine _templateEngine;
+		private RazorLightCodeGenerator _codeGenerator;
 		private readonly ConfigurationOptions _config;
 
 		public RazorLightEngine() : this(ConfigurationOptions.Default) { }
@@ -24,7 +24,9 @@ namespace RazorLight
 			}
 
 			this._config = options;
+			_templateEngine = new RazorTemplateEngine(new LightRazorHost());
 			_compilerService = new RoslynCompilerService(options);
+			_codeGenerator = new RazorLightCodeGenerator(options);
 		}
 
 		public string ParseString<T>(string content, T model)
@@ -39,44 +41,29 @@ namespace RazorLight
 				throw new ArgumentNullException();
 			}
 
-			string code = GenerateCode(new StringReader(content));
+			string razorCode = _codeGenerator.GenerateCode(new StringReader(content));
 
-			Type compiledType = _compilerService.Compile(code);
-
-			return ActivatePage(compiledType, model);
+			return ProcessRazorPage<T>(razorCode, model);
 		}
 
-		public string GenerateCode(TextReader input)
+		public string ParseFile<T>(string viewRelativePath, T model)
 		{
-			RazorTemplateEngine engine = new RazorTemplateEngine(new LightRazorHost());
-
-			GeneratorResults generatorResults = null;
-			try
+			if (viewRelativePath == null)
 			{
-				generatorResults = engine.GenerateCode(input);
-
-				if (!generatorResults.Success)
-				{
-					var builder = new StringBuilder();
-					builder.AppendLine("Failed to parse an input:");
-
-					foreach (RazorError error in generatorResults.ParserErrors)
-					{
-						builder.AppendLine($"{error.Message} (line {error.Location.LineIndex})");
-					}
-
-					throw new RazorLightException(builder.ToString());
-				}
-			}
-			catch (Exception ex) when (!(ex is RazorLightException))
-			{
-				throw new RazorLightException("Failed to generate a language code. See inner exception", ex);
+				throw new ArgumentNullException(viewRelativePath);
 			}
 
-			return generatorResults.GeneratedCode;
+			if (model == null)
+			{
+				throw new ArgumentNullException();
+			}
+
+			string razorCode = _codeGenerator.GenerateCode(viewRelativePath);
+
+			return ProcessRazorPage<T>(razorCode, model);
 		}
 
-		public string ActivatePage<T>(Type type, T model)
+		private string ActivatePage<T>(Type type, T model)
 		{
 			if (!typeof(LightRazorPage<T>).IsAssignableFrom(type))
 			{
@@ -93,6 +80,13 @@ namespace RazorLight
 
 				return stream.ToString();
 			}
+		}
+
+		private string ProcessRazorPage<T>(string razorCode, T model)
+		{
+			Type compiledType = _compilerService.Compile(razorCode);
+
+			return ActivatePage<T>(compiledType, model);
 		}
 	}
 }
