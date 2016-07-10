@@ -19,6 +19,7 @@ namespace RazorLight
 				throw new ArgumentNullException(nameof(options));
 			}
 
+			_config = options;
 			_templateEngine = new RazorTemplateEngine(new LightRazorHost());
 		}
 

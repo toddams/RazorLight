@@ -20,6 +20,8 @@ namespace RazorLight
 				{
 					throw new ArgumentException();
 				}
+
+				viewsFolder = value;
 			}
 		}
 
