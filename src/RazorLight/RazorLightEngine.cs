@@ -35,7 +35,7 @@ namespace RazorLight
 			if (!string.IsNullOrEmpty(options.ViewsFolder))
 			{
 				_fileProvider = new PhysicalFileProvider(options.ViewsFolder);
-				compilerCache = new CompilerCache(new PhysicalFileProvider(options.ViewsFolder));
+				compilerCache = new CompilerCache(_fileProvider);
 				CanParseFiles = true;
 			}
 

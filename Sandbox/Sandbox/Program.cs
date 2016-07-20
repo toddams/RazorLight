@@ -18,7 +18,7 @@ namespace Sandbox
 
 			string result = engine.ParseFile<TestViewModel>("Test.cshtml", new TestViewModel());
 			sw.Stop();
-			Console.WriteLine(sw.ElapsedTicks);
+			Console.WriteLine(sw.ElapsedMilliseconds);
 			sw.Reset();
 			sw.Start();
 			string result2 = engine.ParseFile<TestViewModel>("Test.cshtml", new TestViewModel());

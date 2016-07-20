@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Primitives;
 
 namespace RazorLight
 {
@@ -55,7 +56,7 @@ namespace RazorLight
 			// normalized and a cache entry exists.
 			if (!_cache.TryGetValue(relativePath, out cacheEntry))
 			{
-				var normalizedPath = GetNormalizedPath(relativePath);
+				string normalizedPath = GetNormalizedPath(relativePath);
 				if (!_cache.TryGetValue(normalizedPath, out cacheEntry))
 				{
 					cacheEntry = CreateCacheEntry(relativePath, normalizedPath, compile);
@@ -90,7 +91,7 @@ namespace RazorLight
 				fileInfo = _fileProvider.GetFileInfo(normalizedPath);
 				if (!fileInfo.Exists)
 				{
-					var expirationToken = _fileProvider.Watch(normalizedPath);
+					IChangeToken expirationToken = _fileProvider.Watch(normalizedPath);
 					cacheEntry = Task.FromResult("");
 
 					cacheEntryOptions = new MemoryCacheEntryOptions();
@@ -113,11 +114,10 @@ namespace RazorLight
 				// Indicates that the file was found and needs to be compiled.
 				Debug.Assert(fileInfo != null && fileInfo.Exists);
 				Debug.Assert(cacheEntryOptions != null);
-				
 
 				try
 				{
-					var compilationResult = compile(relativePath);
+					string compilationResult = compile(relativePath);
 					compilationTaskSource.SetResult(compilationResult);
 				}
 				catch (Exception ex)
