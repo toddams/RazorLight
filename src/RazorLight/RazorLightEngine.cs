@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using Microsoft.AspNetCore.Razor;
-using RazorLight.Host;
 using RazorLight.Compilation;
 using Microsoft.Extensions.FileProviders;
 
@@ -10,13 +8,15 @@ namespace RazorLight
 	public class RazorLightEngine : IDisposable
 	{
 		private readonly ConfigurationOptions _config;
-		private RazorTemplateEngine _templateEngine;
 		private readonly RoslynCompilerService _compilerService;
 		private readonly RazorLightCodeGenerator _codeGenerator;
 
 		private readonly PhysicalFileProvider _fileProvider;
 		private readonly CompilerCache compilerCache;
 
+		/// <summary>
+		/// Initializes new RazorLight engine with a default configuration options
+		/// </summary>
 		public RazorLightEngine() : this(ConfigurationOptions.Default) { }
 
 		public RazorLightEngine(ConfigurationOptions options)
@@ -27,7 +27,6 @@ namespace RazorLight
 			}
 
 			this._config = options;
-			_templateEngine = new RazorTemplateEngine(new LightRazorHost());
 			_compilerService = new RoslynCompilerService(options);
 			_codeGenerator = new RazorLightCodeGenerator(options);
 
@@ -40,8 +39,18 @@ namespace RazorLight
 
 		}
 
+		/// <summary>
+		/// Returns true if ConfigurationOptions's property ViewFolder is set and such folder exists in filesystem
+		/// </summary>
 		public bool CanParseFiles { get; private set; }
 
+		/// <summary>
+		/// Parses given razor template string
+		/// </summary>
+		/// <typeparam name="T">Type of Model</typeparam>
+		/// <param name="content">Razor string</param>
+		/// <param name="model"></param>
+		/// <returns></returns>
 		public string ParseString<T>(string content, T model)
 		{
 			if(content == null)
@@ -59,6 +68,13 @@ namespace RazorLight
 			return ProcessRazorPage<T>(razorCode, model);
 		}
 
+		/// <summary>
+		/// Parses *.cshtml file with a given relative path and Model. Parsed result is compiled and cached
+		/// </summary>
+		/// <typeparam name="T">Type of Model</typeparam>
+		/// <param name="viewRelativePath">Relative path to the Razor view</param>
+		/// <param name="model">Model of the Razor view</param>
+		/// <returns></returns>
 		public string ParseFile<T>(string viewRelativePath, T model)
 		{
 			if (!CanParseFiles)
