@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
-using System.Runtime.CompilerServices;
-using RazorLight.Compilation;
 using Microsoft.Extensions.FileProviders;
+using RazorLight.Compilation;
+using RazorLight.Extensions;
 
 namespace RazorLight
 {
@@ -68,7 +65,7 @@ namespace RazorLight
 				throw new ArgumentNullException();
 			}
 
-			string razorCode = _codeGenerator.GenerateCode(new StringReader(content));
+			string razorCode = _codeGenerator.GenerateCode(new StringReader(content), model);
 
 			return CompileAndRun<T>(razorCode, model);
 		}
@@ -97,18 +94,45 @@ namespace RazorLight
 				throw new ArgumentNullException(nameof(model));
 			}
 
-			string result = compilerCache.GetOrAdd(viewRelativePath, path => CompileAndRun<T>(_codeGenerator.GenerateCode(path), model));
+			string result = compilerCache.GetOrAdd(viewRelativePath, path => OnCompilerCacheMiss(path, model));
 
 			return result;
+		}
+
+		private string OnCompilerCacheMiss<T>(string viewRelativePath, T model)
+		{
+			string fullPath = Path.Combine(_config.ViewsFolder, viewRelativePath);
+			if (!File.Exists(fullPath))
+			{
+				throw new FileNotFoundException("View not found", fullPath);
+			}
+
+			FileStream fileStream = null;
+			try
+			{
+				fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+				using (var reader = new StreamReader(fileStream))
+				{
+					string razorCode = _codeGenerator.GenerateCode(reader, model);
+					return CompileAndRun(razorCode, model);
+				}
+			}
+			finally
+			{
+				if (fileStream != null)
+				{
+					fileStream.Dispose();
+				}
+			}
 		}
 
 		private string CompileAndRun<T>(string razorCode, T model)
 		{
 			Type compiledType = _compilerService.Compile(razorCode);
 
-			if (IsAnonymousType(typeof(T)))
+			if ((typeof(T).IsAnonymousType()))
 			{
-				ExpandoObject dynamicModel = ToExpando(model);
+				ExpandoObject dynamicModel = model.ToExpando();
 
 				LightRazorPage<dynamic> page = (LightRazorPage<dynamic>)Activator.CreateInstance(compiledType);
 
@@ -133,27 +157,6 @@ namespace RazorLight
 
 				return stream.ToString();
 			}
-		}
-
-		public static ExpandoObject ToExpando(object anonymousObject)
-		{
-			IDictionary<string, object> expando = new ExpandoObject();
-			foreach (var propertyDescriptor in anonymousObject.GetType().GetTypeInfo().GetProperties())
-			{
-				var obj = propertyDescriptor.GetValue(anonymousObject);
-				expando.Add(propertyDescriptor.Name, obj);
-			}
-
-			return (ExpandoObject)expando;
-		}
-
-		public static bool IsAnonymousType(Type type)
-		{
-			bool hasCompilerGeneratedAttribute = type.GetTypeInfo().GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any();
-			bool nameContainsAnonymousType = type.FullName.Contains("AnonymousType");
-			bool isAnonymousType = hasCompilerGeneratedAttribute && nameContainsAnonymousType;
-
-			return isAnonymousType;
 		}
 
 		public void Dispose()

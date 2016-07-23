@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
+using System.Text;
 using RazorLight;
 
 namespace Sandbox
@@ -8,22 +7,25 @@ namespace Sandbox
 	public class Program
     {
 		public static void Main(string[] args)
-        {
-			string root = @"D:\MyProjects\RazorLight\tests\RazorLight.Tests";
+		{
+			string content = "Hello @Model.Title";
+			Console.WriteLine(new RazorLightEngine().ParseString(content, new TestViewModel()));
 
-			var config = new ConfigurationOptions() { ViewsFolder = Path.Combine(root, "Views") };
-			var engine = new RazorLightEngine(config);
+			//string root = @"D:\MyProjects\RazorLight\tests\RazorLight.Tests";
 
-			var sw = Stopwatch.StartNew();
+			//var config = new ConfigurationOptions() { ViewsFolder = Path.Combine(root, "Views") };
+			//var engine = new RazorLightEngine(config);
 
-			string result = engine.ParseFile<TestViewModel>("Test.cshtml", new TestViewModel());
-			sw.Stop();
-			Console.WriteLine(sw.ElapsedMilliseconds);
-			sw.Reset();
-			sw.Start();
-			string result2 = engine.ParseFile<TestViewModel>("Test.cshtml", new TestViewModel());
-			sw.Stop();
-			Console.WriteLine(sw.ElapsedTicks);
+			//var sw = Stopwatch.StartNew();
+
+			//string result = engine.ParseFile<TestViewModel>("Test.cshtml", new TestViewModel());
+			//sw.Stop();
+			//Console.WriteLine(sw.ElapsedMilliseconds);
+			//sw.Reset();
+			//sw.Start();
+			//string result2 = engine.ParseFile<TestViewModel>("Test.cshtml", new TestViewModel());
+			//sw.Stop();
+			//Console.WriteLine(sw.ElapsedTicks);
 		}
 	}
 }

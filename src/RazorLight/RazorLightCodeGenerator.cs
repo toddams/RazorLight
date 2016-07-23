@@ -23,38 +23,7 @@ namespace RazorLight
 			_templateEngine = new RazorTemplateEngine(new LightRazorHost());
 		}
 
-		public string GenerateCode(string viewRelativePath)
-		{
-			if (string.IsNullOrEmpty(viewRelativePath))
-			{
-				throw new ArgumentNullException(nameof(viewRelativePath));
-			}
-
-			string fullPath = Path.Combine(_config.ViewsFolder, viewRelativePath);
-			if (!File.Exists(fullPath))
-			{
-				throw new FileNotFoundException("View not found", fullPath);
-			}
-
-			FileStream fileStream = null;
-			try
-			{
-				fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-				using(var reader = new StreamReader(fileStream))
-				{
-					return GenerateCode(reader);
-				}
-			}
-			finally
-			{
-				if(fileStream != null)
-				{
-					fileStream.Dispose();
-				}
-			}
-		}
-
-		public string GenerateCode(TextReader input)
+		public string GenerateCode<T>(TextReader input, T model)
 		{
 			GeneratorResults generatorResults = null;
 			try
