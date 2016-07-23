@@ -5,42 +5,32 @@ namespace RazorLight.Tests
 {
 	public class CodeGeneratorTest
     {
-		string appRootPath = @"D:\MyProjects\RazorLight\tests\RazorLight.Tests";
+		private string appRootPath = @"D:\MyProjects\RazorLight\tests\RazorLight.Tests";
+	    private string content = "Hello, @Model.Title";
+		private TestViewModel model = new TestViewModel();
 
-		//[Fact]
-		//public void ThrowsOnInvalidRelativeViewPath()
-		//{
-		//	var confing = new ConfigurationOptions() { ViewsFolder = Path.Combine(appRootPath, "Views") };
+		[Fact]
+	    public void AnonymousObject_Ok()
+	    {
+			var codeGenerator = new RazorLightCodeGenerator();
 
-		//	var codeGenerator = new RazorLightCodeGenerator();
+		    var model = new
+		    {
+			    Title = "Test anon"
+		    };
 
-		//	Assert.Throws<FileNotFoundException>(() => codeGenerator.GenerateCode("NotExistinView.cshtml"));
-		//}
+		    string result = codeGenerator.GenerateCode(new StringReader(content), new ModelTypeInfo(model.GetType()));
 
-		//[Fact]
-		//public void SuccessOnValidView()
-		//{
-		//	var generator = new RazorLightCodeGenerator(new ConfigurationOptions() { ViewsFolder = Path.Combine(appRootPath, "Views") });
+			Assert.NotNull(result);
+	    }
 
-		//	string code = generator.GenerateCode("Test.cshtml");
+	    public void RealModel_Ok()
+	    {
+			var codeGenerator = new RazorLightCodeGenerator();
 
-		//	Assert.NotNull(code);
-		//}
+		    string result = codeGenerator.GenerateCode(new StringReader(content), new ModelTypeInfo(model.GetType()));
 
-		//[Fact]
-		//public void CodeGeneratorGivesCorrectOutput()
-		//{
-		//	//Arrange
-		//	string view = File.ReadAllText(Path.Combine(appRootPath, "Views/Test.cshtml"));
-		//	string expectedOutput = File.ReadAllText(Path.Combine(appRootPath, "Views/Test.txt"));
-
-		//	var codeGenerator = new RazorLightCodeGenerator(ConfigurationOptions.Default);
-
-		//	////Act
-		//	var code = codeGenerator.GenerateCode(new StringReader(view));
-
-		//	//Assert
-		//	Assert.Equal(code, expectedOutput);
-		//}
+			Assert.NotNull(result);
+	    }
 	}
 }

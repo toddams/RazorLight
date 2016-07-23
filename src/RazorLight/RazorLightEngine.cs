@@ -96,6 +96,12 @@ namespace RazorLight
 				throw new ArgumentNullException(nameof(model));
 			}
 
+			string fullPath = Path.Combine(_config.ViewsFolder, viewRelativePath);
+			if (!File.Exists(fullPath))
+			{
+				throw new FileNotFoundException("View not found", fullPath);
+			}
+
 			string result = compilerCache.GetOrAdd(viewRelativePath, path => OnCompilerCacheMiss(path, model));
 
 			return result;
