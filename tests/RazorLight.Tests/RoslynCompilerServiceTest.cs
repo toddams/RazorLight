@@ -15,9 +15,9 @@ namespace RazorLight.Tests
 						";
 
 			var compiler = new RoslynCompilerService(ConfigurationOptions.Default);
-			var codeGenerator = new RazorLightCodeGenerator(ConfigurationOptions.Default);
+			var codeGenerator = new RazorLightCodeGenerator();
 
-			string code = codeGenerator.GenerateCode(new StringReader(view));
+			string code = codeGenerator.GenerateCode(new StringReader(view), new ModelTypeInfo(typeof(TestViewModel)));
 
 			Assert.Throws<RazorLightCompilationException>(() => compiler.Compile(code));
 		}

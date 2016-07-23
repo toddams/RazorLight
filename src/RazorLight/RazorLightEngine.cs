@@ -29,8 +29,8 @@ namespace RazorLight
 			}
 
 			this._config = options;
+			_codeGenerator = new RazorLightCodeGenerator();
 			_compilerService = new RoslynCompilerService(options);
-			_codeGenerator = new RazorLightCodeGenerator(options);
 
 			if (!string.IsNullOrEmpty(options.ViewsFolder))
 			{
@@ -65,9 +65,11 @@ namespace RazorLight
 				throw new ArgumentNullException();
 			}
 
-			string razorCode = _codeGenerator.GenerateCode(new StringReader(content), model);
+			var modelTypeInfo = new ModelTypeInfo<T>(model);
 
-			return CompileAndRun<T>(razorCode, model);
+			string razorCode = _codeGenerator.GenerateCode(new StringReader(content), modelTypeInfo);
+
+			return CompileAndRun<T>(razorCode, modelTypeInfo);
 		}
 
 		/// <summary>
@@ -113,8 +115,10 @@ namespace RazorLight
 				fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 				using (var reader = new StreamReader(fileStream))
 				{
-					string razorCode = _codeGenerator.GenerateCode(reader, model);
-					return CompileAndRun(razorCode, model);
+					ModelTypeInfo<T> modelTypeInfo = new ModelTypeInfo<T>(model);
+
+					string razorCode = _codeGenerator.GenerateCode(reader, modelTypeInfo);
+					return CompileAndRun(razorCode, modelTypeInfo);
 				}
 			}
 			finally
@@ -126,15 +130,14 @@ namespace RazorLight
 			}
 		}
 
-		private string CompileAndRun<T>(string razorCode, T model)
+		private string CompileAndRun<T>(string razorCode, ModelTypeInfo<T> modelTypeInfo)
 		{
 			Type compiledType = _compilerService.Compile(razorCode);
 
-			if ((typeof(T).IsAnonymousType()))
+			if (modelTypeInfo.IsAnonymousType)
 			{
-				ExpandoObject dynamicModel = model.ToExpando();
-
-				LightRazorPage<dynamic> page = (LightRazorPage<dynamic>)Activator.CreateInstance(compiledType);
+				ExpandoObject dynamicModel = modelTypeInfo.Value.ToExpando();
+				LightRazorPage<dynamic> page = (LightRazorPage<dynamic>) Activator.CreateInstance(compiledType);
 
 				return RunPage(page, dynamicModel);
 			}
@@ -142,7 +145,7 @@ namespace RazorLight
 			{
 				LightRazorPage<T> page = (LightRazorPage<T>)Activator.CreateInstance(compiledType);
 
-				return RunPage(page, model);
+				return RunPage<T>(page, modelTypeInfo.Value);
 			}
 		}
 

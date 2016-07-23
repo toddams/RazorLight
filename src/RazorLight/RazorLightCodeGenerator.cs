@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.CodeGenerators;
 using RazorLight.Host;
@@ -8,44 +9,23 @@ using RazorLight.Host;
 namespace RazorLight
 {
 	public class RazorLightCodeGenerator
-    {
-		private readonly RazorTemplateEngine _templateEngine;
-		private readonly ConfigurationOptions _config;
-
-		public RazorLightCodeGenerator(ConfigurationOptions options)
+	{
+		public string GenerateCode(TextReader input, ModelTypeInfo modelTypeInfo)
 		{
-			if(options == null)
+			LightRazorHost host = new LightRazorHost(modelTypeInfo.TemplateTypeName);
+			GeneratorResults generatorResults = new RazorTemplateEngine(host).GenerateCode(input);
+
+			if (!generatorResults.Success)
 			{
-				throw new ArgumentNullException(nameof(options));
-			}
+				var builder = new StringBuilder();
+				builder.AppendLine("Failed to parse an input:");
 
-			_config = options;
-			_templateEngine = new RazorTemplateEngine(new LightRazorHost());
-		}
-
-		public string GenerateCode<T>(TextReader input, T model)
-		{
-			GeneratorResults generatorResults = null;
-			try
-			{
-				generatorResults = _templateEngine.GenerateCode(input);
-
-				if (!generatorResults.Success)
+				foreach (RazorError error in generatorResults.ParserErrors)
 				{
-					var builder = new StringBuilder();
-					builder.AppendLine("Failed to parse an input:");
-
-					foreach (RazorError error in generatorResults.ParserErrors)
-					{
-						builder.AppendLine($"{error.Message} (line {error.Location.LineIndex})");
-					}
-
-					throw new RazorLightException(builder.ToString());
+					builder.AppendLine($"{error.Message} (line {error.Location.LineIndex})");
 				}
-			}
-			catch (Exception ex) when (!(ex is RazorLightException))
-			{
-				throw new RazorLightException("Failed to generate a language code. See inner exception", ex);
+
+				throw new RazorLightException(builder.ToString());
 			}
 
 			return generatorResults.GeneratedCode;

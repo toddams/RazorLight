@@ -20,6 +20,8 @@ namespace RazorLight.Host
         private const string BaseType = "RazorLight.LightRazorPage";
         private const string HtmlHelperPropertyName = "Html";
 
+	    private string _defaultModel = "dynamic";
+
         private static readonly string[] _defaultNamespaces = new[]
         {
             "System",
@@ -100,9 +102,26 @@ namespace RazorLight.Host
             }
         }
 
+	    public LightRazorHost(string modelTypeName) : this()
+	    {
+		    if (string.IsNullOrEmpty(modelTypeName))
+		    {
+			    throw new ArgumentNullException(nameof(modelTypeName));
+		    }
+
+		    this.DefaultModel = modelTypeName;
+	    }
+
         public virtual string DefaultModel
         {
-            get { return "dynamic"; }
+	        get
+	        {
+		        return _defaultModel;
+	        }
+	        private set
+	        {
+		        _defaultModel = value;
+	        }
         }
 
         public virtual IReadOnlyList<Chunk> DefaultInheritedChunks
@@ -200,7 +219,7 @@ namespace RazorLight.Host
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var inheritedChunkTrees = GetInheritedChunkTrees(context.SourceFile);
+            IReadOnlyList<ChunkTree> inheritedChunkTrees = GetInheritedChunkTrees(context.SourceFile);
 
             ChunkInheritanceUtility.MergeInheritedChunkTrees(
                 context.ChunkTreeBuilder.Root,
