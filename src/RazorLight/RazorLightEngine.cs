@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using RazorLight.Compilation;
 using Microsoft.Extensions.FileProviders;
 
@@ -53,19 +58,19 @@ namespace RazorLight
 		/// <returns></returns>
 		public string ParseString<T>(string content, T model)
 		{
-			if(content == null)
+			if (content == null)
 			{
 				throw new ArgumentNullException(nameof(content));
 			}
 
-			if(model == null)
+			if (model == null)
 			{
 				throw new ArgumentNullException();
 			}
 
 			string razorCode = _codeGenerator.GenerateCode(new StringReader(content));
 
-			return ProcessRazorPage<T>(razorCode, model);
+			return CompileAndRun<T>(razorCode, model);
 		}
 
 		/// <summary>
@@ -92,17 +97,33 @@ namespace RazorLight
 				throw new ArgumentNullException(nameof(model));
 			}
 
-			string result = compilerCache.GetOrAdd(viewRelativePath, path => ProcessRazorPage<T>(_codeGenerator.GenerateCode(path), model));
+			string result = compilerCache.GetOrAdd(viewRelativePath, path => CompileAndRun<T>(_codeGenerator.GenerateCode(path), model));
 
 			return result;
 		}
 
-		private string ProcessRazorPage<T>(string razorCode, T model)
+		private string CompileAndRun<T>(string razorCode, T model)
 		{
 			Type compiledType = _compilerService.Compile(razorCode);
 
-			var page = (LightRazorPage<T>)Activator.CreateInstance(compiledType);
+			if (IsAnonymousType(typeof(T)))
+			{
+				ExpandoObject dynamicModel = ToExpando(model);
 
+				LightRazorPage<dynamic> page = (LightRazorPage<dynamic>)Activator.CreateInstance(compiledType);
+
+				return RunPage(page, dynamicModel);
+			}
+			else
+			{
+				LightRazorPage<T> page = (LightRazorPage<T>)Activator.CreateInstance(compiledType);
+
+				return RunPage(page, model);
+			}
+		}
+
+		private string RunPage<T>(LightRazorPage<T> page, T model)
+		{
 			using (var stream = new StringWriter())
 			{
 				page.Model = model;
@@ -112,6 +133,27 @@ namespace RazorLight
 
 				return stream.ToString();
 			}
+		}
+
+		public static ExpandoObject ToExpando(object anonymousObject)
+		{
+			IDictionary<string, object> expando = new ExpandoObject();
+			foreach (var propertyDescriptor in anonymousObject.GetType().GetTypeInfo().GetProperties())
+			{
+				var obj = propertyDescriptor.GetValue(anonymousObject);
+				expando.Add(propertyDescriptor.Name, obj);
+			}
+
+			return (ExpandoObject)expando;
+		}
+
+		public static bool IsAnonymousType(Type type)
+		{
+			bool hasCompilerGeneratedAttribute = type.GetTypeInfo().GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any();
+			bool nameContainsAnonymousType = type.FullName.Contains("AnonymousType");
+			bool isAnonymousType = hasCompilerGeneratedAttribute && nameContainsAnonymousType;
+
+			return isAnonymousType;
 		}
 
 		public void Dispose()
