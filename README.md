@@ -6,7 +6,7 @@ Install the nuget package
 	Install-Package RazorEngine
 
 
-A lightweight fork of Microsoft Razor template engine which allows you to parse a string or *.cshtml files without any efforts. With RazorLight you can use Razor syntax to build dynamic templates. From the very beginning library was built for [.NET Core](https://dotnet.github.io/) projects, but with a release of [.NET Platform Standard](https://github.com/dotnet/corefx/blob/master/Documentation/architecture/net-platform-standard.md) - it is also possible to use it on full .NET Framework (>= 4.6.2)
+A lightweight fork of Microsoft [Razor template engine](https://github.com/aspnet/Razor) which allows you to parse a string or *.cshtml files without any efforts. With RazorLight you can use Razor syntax to build dynamic templates. From the very beginning library was built for [.NET Core](https://dotnet.github.io/) projects, but with a release of [.NET Platform Standard](https://github.com/dotnet/corefx/blob/master/Documentation/architecture/net-platform-standard.md) - it is also possible to use it on full .NET Framework (>= 4.6.2)
 
 
 ##Examples
