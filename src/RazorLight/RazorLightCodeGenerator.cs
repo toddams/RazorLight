@@ -9,7 +9,7 @@ namespace RazorLight
 {
 	public class RazorLightCodeGenerator
     {
-		private RazorTemplateEngine _templateEngine;
+		private readonly RazorTemplateEngine _templateEngine;
 		private readonly ConfigurationOptions _config;
 
 		public RazorLightCodeGenerator(ConfigurationOptions options)

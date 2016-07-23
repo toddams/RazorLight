@@ -11,9 +11,7 @@ using Microsoft.AspNetCore.Razor.CodeGenerators;
 using Microsoft.AspNetCore.Razor.Parser;
 using Microsoft.AspNetCore.Razor.Runtime.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.Extensions.FileProviders;
 using RazorLight.Host.Directives;
-using RazorLight.Host.Internal;
 
 namespace RazorLight.Host
 {

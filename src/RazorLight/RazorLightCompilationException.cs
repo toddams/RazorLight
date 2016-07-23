@@ -5,7 +5,7 @@ namespace RazorLight
 {
 	public class RazorLightCompilationException : RazorLightException
     {
-		private List<string> compilationErrors;
+		private readonly List<string> compilationErrors;
 
 		public IReadOnlyList<string> CompilationErrors => compilationErrors;
 

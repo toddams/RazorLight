@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Razor;
 using RazorLight.Host;
 using RazorLight.Compilation;
 using Microsoft.Extensions.FileProviders;
-using System.Collections.Concurrent;
 
 namespace RazorLight
 {
@@ -12,11 +11,11 @@ namespace RazorLight
 	{
 		private readonly ConfigurationOptions _config;
 		private RazorTemplateEngine _templateEngine;
-		private RoslynCompilerService _compilerService;
-		private RazorLightCodeGenerator _codeGenerator;
+		private readonly RoslynCompilerService _compilerService;
+		private readonly RazorLightCodeGenerator _codeGenerator;
 
-		private PhysicalFileProvider _fileProvider;
-		private CompilerCache compilerCache;
+		private readonly PhysicalFileProvider _fileProvider;
+		private readonly CompilerCache compilerCache;
 
 		public RazorLightEngine() : this(ConfigurationOptions.Default) { }
 
@@ -47,7 +46,7 @@ namespace RazorLight
 		{
 			if(content == null)
 			{
-				throw new ArgumentNullException(content);
+				throw new ArgumentNullException(nameof(content));
 			}
 
 			if(model == null)
@@ -69,12 +68,12 @@ namespace RazorLight
 
 			if (viewRelativePath == null)
 			{
-				throw new ArgumentNullException(viewRelativePath);
+				throw new ArgumentNullException(nameof(viewRelativePath));
 			}
 
 			if (model == null)
 			{
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(model));
 			}
 
 			string result = compilerCache.GetOrAdd(viewRelativePath, path => ProcessRazorPage<T>(_codeGenerator.GenerateCode(path), model));

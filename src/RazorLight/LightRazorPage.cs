@@ -14,7 +14,7 @@ namespace RazorLight
 		private StringWriter _valueBuffer;
 		private TextWriter _pageWriter;
 
-		public LightRazorPage()
+		protected LightRazorPage()
 		{
 		}
 
@@ -28,9 +28,16 @@ namespace RazorLight
 		/// <summary>
 		/// Gets the dynamic view data dictionary.
 		/// </summary>
+		
 		//public dynamic ViewBag { get; set; }
 
 		public abstract Task ExecuteAsync();
+
+		public async Task<HtmlString> FlushAsync()
+		{
+			await Output.FlushAsync();
+			return HtmlString.Empty;
+		}
 
 		/// <summary>
 		/// Writes the specified <paramref name="value"/> with HTML encoding to <see cref="Output"/>.
@@ -174,49 +181,5 @@ namespace RazorLight
 				writer.Write(value);
 			}
 		}
-
-		private void WriteUnprefixedAttributeValueTo(TextWriter writer, object value, bool isLiteral)
-		{
-			var stringValue = value as string;
-
-			// The extra branching here is to ensure that we call the Write*To(string) overload where possible.
-			if (isLiteral && stringValue != null)
-			{
-				WriteLiteralTo(writer, stringValue);
-			}
-			else if (isLiteral)
-			{
-				WriteLiteralTo(writer, value);
-			}
-			else if (stringValue != null)
-			{
-				WriteTo(writer, stringValue);
-			}
-			else
-			{
-				WriteTo(writer, value);
-			}
-		}
-
-		public async Task<HtmlString> FlushAsync()
-		{
-			await Output.FlushAsync();
-			return HtmlString.Empty;
-		}
-
-		private bool IsBoolFalseOrNullValue(string prefix, object value)
-		{
-			return string.IsNullOrEmpty(prefix) &&
-				(value == null ||
-				(value is bool && !(bool)value));
-		}
-
-		private bool IsBoolTrueWithEmptyPrefixValue(string prefix, object value)
-		{
-			// If the value is just the bool 'true', use the attribute name as the value.
-			return string.IsNullOrEmpty(prefix) &&
-				(value is bool && (bool)value);
-		}
 	}
-
 }

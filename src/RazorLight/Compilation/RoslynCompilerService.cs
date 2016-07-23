@@ -103,7 +103,7 @@ namespace RazorLight.Compilation
 				DependencyContext entryAssemblyDependencies = DependencyContext.Load(Assembly.GetEntryAssembly());
 				foreach (CompilationLibrary compilationLibrary in entryAssemblyDependencies.CompileLibraries)
 				{
-					IEnumerable<string> assemblyPaths = compilationLibrary.ResolveReferencePaths();
+					List<string> assemblyPaths = compilationLibrary.ResolveReferencePaths().ToList();
 					if (assemblyPaths.Any())
 					{
 						metadataReferences.Add(MetadataReference.CreateFromFile(assemblyPaths.First()));
