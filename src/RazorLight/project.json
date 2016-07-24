@@ -23,5 +23,11 @@
         "System.Runtime.Loader": "4.0.0"
       }
     }
+  },
+
+  "scripts": {
+    "postcompile": [
+      "../../makeNuget.cmd %compile:Configuration% Release ../../nuget"
+    ]
   }
 }
