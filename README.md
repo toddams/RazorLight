@@ -13,8 +13,7 @@ Use Microsoft [Razor template engine](https://github.com/aspnet/Razor) to parse 
 * Parse files
 * Caching
 * Recompile cached view on file content change
-* Anonymous types models
-* Strongly typed views
+* Anonymous type models
 * Load models from extenral assemblies
 
 
