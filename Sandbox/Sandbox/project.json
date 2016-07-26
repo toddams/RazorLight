@@ -2,7 +2,7 @@
   "version": "1.0.0-*",
   "buildOptions": {
     "emitEntryPoint": true,
-    "preserveCompilationContext": false
+    "preserveCompilationContext": true
   },
 
   "dependencies": {

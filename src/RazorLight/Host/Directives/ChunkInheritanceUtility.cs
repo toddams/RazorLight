@@ -3,8 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Chunks;
+using Microsoft.AspNetCore.Razor.Parser;
+using Microsoft.Extensions.FileProviders;
 
 namespace RazorLight.Host.Directives
 {
@@ -15,6 +19,7 @@ namespace RazorLight.Host.Directives
 	{
 		private readonly LightRazorHost _razorHost;
 		private readonly IReadOnlyList<Chunk> _defaultInheritedChunks;
+		private readonly IChunkTreeCache _chunkTreeCache;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ChunkInheritanceUtility"/>.
@@ -25,11 +30,17 @@ namespace RazorLight.Host.Directives
 		/// <param name="defaultInheritedChunks">Sequence of <see cref="Chunk"/>s inherited by default.</param>
 		public ChunkInheritanceUtility(
 			LightRazorHost razorHost,
-			IReadOnlyList<Chunk> defaultInheritedChunks)
+			IReadOnlyList<Chunk> defaultInheritedChunks,
+			IChunkTreeCache chunkTreeCache)
 		{
 			if (razorHost == null)
 			{
 				throw new ArgumentNullException(nameof(razorHost));
+			}
+
+			if (chunkTreeCache == null)
+			{
+				throw new ArgumentNullException(nameof(chunkTreeCache));
 			}
 
 			if (defaultInheritedChunks == null)
@@ -39,7 +50,10 @@ namespace RazorLight.Host.Directives
 
 			_razorHost = razorHost;
 			_defaultInheritedChunks = defaultInheritedChunks;
+			_chunkTreeCache = chunkTreeCache;
 		}
+
+		private List<ChunkTreeResult> NullChunkTreeResult => new List<ChunkTreeResult>();
 
 		/// <summary>
 		/// Gets an ordered <see cref="IReadOnlyList{ChunkTreeResult}"/> of parsed <see cref="ChunkTree"/>s and
@@ -59,7 +73,33 @@ namespace RazorLight.Host.Directives
 		/// </remarks>
 		public virtual IReadOnlyList<ChunkTreeResult> GetInheritedChunkTreeResults(string pagePath)
 		{
-			return new List<ChunkTreeResult>(); ;
+			if (pagePath == null)
+				return NullChunkTreeResult;
+
+			var inheritedChunkTreeResults = new List<ChunkTreeResult>();
+			var templateEngine = new RazorTemplateEngine(_razorHost);
+			foreach (var viewImportsPath in ViewHierarchyUtility.GetViewImportsLocations(pagePath))
+			{
+				// viewImportsPath contains the app-relative path of the _ViewImports.
+				// Since the parsing of a _ViewImports would cause parent _ViewImports to be parsed
+				// we need to ensure the paths are app-relative to allow the GetGlobalFileLocations
+				// for the current _ViewImports to succeed.
+
+				var chunkTree = _chunkTreeCache.GetOrAdd(
+						viewImportsPath,
+						fileInfo => ParseViewFile(
+							templateEngine,
+							fileInfo,
+							viewImportsPath));
+
+				if (chunkTree != null)
+				{
+					var result = new ChunkTreeResult(chunkTree, viewImportsPath);
+					inheritedChunkTreeResults.Insert(0, result);
+				}
+			}
+
+			return inheritedChunkTreeResults;
 		}
 
 		/// <summary>
@@ -113,6 +153,41 @@ namespace RazorLight.Host.Directives
 				new UsingChunkMerger(),
 				new SetBaseTypeChunkMerger(modelType)
 			};
+		}
+
+		private static ChunkTree ParseViewFile(
+			RazorTemplateEngine engine,
+			IFileInfo fileInfo,
+			string viewImportsPath)
+		{
+			using (var stream = fileInfo.CreateReadStream())
+			{
+				using (var streamReader = new StreamReader(stream))
+				{
+					var parseResults = engine.ParseTemplate(streamReader, viewImportsPath);
+					var className = ParserHelpers.SanitizeClassName(fileInfo.Name);
+					var language = engine.Host.CodeLanguage;
+					var chunkGenerator = language.CreateChunkGenerator(
+						className,
+						engine.Host.DefaultNamespace,
+						viewImportsPath,
+						engine.Host);
+					chunkGenerator.Visit(parseResults);
+
+					// Rewrite the location of inherited chunks so they point to the global import file.
+					var chunkTree = chunkGenerator.Context.ChunkTreeBuilder.Root;
+					foreach (var chunk in chunkTree.Children)
+					{
+						chunk.Start = new SourceLocation(
+							viewImportsPath,
+							chunk.Start.AbsoluteIndex,
+							chunk.Start.LineIndex,
+							chunk.Start.CharacterIndex);
+					}
+
+					return chunkTree;
+				}
+			}
 		}
 	}
 }

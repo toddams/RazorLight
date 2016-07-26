@@ -1,7 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
-using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.CodeGenerators;
 using RazorLight.Host;
@@ -10,11 +8,23 @@ namespace RazorLight
 {
 	public class RazorLightCodeGenerator
 	{
-		public string GenerateCode(TextReader input, ModelTypeInfo modelTypeInfo)
-		{
-			LightRazorHost host = new LightRazorHost(modelTypeInfo.TemplateTypeName);
-			GeneratorResults generatorResults = new RazorTemplateEngine(host).GenerateCode(input);
+		private readonly ConfigurationOptions options;
 
+		public RazorLightCodeGenerator(ConfigurationOptions options)
+		{
+			this.options = options;
+		}
+
+		public string GenerateCode(Stream inputStream, ModelTypeInfo modelTypeInfo)
+		{
+			LightRazorHost host = new LightRazorHost(options);
+
+			GeneratorResults generatorResults = null;
+			using (var streamReader = new StreamReader(inputStream))
+			{
+				generatorResults = new RazorTemplateEngine(host).GenerateCode(streamReader);
+			}
+			
 			if (!generatorResults.Success)
 			{
 				var builder = new StringBuilder();

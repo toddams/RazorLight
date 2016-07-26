@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.CodeGenerators;
 using Microsoft.AspNetCore.Razor.Parser;
 using Microsoft.AspNetCore.Razor.Runtime.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.Extensions.FileProviders;
 using RazorLight.Host.Directives;
 
 namespace RazorLight.Host
@@ -21,8 +22,12 @@ namespace RazorLight.Host
         private const string HtmlHelperPropertyName = "Html";
 
 	    private string _defaultModel = "dynamic";
+	    private string _defaultClassName = "__RazorLightTemplate";
+	    private string _defaultNamespace = "RazorLight.GeneratedTemplates";
 
-        private static readonly string[] _defaultNamespaces = new[]
+	    private readonly ConfigurationOptions _config;
+
+		private static readonly string[] _defaultNamespaces = new[]
         {
             "System",
             "System.Linq",
@@ -38,12 +43,19 @@ namespace RazorLight.Host
             }
         };
 
-        private ChunkInheritanceUtility _chunkInheritanceUtility;
+		private ChunkInheritanceUtility _chunkInheritanceUtility;
 
-        public LightRazorHost() : base(new CSharpRazorCodeLanguage())
-        {
-            DefaultBaseClass = $"{BaseType}<{ChunkHelper.TModelToken}>";
-            DefaultNamespace = "AspNetCore";
+		/// <summary>
+		/// Initialies LightRazorHost with a specified fileprovider
+		/// </summary>
+		/// <param name="viewsFileProvider"></param>
+	    public LightRazorHost(ConfigurationOptions options) : base(new CSharpRazorCodeLanguage())
+		{
+			_config = options;
+
+	        DefaultClassName = _defaultClassName;
+	        DefaultNamespace = _defaultNamespace;
+			DefaultBaseClass = $"{BaseType}<{ChunkHelper.TModelToken}>";
 			EnableInstrumentation = false; //This should not be true, unsell you want your code to work :)
 			GeneratedClassContext = new GeneratedClassContext(
                 executeMethodName: "ExecuteAsync",
@@ -102,23 +114,13 @@ namespace RazorLight.Host
             }
         }
 
-	    public LightRazorHost(string modelTypeName) : this()
-	    {
-		    if (string.IsNullOrEmpty(modelTypeName))
-		    {
-			    throw new ArgumentNullException(nameof(modelTypeName));
-		    }
-
-		    this.DefaultModel = modelTypeName;
-	    }
-
         public virtual string DefaultModel
         {
 	        get
 	        {
 		        return _defaultModel;
 	        }
-	        private set
+	        set
 	        {
 		        _defaultModel = value;
 	        }
@@ -129,41 +131,19 @@ namespace RazorLight.Host
             get { return _defaultInheritedChunks; }
         }
 
-		public override string DefaultClassName
-		{
-			get
-			{
-				return "__RazorLightTemplate";
-			}
+		public virtual string ViewName { get;  set; }
 
-			set
-			{
-				base.DefaultClassName = value;
-			}
-		}
-
-		public override string DefaultNamespace
-		{
-			get
-			{
-				return "RazorLight.GeneratedTemplates";
-			}
-
-			set
-			{
-				base.DefaultNamespace = value;
-			}
-		}
-
-		// Internal for testing
-		internal ChunkInheritanceUtility ChunkInheritanceUtility
+	    internal ChunkInheritanceUtility ChunkInheritanceUtility
         {
             get
             {
                 if (_chunkInheritanceUtility == null)
                 {
                     // This needs to be lazily evaluated to support DefaultInheritedChunks being virtual.
-                    _chunkInheritanceUtility = new ChunkInheritanceUtility(this, DefaultInheritedChunks);
+                    _chunkInheritanceUtility = new ChunkInheritanceUtility(
+						this, 
+						DefaultInheritedChunks, 
+						new DefaultChunkTreeCache(_config.ViewsFileProvider));
                 }
 
                 return _chunkInheritanceUtility;
@@ -172,17 +152,6 @@ namespace RazorLight.Host
             {
                 _chunkInheritanceUtility = value;
             }
-        }
-
-        /// <summary>
-        /// Locates and parses _ViewImports.cshtml files applying to the given <paramref name="sourceFileName"/> to
-        /// create <see cref="ChunkTreeResult"/>s.
-        /// </summary>
-        /// <param name="sourceFileName">The path to a Razor file to locate _ViewImports.cshtml for.</param>
-        /// <returns>Inherited <see cref="ChunkTreeResult"/>s.</returns>
-        public IReadOnlyList<ChunkTreeResult> GetInheritedChunkTreeResults(string sourceFileName)
-        {
-            return ChunkInheritanceUtility.GetInheritedChunkTreeResults(sourceFileName);
         }
 
         /// <inheritdoc />
@@ -219,6 +188,7 @@ namespace RazorLight.Host
                 throw new ArgumentNullException(nameof(context));
             }
 
+
             IReadOnlyList<ChunkTree> inheritedChunkTrees = GetInheritedChunkTrees(context.SourceFile);
 
             ChunkInheritanceUtility.MergeInheritedChunkTrees(
@@ -233,7 +203,7 @@ namespace RazorLight.Host
 
         private IReadOnlyList<ChunkTree> GetInheritedChunkTrees(string sourceFileName)
         {
-            var inheritedChunkTrees = GetInheritedChunkTreeResults(sourceFileName)
+            var inheritedChunkTrees = ChunkInheritanceUtility.GetInheritedChunkTreeResults(sourceFileName)
                 .Select(result => result.ChunkTree)
                 .ToList();
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Dynamic;
 using System.IO;
+using System.Text;
 using Microsoft.Extensions.FileProviders;
 using RazorLight.Compilation;
 using RazorLight.Extensions;
@@ -13,7 +14,6 @@ namespace RazorLight
 		private readonly RoslynCompilerService _compilerService;
 		private readonly RazorLightCodeGenerator _codeGenerator;
 
-		private readonly PhysicalFileProvider _fileProvider;
 		private readonly CompilerCache compilerCache;
 
 		/// <summary>
@@ -28,14 +28,13 @@ namespace RazorLight
 				throw new ArgumentNullException(nameof(options));
 			}
 
-			this._config = options;
-			_codeGenerator = new RazorLightCodeGenerator();
+			_config = options;
+			_codeGenerator = new RazorLightCodeGenerator(options);
 			_compilerService = new RoslynCompilerService(options);
 
-			if (!string.IsNullOrEmpty(options.ViewsFolder))
+			if (options.ViewsFileProvider != null)
 			{
-				_fileProvider = new PhysicalFileProvider(options.ViewsFolder);
-				compilerCache = new CompilerCache(_fileProvider);
+				compilerCache = new CompilerCache(_config.ViewsFileProvider);
 				CanParseFiles = true;
 			}
 
@@ -67,7 +66,11 @@ namespace RazorLight
 
 			var modelTypeInfo = new ModelTypeInfo<T>(model);
 
-			string razorCode = _codeGenerator.GenerateCode(new StringReader(content), modelTypeInfo);
+			string razorCode = null;
+			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(content)))
+			{
+				razorCode = _codeGenerator.GenerateCode(stream, modelTypeInfo);
+			}
 
 			return CompileAndRun<T>(razorCode, modelTypeInfo);
 		}
@@ -96,10 +99,9 @@ namespace RazorLight
 				throw new ArgumentNullException(nameof(model));
 			}
 
-			string fullPath = Path.Combine(_config.ViewsFolder, viewRelativePath);
-			if (!File.Exists(fullPath))
+			if (!_config.ViewsFileProvider.GetFileInfo(viewRelativePath).Exists)
 			{
-				throw new FileNotFoundException("View not found", fullPath);
+				throw new FileNotFoundException("View not found", viewRelativePath);
 			}
 
 			string result = compilerCache.GetOrAdd(viewRelativePath, path => OnCompilerCacheMiss(path, model));
@@ -109,30 +111,19 @@ namespace RazorLight
 
 		private string OnCompilerCacheMiss<T>(string viewRelativePath, T model)
 		{
-			string fullPath = Path.Combine(_config.ViewsFolder, viewRelativePath);
-			if (!File.Exists(fullPath))
+			IFileInfo fileInfo = _config.ViewsFileProvider.GetFileInfo(viewRelativePath);
+
+			if (!fileInfo.Exists)
 			{
-				throw new FileNotFoundException("View not found", fullPath);
+				throw new FileNotFoundException("View not found", viewRelativePath);
 			}
 
-			FileStream fileStream = null;
-			try
+			using (Stream stream = fileInfo.CreateReadStream())
 			{
-				fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-				using (var reader = new StreamReader(fileStream))
-				{
-					ModelTypeInfo<T> modelTypeInfo = new ModelTypeInfo<T>(model);
+				ModelTypeInfo<T> modelTypeInfo = new ModelTypeInfo<T>(model);
 
-					string razorCode = _codeGenerator.GenerateCode(reader, modelTypeInfo);
-					return CompileAndRun(razorCode, modelTypeInfo);
-				}
-			}
-			finally
-			{
-				if (fileStream != null)
-				{
-					fileStream.Dispose();
-				}
+				string razorCode = _codeGenerator.GenerateCode(stream, modelTypeInfo);
+				return CompileAndRun(razorCode, modelTypeInfo);
 			}
 		}
 
@@ -143,7 +134,7 @@ namespace RazorLight
 			if (modelTypeInfo.IsAnonymousType)
 			{
 				ExpandoObject dynamicModel = modelTypeInfo.Value.ToExpando();
-				LightRazorPage<dynamic> page = (LightRazorPage<dynamic>) Activator.CreateInstance(compiledType);
+				LightRazorPage<dynamic> page = (LightRazorPage<dynamic>)Activator.CreateInstance(compiledType);
 
 				return RunPage(page, dynamicModel);
 			}
@@ -171,7 +162,9 @@ namespace RazorLight
 		public void Dispose()
 		{
 			compilerCache?.Dispose();
-			_fileProvider?.Dispose();
+
+			//Dispose inner filewathcer in case of using PhysicalFileProvider
+			(_config.ViewsFileProvider as PhysicalFileProvider)?.Dispose(); 
 		}
 	}
 }

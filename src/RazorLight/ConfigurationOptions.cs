@@ -1,31 +1,12 @@
-﻿using System.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.FileProviders;
 
 namespace RazorLight
 {
 	public class ConfigurationOptions
-    {
-		/// <summary>
-		/// Absolute path to the root folder which contains Razor views
-		/// </summary>
-		private string viewsFolder;
-		public string ViewsFolder
-		{
-			get
-			{
-				return viewsFolder;
-			}
-			set
-			{
-				if (value == null || !Directory.Exists(value))
-				{
-					throw new DirectoryNotFoundException();
-				}
-
-				viewsFolder = value;
-			}
-		}
+	{
+		public IFileProvider ViewsFileProvider { get; set; } = new NullFileProvider();
 
 		/// <summary>
 		/// If set to true - all dependencies from the entry assembly will be added as a compiler metatada references while compiling Razor views
