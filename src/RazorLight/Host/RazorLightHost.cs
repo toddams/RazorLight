@@ -1,6 +1,3 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -156,20 +153,6 @@ namespace RazorLight.Host
 			}
 		}
 
-		public GeneratorResults GenerateCode(string rootRelativePath, Stream inputStream)
-		{
-			string className = ParserHelpers.SanitizeClassName(rootRelativePath);
-			var engine = new RazorTemplateEngine(this);
-			return engine.GenerateCode(inputStream, className, DefaultNamespace, rootRelativePath);
-		}
-
-		public GeneratorResults GenerateCode(TextReader contentReader)
-		{
-			string className = Path.GetFileName(Path.GetRandomFileName());
-			var engine = new RazorTemplateEngine(this);
-			return engine.GenerateCode(contentReader);
-		}
-
 		public override ParserBase DecorateCodeParser(ParserBase incomingCodeParser)
 		{
 			if (incomingCodeParser == null)
@@ -199,7 +182,7 @@ namespace RazorLight.Host
 
 			//Evaluate inherited chunks only for physycal files.
 			//If context.SourceFile is null - we are parsing a string
-			//and ViewImports / ViewStart will not be applied
+			//and ViewImports will not be applied
 			if (!string.IsNullOrEmpty(context.SourceFile))
 			{
 				inheritedChunkTrees = ChunkInheritanceUtility
