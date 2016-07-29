@@ -8,18 +8,21 @@ using RazorLight.Rendering;
 
 namespace RazorLight
 {
-	public class PageRenderer
+	public class PageRenderer : IDisposable
 	{
-		private MemoryPoolViewBufferScope _bufferScope;
+		private readonly MemoryPoolViewBufferScope _bufferScope;
 		private readonly HtmlEncoder _htmlEncoder;
 
-		public PageRenderer()
+		public PageRenderer(TemplatePage page)
 		{
+			this.razorPage = page;
+
+			_bufferScope = new MemoryPoolViewBufferScope();
 			_htmlEncoder = HtmlEncoder.Default;
 			ViewStartPages = new List<TemplatePage>();
 		}
 
-		public TemplatePage RazorPage { get; set; }
+		private readonly TemplatePage razorPage;
 
 		public List<TemplatePage> ViewStartPages { get; }
 
@@ -30,11 +33,8 @@ namespace RazorLight
 				throw new ArgumentNullException(nameof(context));
 			}
 
-			using (_bufferScope = new MemoryPoolViewBufferScope())
-			{
-				ViewBufferTextWriter bodyWriter = await RenderPageAsync(RazorPage, context, invokeViewStarts: true);
-				await RenderLayoutAsync(context, bodyWriter);
-			}
+			ViewBufferTextWriter bodyWriter = await RenderPageAsync(razorPage, context, invokeViewStarts: true);
+			await RenderLayoutAsync(context, bodyWriter);
 		}
 
 		private Task RenderPageCoreAsync(TemplatePage page, PageContext context)
@@ -125,7 +125,7 @@ namespace RazorLight
 			// If non-null, copy the layout value from the view start page(s) to the entry page.
 			if (layout != null)
 			{
-				RazorPage.Layout = layout;
+				razorPage.Layout = layout;
 			}
 		}
 
@@ -135,7 +135,7 @@ namespace RazorLight
 		{
 			// A layout page can specify another layout page. We'll need to continue
 			// looking for layout pages until they're no longer specified.
-			var previousPage = RazorPage;
+			var previousPage = razorPage;
 			var renderedLayouts = new List<TemplatePage>();
 
 			// This loop will execute Layout pages from the inside to the outside. With each
@@ -156,7 +156,7 @@ namespace RazorLight
 				var layoutPage = GetLayoutPage(context, previousPage.Path, previousPage.Layout);
 
 				if (renderedLayouts.Count > 0 &&
-				    renderedLayouts.Any(l => string.Equals(l.Path, layoutPage.Path, StringComparison.Ordinal)))
+					renderedLayouts.Any(l => string.Equals(l.Path, layoutPage.Path, StringComparison.Ordinal)))
 				{
 					// If the layout has been previously rendered as part of this view, we're potentially in a layout
 					// rendering cycle.
@@ -236,6 +236,14 @@ namespace RazorLight
 
 			//var layoutPage = layoutPageResult.Page;
 			//return layoutPage;
+		}
+
+		public void Dispose()
+		{
+			if (_bufferScope != null)
+			{
+				_bufferScope.Dispose();
+			}
 		}
 
 		#region Helpers
