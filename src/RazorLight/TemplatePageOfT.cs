@@ -6,7 +6,7 @@ namespace RazorLight
 	/// Razor page with a Model
 	/// </summary>
 	/// <typeparam name="TModel"></typeparam>
-    public abstract class LightRazorPage<TModel> : LightRazorPage
+    public abstract class TemplatePage<TModel> : TemplatePage
     {
 		public TModel Model { get; set; }
 	}
