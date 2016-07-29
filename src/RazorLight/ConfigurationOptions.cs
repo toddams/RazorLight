@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.FileProviders;
 
 namespace RazorLight
 {
 	public class ConfigurationOptions
 	{
-		public IFileProvider ViewsFileProvider { get; set; } = new NullFileProvider();
+		public string ViewsFolder { get; set; }
 
 		/// <summary>
 		/// If set to true - all dependencies from the entry assembly will be added as a compiler metatada references while compiling Razor views
