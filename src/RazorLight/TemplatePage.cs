@@ -23,10 +23,15 @@ namespace RazorLight
 		{
 			SectionWriters = new Dictionary<string, RenderAsyncDelegate>(StringComparer.OrdinalIgnoreCase);
 		}
-
+		
+		
 		public PageContext PageContext { get; set; }
 
 		public HtmlEncoder HtmlEncoder { get; set; } = HtmlEncoder.Default;
+
+		public virtual void SetModel(object data)
+		{
+		}
 
 		public virtual TextWriter Output
 		{
