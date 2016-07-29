@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
-namespace RazorLight
+namespace RazorLight.Compilation
 {
 	/// <summary>
 	/// Caches the result of runtime compilation of Razor files for the duration of the application lifetime.
