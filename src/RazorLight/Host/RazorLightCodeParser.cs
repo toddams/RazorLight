@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Razor.Parser;
 
 namespace RazorLight.Host
 {
-	public class LightRazorCodeParser : CSharpCodeParser
+	public class RazorLightCodeParser : CSharpCodeParser
     {
         private const string ModelKeyword = "model";
         private SourceLocation? _endInheritsLocation;
         private bool _modelStatementFound;
 
-        public LightRazorCodeParser()
+        public RazorLightCodeParser()
         {
             MapDirectives(ModelDirective, ModelKeyword);
         }

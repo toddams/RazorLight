@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Razor.CodeGenerators.Visitors;
 
 namespace RazorLight.Host
 {
-    public class LightCSharpDesignTimeCodeVisitor : CSharpDesignTimeCodeVisitor
+    public class RazorLightCSharpDesignTimeCodeVisitor : CSharpDesignTimeCodeVisitor
     {
         private const string ModelVariable = "__modelHelper";
         private ModelChunk _modelChunk;
 
-        public LightCSharpDesignTimeCodeVisitor(
+        public RazorLightCSharpDesignTimeCodeVisitor(
             CSharpCodeVisitor csharpCodeVisitor,
             CSharpCodeWriter writer,
             CodeGeneratorContext context)

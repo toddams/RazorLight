@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Razor.CodeGenerators.Visitors;
 
 namespace RazorLight.Host
 {
-    public class LightCSharpCodeGenerator : CSharpCodeGenerator
+    public class RazorLightCSharpCodeGenerator : CSharpCodeGenerator
     {
         private readonly string _defaultModel;
 
-        public LightCSharpCodeGenerator(
+        public RazorLightCSharpCodeGenerator(
             CodeGeneratorContext context,
             string defaultModel)
             : base(context)
@@ -68,7 +68,7 @@ namespace RazorLight.Host
                 throw new ArgumentNullException(nameof(context));
             }
 
-            return new LightCSharpDesignTimeCodeVisitor(csharpCodeVisitor, writer, context);
+            return new RazorLightCSharpDesignTimeCodeVisitor(csharpCodeVisitor, writer, context);
         }
     }
 }
