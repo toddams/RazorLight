@@ -1,170 +1,202 @@
 ﻿using System;
-using System.Dynamic;
 using System.IO;
 using System.Text;
+using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.CodeGenerators;
+using Microsoft.AspNetCore.Razor.Parser;
 using Microsoft.Extensions.FileProviders;
 using RazorLight.Compilation;
-using RazorLight.Extensions;
+using RazorLight.Host;
 
 namespace RazorLight
 {
 	public class RazorLightEngine : IDisposable
 	{
-		private readonly ConfigurationOptions _config;
-		private readonly RoslynCompilerService _compilerService;
-		private readonly RazorLightCodeGenerator _codeGenerator; //TODO: Remove
-
-		private readonly CompilerCache compilerCache;
-
-		/// <summary>
-		/// Initializes new RazorLight engine with a default configuration options
-		/// </summary>
-		public RazorLightEngine() : this(ConfigurationOptions.Default) { }
+		private readonly IFileProvider _viewsFileProvider;
+		private readonly RoslynCompilerService _pageCompiler;
+		private readonly CompilerCache _compilerCache;
 
 		public RazorLightEngine(ConfigurationOptions options)
 		{
 			if (options == null)
-			{
 				throw new ArgumentNullException(nameof(options));
-			}
 
-			_config = options;
-			_codeGenerator = new RazorLightCodeGenerator(options);
-			_compilerService = new RoslynCompilerService(options);
+			this.Config = options;
 
-			if (options.ViewsFileProvider != null)
+			this._pageCompiler = new RoslynCompilerService(Config);
+			this._viewsFileProvider = options.ViewsFileProvider;
+			this._compilerCache = new CompilerCache(_viewsFileProvider);
+		}
+
+		public ConfigurationOptions Config { get; private set; }
+
+		/// <summary>
+		/// Parses a file with a given relative path and model.
+		/// </summary>
+		/// <typeparam name="T">Type of the Model to use with a template</typeparam>
+		/// <param name="path">View path relative to ViewsFolder path</param>
+		/// <param name="model">The model</param>
+		/// <returns>The result of executing the template</returns>
+		/// <remarks>Compilation result will be cached (path = cache key)</remarks>
+		public string ParseFile<T>(string path, T model)
+		{
+			if (string.IsNullOrEmpty(path))
 			{
-				compilerCache = new CompilerCache(_config.ViewsFileProvider);
-				CanParseFiles = true;
+				throw new ArgumentNullException(nameof(path));
 			}
 
+			return _compilerCache.GetOrAdd(path, s => OnCompilerCacheMiss(path, model));
 		}
 
 		/// <summary>
-		/// Returns true if ConfigurationOptions's property ViewFolder is set and such folder exists in filesystem
+		/// Parses a string with a given model
 		/// </summary>
-		public bool CanParseFiles { get; private set; }
-
-		/// <summary>
-		/// Parses given razor template string
-		/// </summary>
-		/// <typeparam name="T">Type of Model</typeparam>
-		/// <param name="content">Razor string</param>
-		/// <param name="model"></param>
-		/// <returns></returns>
+		/// <typeparam name="T">Type of the Model to use with a template</typeparam>
+		/// <param name="content">String that represents a razor template</param>
+		/// <param name="model">The model</param>
+		/// <returns>The result of executing the template</returns>
+		/// <remarks>Compilation result will NOT be cached</remarks>
 		public string ParseString<T>(string content, T model)
 		{
-			if (content == null)
+			if (string.IsNullOrEmpty(content))
 			{
 				throw new ArgumentNullException(nameof(content));
 			}
 
-			if (model == null)
+			var pageContext = new PageContext()
 			{
-				throw new ArgumentNullException();
+				IsPhysicalPage = false,
+				ModelTypeInfo = new ModelTypeInfo(typeof(T))
+			};
+
+			string razorTemplate = null;
+			using (var reader = new StringReader(content))
+			{
+				razorTemplate = GenerateRazorTemplate(reader, pageContext);
 			}
 
-			var modelTypeInfo = new ModelTypeInfo<T>(model);
+			TemplatePage page = Compile<T>(razorTemplate, pageContext);
 
-			string razorCode = null;
-			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(content)))
-			{
-				razorCode = _codeGenerator.GenerateCode(stream, modelTypeInfo);
-			}
-
-			return CompileAndRun<T>(razorCode, modelTypeInfo);
+			return RunTemplate(page, pageContext, model);
 		}
 
-		/// <summary>
-		/// Parses *.cshtml file with a given relative path and Model. Parsed result is compiled and cached
-		/// </summary>
-		/// <typeparam name="T">Type of Model</typeparam>
-		/// <param name="viewRelativePath">Relative path to the Razor view</param>
-		/// <param name="model">Model of the Razor view</param>
-		/// <returns></returns>
-		public string ParseFile<T>(string viewRelativePath, T model)
+		private string OnCompilerCacheMiss<T>(string path, T model)
 		{
-			if (!CanParseFiles)
+			IFileInfo templateFileInfo = _viewsFileProvider.GetFileInfo(path);
+
+			if (templateFileInfo.IsDirectory)
 			{
-				throw new RazorLightException("Can't parse a file. ViewsFolder must be set in ConfigurationOptions");
+				throw new ArgumentException("Invalid file path");
 			}
 
-			if (viewRelativePath == null)
+			if (!templateFileInfo.Exists)
 			{
-				throw new ArgumentNullException(nameof(viewRelativePath));
+				throw new FileNotFoundException("File not found", templateFileInfo.PhysicalPath);
 			}
 
-			if (model == null)
+			var pageContext = new PageContext()
 			{
-				throw new ArgumentNullException(nameof(model));
+				IsPhysicalPage = true,
+				ModelTypeInfo = new ModelTypeInfo(typeof(T)),
+				PageKey = path,
+				ExecutingFilePath = templateFileInfo.PhysicalPath
+			};
+
+			string razorTemplate = null;
+			using (var stream = templateFileInfo.CreateReadStream())
+			using (var reader = new StreamReader(stream))
+			{
+				razorTemplate = GenerateRazorTemplate(reader, pageContext);
 			}
 
-			if (!_config.ViewsFileProvider.GetFileInfo(viewRelativePath).Exists)
-			{
-				throw new FileNotFoundException("View not found", viewRelativePath);
-			}
+			TemplatePage page = Compile<T>(razorTemplate, pageContext);
 
-			string result = compilerCache.GetOrAdd(viewRelativePath, path => OnCompilerCacheMiss(path, model));
-
-			return result;
+			return RunTemplate(page, pageContext, model);
 		}
 
-		private string OnCompilerCacheMiss<T>(string viewRelativePath, T model)
+		private string GenerateRazorTemplate(TextReader content, PageContext pageContext)
 		{
-			IFileInfo fileInfo = _config.ViewsFileProvider.GetFileInfo(viewRelativePath);
+			string path = pageContext.IsPhysicalPage ? pageContext.PageKey : Path.GetFileName(Path.GetRandomFileName());
+			string className = ParserHelpers.SanitizeClassName(path);
+			var host = CreateHost(pageContext.ModelTypeInfo.TemplateTypeName);
+			var templateEngine = new RazorTemplateEngine(host);
 
-			if (!fileInfo.Exists)
+			GeneratorResults generatorResults = null;
+
+			if (pageContext.IsPhysicalPage)
 			{
-				throw new FileNotFoundException("View not found", viewRelativePath);
-			}
-
-			using (Stream stream = fileInfo.CreateReadStream())
-			{
-				ModelTypeInfo<T> modelTypeInfo = new ModelTypeInfo<T>(model);
-
-				string razorCode = _codeGenerator.GenerateCode(stream, modelTypeInfo);
-				return CompileAndRun(razorCode, modelTypeInfo);
-			}
-		}
-
-		private string CompileAndRun<T>(string razorCode, ModelTypeInfo<T> modelTypeInfo)
-		{
-			Type compiledType = _compilerService.Compile(razorCode);
-
-			if (modelTypeInfo.IsAnonymousType)
-			{
-				ExpandoObject dynamicModel = modelTypeInfo.Value.ToExpando();
-				TemplatePage<dynamic> page = (TemplatePage<dynamic>)Activator.CreateInstance(compiledType);
-
-				return RunPage(page, dynamicModel);
+				//This overload will pass page's relative path to CodeGeneratorContext param of DecorateCodeGenerator method
+				//to grab ViewImports of the template page
+				generatorResults = templateEngine.GenerateCode(content, className, host.DefaultNamespace, pageContext.PageKey);
 			}
 			else
 			{
-				TemplatePage<T> page = (TemplatePage<T>)Activator.CreateInstance(compiledType);
+				generatorResults = templateEngine.GenerateCode(content);
+			}
 
-				return RunPage<T>(page, modelTypeInfo.Value);
+			if (!generatorResults.Success)
+			{
+				var builder = new StringBuilder();
+				builder.AppendLine("Failed to parse razor page:");
+
+				foreach (RazorError error in generatorResults.ParserErrors)
+				{
+					builder.AppendLine($"{error.Message} (line {error.Location.LineIndex})");
+				}
+
+				throw new RazorLightException(builder.ToString());
+			}
+
+			return generatorResults.GeneratedCode;
+		}
+
+		private TemplatePage Compile<T>(string razorCode, PageContext context)
+		{
+			Type compiledType = _pageCompiler.Compile(razorCode);
+
+			TemplatePage templatepage = null;
+
+			if (context.ModelTypeInfo.IsStrongType)
+			{
+				templatepage = (TemplatePage<T>) Activator.CreateInstance(compiledType);
+			}
+			else
+			{
+				templatepage = (TemplatePage<dynamic>) Activator.CreateInstance(compiledType);
+			}
+
+			return templatepage;
+		}
+
+		private string RunTemplate(TemplatePage page, PageContext context, object model)
+		{
+			object pageModel = context.ModelTypeInfo.CreateTemplateModel(model);
+			page.SetModel(pageModel);
+			page.Path = context.ExecutingFilePath;
+
+			using (var writer = new StringWriter())
+			{
+				context.Writer = writer;
+
+				using (var renderer = new PageRenderer(page))
+				{
+					renderer.RenderAsync(context).Wait();
+					return writer.ToString();
+				}
 			}
 		}
 
-		private string RunPage<T>(TemplatePage<T> page, T model)
+		private RazorLightHost CreateHost(string typeName)
 		{
-			using (var stream = new StringWriter())
-			{
-				page.Model = model;
-				//page.Output = stream;
-
-				page.ExecuteAsync().Wait();
-
-				return stream.ToString();
-			}
+			return new RazorLightHost(Config.ViewsFileProvider) { DefaultModel = typeName};
 		}
 
 		public void Dispose()
 		{
-			compilerCache?.Dispose();
-
-			//Dispose inner filewathcer in case of using PhysicalFileProvider
-			(_config.ViewsFileProvider as PhysicalFileProvider)?.Dispose(); 
+			if (_compilerCache != null)
+			{
+				_compilerCache.Dispose();
+			}
 		}
 	}
 }
