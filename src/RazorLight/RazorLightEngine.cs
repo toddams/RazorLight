@@ -141,15 +141,7 @@ namespace RazorLight
 
 			if (!generatorResults.Success)
 			{
-				var builder = new StringBuilder();
-				builder.AppendLine("Failed to parse razor page:");
-
-				foreach (RazorError error in generatorResults.ParserErrors)
-				{
-					builder.AppendLine($"{error.Message} (line {error.Location.LineIndex})");
-				}
-
-				throw new RazorLightException(builder.ToString());
+				throw new TemplateParsingException("Failed to parse razor page. See ParserErrors for more details", generatorResults.ParserErrors);
 			}
 
 			return generatorResults.GeneratedCode;

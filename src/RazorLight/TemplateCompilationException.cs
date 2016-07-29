@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace RazorLight
 {
-	public class RazorLightCompilationException : RazorLightException
+	public class TemplateCompilationException : RazorLightException
     {
 		private readonly List<string> compilationErrors;
 
 		public IReadOnlyList<string> CompilationErrors => compilationErrors;
 
-		public RazorLightCompilationException(string message, IEnumerable<string> errors) : base(message)
+		public TemplateCompilationException(string message, IEnumerable<string> errors) : base(message)
 		{
 			this.compilationErrors = new List<string>();
 			if (errors != null)

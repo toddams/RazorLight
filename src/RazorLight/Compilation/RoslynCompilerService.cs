@@ -77,7 +77,7 @@ namespace RazorLight.Compilation
 							.Where(d => d.IsWarningAsError || d.Severity == DiagnosticSeverity.Error)
 							.Select(d => d.GetMessage());
 
-						throw new RazorLightCompilationException(
+						throw new TemplateCompilationException(
 							"Failed to compile generated razor view. See CompilationErrors for detailed information", errors);
 					}
 					else
