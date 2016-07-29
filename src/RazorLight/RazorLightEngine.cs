@@ -16,6 +16,10 @@ namespace RazorLight
 		private readonly RoslynCompilerService _pageCompiler;
 		private readonly CompilerCache _compilerCache;
 
+		public RazorLightEngine() : this(ConfigurationOptions.Default)
+		{
+		}
+
 		public RazorLightEngine(ConfigurationOptions options)
 		{
 			if (options == null)
