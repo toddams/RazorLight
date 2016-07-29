@@ -11,10 +11,11 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.DependencyModel;
+using RazorLight.Abstractions;
 
 namespace RazorLight.Compilation
 {
-	public class RoslynCompilerService
+	public class RoslynCompilerService : ICompilerService
 	{
 		private readonly ConfigurationOptions _config;
 

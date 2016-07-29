@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.CodeGenerators;
 using Microsoft.AspNetCore.Razor.Parser;
 using Microsoft.Extensions.FileProviders;
+using RazorLight.Abstractions;
 using RazorLight.Compilation;
 using RazorLight.Host;
 
@@ -13,8 +14,8 @@ namespace RazorLight
 	public class RazorLightEngine : IDisposable
 	{
 		private readonly IFileProvider _viewsFileProvider;
-		private readonly RoslynCompilerService _pageCompiler;
-		private readonly CompilerCache _compilerCache;
+		private readonly ICompilerService _pageCompiler;
+		private readonly ICompilerCache _compilerCache;
 
 		public RazorLightEngine() : this(ConfigurationOptions.Default)
 		{
@@ -199,7 +200,7 @@ namespace RazorLight
 		{
 			if (_compilerCache != null)
 			{
-				_compilerCache.Dispose();
+				((IDisposable)_compilerCache).Dispose();
 			}
 		}
 	}
