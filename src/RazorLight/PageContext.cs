@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
+﻿using System.Dynamic;
 using System.IO;
 
 namespace RazorLight
@@ -26,12 +24,15 @@ namespace RazorLight
 		/// <value>The view bag.</value>
 		public dynamic ViewBag => viewBag;
 
+	    public ModelTypeInfo ModelTypeInfo { get; set; }
+
 		/// <summary>
 		/// Indicates if current page is being read from file
-		/// If true - 
 		/// </summary>
 	    public bool IsPhysicalPage { get; set; }
 
 	    public string ExecutingFilePath { get; set; }
+
+	    public string PageKey { get; set; }
 	}
 }

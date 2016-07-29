@@ -17,14 +17,15 @@ namespace RazorLight
 
 		public string GenerateCode(Stream inputStream, ModelTypeInfo modelTypeInfo)
 		{
-			LightRazorHost host = new LightRazorHost(options);
+			RazorLightHost host = new RazorLightHost(options.ViewsFileProvider);
+			host.DefaultModel = modelTypeInfo.TemplateTypeName;
 
 			GeneratorResults generatorResults = null;
 			using (var streamReader = new StreamReader(inputStream))
 			{
 				generatorResults = new RazorTemplateEngine(host).GenerateCode(streamReader);
 			}
-			
+
 			if (!generatorResults.Success)
 			{
 				var builder = new StringBuilder();

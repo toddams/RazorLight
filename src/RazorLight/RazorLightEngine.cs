@@ -12,7 +12,7 @@ namespace RazorLight
 	{
 		private readonly ConfigurationOptions _config;
 		private readonly RoslynCompilerService _compilerService;
-		private readonly RazorLightCodeGenerator _codeGenerator;
+		private readonly RazorLightCodeGenerator _codeGenerator; //TODO: Remove
 
 		private readonly CompilerCache compilerCache;
 
@@ -134,24 +134,24 @@ namespace RazorLight
 			if (modelTypeInfo.IsAnonymousType)
 			{
 				ExpandoObject dynamicModel = modelTypeInfo.Value.ToExpando();
-				LightRazorPage<dynamic> page = (LightRazorPage<dynamic>)Activator.CreateInstance(compiledType);
+				TemplatePage<dynamic> page = (TemplatePage<dynamic>)Activator.CreateInstance(compiledType);
 
 				return RunPage(page, dynamicModel);
 			}
 			else
 			{
-				LightRazorPage<T> page = (LightRazorPage<T>)Activator.CreateInstance(compiledType);
+				TemplatePage<T> page = (TemplatePage<T>)Activator.CreateInstance(compiledType);
 
 				return RunPage<T>(page, modelTypeInfo.Value);
 			}
 		}
 
-		private string RunPage<T>(LightRazorPage<T> page, T model)
+		private string RunPage<T>(TemplatePage<T> page, T model)
 		{
 			using (var stream = new StringWriter())
 			{
 				page.Model = model;
-				page.Output = stream;
+				//page.Output = stream;
 
 				page.ExecuteAsync().Wait();
 

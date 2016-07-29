@@ -163,6 +163,13 @@ namespace RazorLight.Host
 			return engine.GenerateCode(inputStream, className, DefaultNamespace, rootRelativePath);
 		}
 
+		public GeneratorResults GenerateCode(TextReader contentReader)
+		{
+			string className = Path.GetFileName(Path.GetRandomFileName());
+			var engine = new RazorTemplateEngine(this);
+			return engine.GenerateCode(contentReader);
+		}
+
 		public override ParserBase DecorateCodeParser(ParserBase incomingCodeParser)
 		{
 			if (incomingCodeParser == null)
