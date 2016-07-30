@@ -1,28 +1,37 @@
-﻿//using System.IO;
-//using Xunit;
+﻿using System.IO;
+using Microsoft.Extensions.FileProviders;
+using Xunit;
 
-//namespace RazorLight.Tests
-//{
-//	public class ConfigurationOptionsTest
-//    {
-//		[Fact]
-//		public void ConfigureOptionsHasDefaultValues()
-//		{
-//			var options = ConfigurationOptions.Default;
+namespace RazorLight.Tests
+{
+	public class ConfigurationOptionsTest
+	{
+		string unexistingDirectory = @"C:/some/path/to/unexisting/Folder/58674963";
 
-//			Assert.NotNull(options.AdditionalCompilationReferences);
-//			Assert.Equal(options.AdditionalCompilationReferences.Count, 0);
-//			Assert.NotNull(options.LoadDependenciesFromEntryAssembly);
-//		}
+		[Fact]
+		public void ConfigureOptionsHasDefaultValues()
+		{
+			var options = ConfigurationOptions.Default;
 
-//		[Fact]
-//		public void InvalidViewsFolderThrows()
-//		{
-//			var path = @"C:/FolderThatNotExists4444";
+			Assert.NotNull(options.AdditionalCompilationReferences);
+			Assert.Equal(options.AdditionalCompilationReferences.Count, 0);
+			Assert.NotNull(options.LoadDependenciesFromEntryAssembly);
+		}
 
-//			var config = new ConfigurationOptions();
+		[Fact]
+		public void InvalidViewsFolderThrows()
+		{
+			var config = new ConfigurationOptions();
 
-//			Assert.Throws<DirectoryNotFoundException>(() => config.ViewsFolder = path);
-//		}
-//	}
-//}
+			Assert.Throws<DirectoryNotFoundException>(() => config.ViewsFolder = unexistingDirectory);
+		}
+
+		[Fact]
+		public void Get_NullFileProvider_ByDefault()
+		{
+			var engine = new RazorLightEngine();
+
+			Assert.Equal(engine.Config.ViewsFileProvider.GetType(), typeof(NullFileProvider));
+		}
+	}
+}
