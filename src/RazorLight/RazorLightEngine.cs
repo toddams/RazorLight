@@ -119,7 +119,7 @@ namespace RazorLight
 			return RunTemplate(page, pageContext, model);
 		}
 
-		private string GenerateRazorTemplate(TextReader content, PageContext pageContext)
+		internal string GenerateRazorTemplate(TextReader content, PageContext pageContext)
 		{
 			string path = pageContext.IsPhysicalPage ? pageContext.PageKey : Path.GetFileName(Path.GetRandomFileName());
 			string className = ParserHelpers.SanitizeClassName(path);
@@ -147,7 +147,7 @@ namespace RazorLight
 			return generatorResults.GeneratedCode;
 		}
 
-		private TemplatePage Compile<T>(string razorCode, PageContext context)
+		internal TemplatePage Compile<T>(string razorCode, PageContext context)
 		{
 			Type compiledType = _pageCompiler.Compile(razorCode);
 
@@ -165,7 +165,7 @@ namespace RazorLight
 			return templatepage;
 		}
 
-		private string RunTemplate(TemplatePage page, PageContext context, object model)
+		internal string RunTemplate(TemplatePage page, PageContext context, object model)
 		{
 			object pageModel = context.ModelTypeInfo.CreateTemplateModel(model);
 			page.SetModel(pageModel);
