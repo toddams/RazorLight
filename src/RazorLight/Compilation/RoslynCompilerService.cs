@@ -45,7 +45,7 @@ namespace RazorLight.Compilation
 			this._config = options;
 		}
 
-		public Type Compile(string content)
+		public CompilationResult Compile(string content)
 		{
 			string assemblyName = Path.GetRandomFileName();
 
@@ -77,8 +77,7 @@ namespace RazorLight.Compilation
 							.Where(d => d.IsWarningAsError || d.Severity == DiagnosticSeverity.Error)
 							.Select(d => d.GetMessage());
 
-						throw new TemplateCompilationException(
-							"Failed to compile generated razor view. See CompilationErrors for detailed information", errors);
+						return new CompilationResult(errors);
 					}
 					else
 					{
@@ -89,7 +88,7 @@ namespace RazorLight.Compilation
 
 						Type type = assembly.GetExportedTypes().FirstOrDefault(a => !a.IsNested);
 
-						return type;
+						return new CompilationResult(type);
 					}
 				}
 			}

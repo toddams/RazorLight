@@ -1,9 +1,10 @@
 ﻿using System;
+using RazorLight.Compilation;
 
 namespace RazorLight.Abstractions
 {
-    interface ICompilerCache
+	public interface ICompilerCache
     {
-	    string GetOrAdd(string relativePath, Func<string, string> compile);
+		CompilerCacheResult GetOrAdd(string relativePath, Func<string, CompilationResult> compile);
     }
 }

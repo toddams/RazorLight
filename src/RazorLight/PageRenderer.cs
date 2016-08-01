@@ -4,18 +4,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using RazorLight.Abstractions;
 using RazorLight.Rendering;
+using RazorLight.Templating;
 
 namespace RazorLight
 {
 	public class PageRenderer : IDisposable
 	{
-		private readonly MemoryPoolViewBufferScope _bufferScope;
+		private readonly IViewBufferScope _bufferScope;
 		private readonly HtmlEncoder _htmlEncoder;
 
-		public PageRenderer(TemplatePage page)
+		public PageRenderer(TemplatePage page, IPageLookup pageLookup)
 		{
 			this.razorPage = page;
+			this.pageLookup = pageLookup;
 
 			_bufferScope = new MemoryPoolViewBufferScope();
 			_htmlEncoder = HtmlEncoder.Default;
@@ -23,6 +26,7 @@ namespace RazorLight
 		}
 
 		private readonly TemplatePage razorPage;
+		private readonly IPageLookup pageLookup;
 
 		public List<TemplatePage> ViewStartPages { get; }
 
@@ -153,7 +157,7 @@ namespace RazorLight
 					throw new InvalidOperationException("Layout cannot be rendered");
 				}
 
-				var layoutPage = GetLayoutPage(context, previousPage.Path, previousPage.Layout);
+				TemplatePage layoutPage = GetLayoutPage(previousPage.Path, previousPage.Layout);
 
 				if (renderedLayouts.Count > 0 &&
 					renderedLayouts.Any(l => string.Equals(l.Path, layoutPage.Path, StringComparison.Ordinal)))
@@ -206,44 +210,39 @@ namespace RazorLight
 			}
 		}
 
-		private TemplatePage GetLayoutPage(PageContext context, string executingFilePath, string layoutPath)
+		private TemplatePage GetLayoutPage(string executingFilePath, string layoutPath)
 		{
-			return null;
+			RazorPageResult layoutPageResult = pageLookup.GetPage(executingFilePath, layoutPath);
+			IEnumerable<string> originalLocations = layoutPageResult.SearchedLocations;
+			if (layoutPageResult.Page == null)
+			{
+				layoutPageResult = pageLookup.FindPage(layoutPath);
+			}
 
-			//var layoutPageResult = _viewEngine.GetPage(executingFilePath, layoutPath);
-			//var originalLocations = layoutPageResult.SearchedLocations;
-			//if (layoutPageResult.Page == null)
-			//{
-			//	layoutPageResult = _viewEngine.FindPage(context, layoutPath);
-			//}
+			if (layoutPageResult.Page == null)
+			{
+				var locations = string.Empty;
+				if (originalLocations.Any())
+				{
+					locations = Environment.NewLine + string.Join(Environment.NewLine, originalLocations);
+				}
 
-			//if (layoutPageResult.Page == null)
-			//{
-			//	var locations = string.Empty;
-			//	if (originalLocations.Any())
-			//	{
-			//		locations = Environment.NewLine + string.Join(Environment.NewLine, originalLocations);
-			//	}
+				if (layoutPageResult.SearchedLocations.Any())
+				{
+					locations +=
+						Environment.NewLine + string.Join(Environment.NewLine, layoutPageResult.SearchedLocations);
+				}
 
-			//	if (layoutPageResult.SearchedLocations.Any())
-			//	{
-			//		locations +=
-			//			Environment.NewLine + string.Join(Environment.NewLine, layoutPageResult.SearchedLocations);
-			//	}
+				throw new InvalidOperationException("Layout cannot be located"); //TODO: add locations
+			}
 
-			//	throw new InvalidOperationException(Resources.FormatLayoutCannotBeLocated(layoutPath, locations));
-			//}
-
-			//var layoutPage = layoutPageResult.Page;
-			//return layoutPage;
+			var layoutPage = layoutPageResult.Page;
+			return layoutPage;
 		}
 
 		public void Dispose()
 		{
-			if (_bufferScope != null)
-			{
-				_bufferScope.Dispose();
-			}
+			((IDisposable)_bufferScope)?.Dispose();
 		}
 
 		#region Helpers

@@ -29,7 +29,8 @@ namespace RazorLight.Host
 		{
 			"System",
 			"System.Linq",
-			"System.Collections.Generic"
+			"System.Collections.Generic",
+			"RazorLight.Internal"
 		};
 
 		private static readonly Chunk[] _defaultInheritedChunks = new Chunk[]

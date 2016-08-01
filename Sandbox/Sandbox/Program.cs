@@ -1,5 +1,6 @@
 ﻿using System;
 using RazorLight;
+using RazorLight.Internal;
 
 namespace Sandbox
 {
@@ -7,14 +8,18 @@ namespace Sandbox
 	{
 		public static void Main(string[] args)
 		{
-			var engine = new RazorLightEngine2(new ConfigurationOptions()
+			var options = new ConfigurationOptions()
 			{
 				ViewsFolder = @"D:\MyProjects\RazorLight\sandbox\Sandbox\Views"
-			});
+			};
 
-			string result = engine.Go("Test.cshtml", new TestViewModel());
+			var engine = new RazorLightEngine(options);
 
-			Console.WriteLine(result);
+			var r = engine.ParseFile("Test.cshtml", new TestViewModel());
+
+			var r2 = engine.ParseFile("Test.cshtml", new TestViewModel());
+
+			Console.WriteLine(r);
 		}
 	}
 }

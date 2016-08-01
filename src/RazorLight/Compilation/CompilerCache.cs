@@ -38,9 +38,9 @@ namespace RazorLight.Compilation
 		}
 
 		/// <inheritdoc />
-		public string GetOrAdd(
+		public CompilerCacheResult GetOrAdd(
 			string relativePath,
-			Func<string, string> compile)
+			Func<string, CompilationResult> compile)
 		{
 			if (relativePath == null)
 			{
@@ -52,7 +52,7 @@ namespace RazorLight.Compilation
 				throw new ArgumentNullException(nameof(compile));
 			}
 
-			Task<string> cacheEntry;
+			Task<CompilerCacheResult> cacheEntry;
 			// Attempt to lookup the cache entry using the passed in path. This will succeed if the path is already
 			// normalized and a cache entry exists.
 			if (!_cache.TryGetValue(relativePath, out cacheEntry))
@@ -69,15 +69,15 @@ namespace RazorLight.Compilation
 			return cacheEntry.GetAwaiter().GetResult();
 		}
 
-		private Task<string> CreateCacheEntry(
+		private Task<CompilerCacheResult> CreateCacheEntry(
 			string relativePath,
 			string normalizedPath,
-			Func<string, string> compile)
+			Func<string, CompilationResult> compile)
 		{
-			TaskCompletionSource<string> compilationTaskSource = null;
+			TaskCompletionSource<CompilerCacheResult> compilationTaskSource = null;
 			MemoryCacheEntryOptions cacheEntryOptions = null;
 			IFileInfo fileInfo = null;
-			Task<string> cacheEntry;
+			Task<CompilerCacheResult> cacheEntry;
 
 			// Safe races cannot be allowed when compiling Razor pages. To ensure only one compilation request succeeds
 			// per file, we'll lock the creation of a cache entry. Creating the cache entry should be very quick. The
@@ -93,7 +93,7 @@ namespace RazorLight.Compilation
 				if (!fileInfo.Exists)
 				{
 					IChangeToken expirationToken = _fileProvider.Watch(normalizedPath);
-					cacheEntry = Task.FromResult("");
+					cacheEntry = Task.FromResult(new CompilerCacheResult(new[] { expirationToken }));
 
 					cacheEntryOptions = new MemoryCacheEntryOptions();
 					cacheEntryOptions.AddExpirationToken(expirationToken);
@@ -103,11 +103,11 @@ namespace RazorLight.Compilation
 					cacheEntryOptions = GetMemoryCacheEntryOptions(normalizedPath);
 
 					// A file exists and needs to be compiled.
-					compilationTaskSource = new TaskCompletionSource<string>();
+					compilationTaskSource = new TaskCompletionSource<CompilerCacheResult>();
 					cacheEntry = compilationTaskSource.Task;
 				}
 
-				cacheEntry = _cache.Set<Task<string>>(normalizedPath, cacheEntry, cacheEntryOptions);
+				cacheEntry = _cache.Set<Task<CompilerCacheResult>>(normalizedPath, cacheEntry, cacheEntryOptions);
 			}
 
 			if (compilationTaskSource != null)
@@ -118,8 +118,10 @@ namespace RazorLight.Compilation
 
 				try
 				{
-					string compilationResult = compile(relativePath);
-					compilationTaskSource.SetResult(compilationResult);
+					CompilationResult compilationResult = compile(relativePath);
+					compilationResult.EnsureSuccessful();
+					compilationTaskSource.SetResult(
+					   new CompilerCacheResult(relativePath, compilationResult, cacheEntryOptions.ExpirationTokens));
 				}
 				catch (Exception ex)
 				{

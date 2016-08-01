@@ -19,7 +19,8 @@ namespace RazorLight.Tests
 
 		private TemplatePage TestCompileString<T>(RazorLightEngine engine, string content, T model, PageContext context)
 		{
-			return engine.Compile<T>(content, context);
+			var type = engine.Compile(content);
+			return engine.ActivateType(type.CompiledType);
 		}
 
 		[Fact]
@@ -72,7 +73,7 @@ namespace RazorLight.Tests
 			var engine = new RazorLightEngine();
 
 			var code = engine.GenerateRazorTemplate(new StringReader(testContent), testContext);
-			var activatedPage = engine.Compile<TestViewModel>(code, testContext) as TemplatePage<TestViewModel>;
+			var activatedPage = TestCompileString(engine, code, new TestViewModel(), testContext);
 
 			Assert.NotNull(activatedPage);
 		}
