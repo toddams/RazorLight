@@ -42,18 +42,13 @@ namespace RazorLight
 
 		public string ParseString<T>(string content, T model)
 		{
-			ITemplateSource source = new StringTemplateSource(content);
+			var source = new StringTemplateSource(content);
+			var modelTypeInfo = new ModelTypeInfo(typeof(T));
 
-			var pageContext = new PageContext()
-			{
-				IsPhysicalPage = false,
-				ModelTypeInfo = new ModelTypeInfo(typeof(T))
-			};
-
-			string razorCode = GenerateRazorTemplate(source, pageContext);
+			string razorCode = GenerateRazorTemplate(source, modelTypeInfo);
 			Type compiledType = Compile(razorCode).CompiledType;
 			TemplatePage page = ActivateType(compiledType);
-			page.PageContext = pageContext;
+			page.PageContext = new PageContext() { ModelTypeInfo = modelTypeInfo };
 
 			return RunTemplate(page, model);
 		}
@@ -61,44 +56,39 @@ namespace RazorLight
 		public string ParseFile<T>(string relativeFilePath, T model)
 		{
 			IFileInfo fileInfo = viewsFileProvider.GetFileInfo(relativeFilePath);
-			ITemplateSource source = new FileTemplateSource(fileInfo);
-
-			var pageContext = new PageContext()
+			if (!fileInfo.Exists || fileInfo.IsDirectory)
 			{
-				IsPhysicalPage = true,
-				PageKey = relativeFilePath,
+				throw new FileNotFoundException();
+			}
+
+			CompilerCacheResult result = compilerCache.GetOrAdd(relativeFilePath, LookupCompile);
+
+			var context = new PageContext()
+			{
 				ModelTypeInfo = new ModelTypeInfo(typeof(T)),
 				ExecutingFilePath = PathNormalizer.GetNormalizedPath(fileInfo.PhysicalPath)
 			};
 
-			CompilerCacheResult result = compilerCache.GetOrAdd(relativeFilePath, path =>
-			{
-				string razorCode = GenerateRazorTemplate(source, pageContext);
-				return pageCompiler.Compile(razorCode);
-			});
-
 			TemplatePage templatePage = result.PageFactory();
-			templatePage.PageContext = pageContext;
+			templatePage.PageContext = context;
 
 			return RunTemplate(templatePage, model);
 		}
 
-		internal string GenerateRazorTemplate(ITemplateSource source, PageContext pageContext)
+		public string GenerateRazorTemplate(ITemplateSource source, ModelTypeInfo modelTypeInfo)
 		{
-			string path = pageContext.IsPhysicalPage ? pageContext.PageKey : Path.GetFileName(Path.GetRandomFileName());
-			string className = ParserHelpers.SanitizeClassName(path);
-			var host = CreateHost(pageContext.ModelTypeInfo.TemplateTypeName);
-			var templateEngine = new RazorTemplateEngine(host);
+			string className = ParserHelpers.SanitizeClassName(source.TemplateKey);
+			RazorLightHost host = CreateHost(modelTypeInfo);
+			RazorTemplateEngine templateEngine = new RazorTemplateEngine(host);
 
 			GeneratorResults generatorResults = null;
-
 			using (var content = source.CreateReader())
 			{
-				if (pageContext.IsPhysicalPage)
+				if (source.IsPhysicalPage)
 				{
 					//This overload will pass page's relative path to CodeGeneratorContext param of DecorateCodeGenerator method
 					//to grab ViewImports of the template page
-					generatorResults = templateEngine.GenerateCode(content, className, host.DefaultNamespace, pageContext.PageKey);
+					generatorResults = templateEngine.GenerateCode(content, className, host.DefaultNamespace, source.TemplateKey);
 				}
 				else
 				{
@@ -114,7 +104,7 @@ namespace RazorLight
 			return generatorResults.GeneratedCode;
 		}
 
-		internal CompilationResult Compile(string razorCode)
+		public CompilationResult Compile(string razorCode)
 		{
 			var result = pageCompiler.Compile(razorCode);
 			result.EnsureSuccessful();
@@ -122,12 +112,12 @@ namespace RazorLight
 			return result;
 		}
 
-		internal TemplatePage ActivateType(Type compiledType)
+		public TemplatePage ActivateType(Type compiledType)
 		{
 			return (TemplatePage)Activator.CreateInstance(compiledType);
 		}
 
-		internal string RunTemplate(TemplatePage page, object model)
+		public string RunTemplate(TemplatePage page, object model)
 		{
 			object pageModel = page.PageContext.ModelTypeInfo.CreateTemplateModel(model);
 			page.SetModel(pageModel);
@@ -148,24 +138,23 @@ namespace RazorLight
 		internal CompilationResult LookupCompile(string path)
 		{
 			IFileInfo fileInfo = viewsFileProvider.GetFileInfo(path);
-			ITemplateSource source = new FileTemplateSource(fileInfo);
+			ITemplateSource source = new FileTemplateSource(fileInfo, path);
 
-			var pageContext = new PageContext()
-			{
-				IsPhysicalPage = true,
-				PageKey = path,
-				ModelTypeInfo = new ModelTypeInfo(typeof(NullModel)),
-				ExecutingFilePath = PathNormalizer.GetNormalizedPath(fileInfo.PhysicalPath)
-			};
-
-			string razorCode = GenerateRazorTemplate(source, pageContext);
+			string razorCode = GenerateRazorTemplate(source, null);
 
 			return Compile(razorCode);
 		}
 
-		private RazorLightHost CreateHost(string typeName)
+		private RazorLightHost CreateHost(ModelTypeInfo modelTypeInfo)
 		{
-			return new RazorLightHost(Config.ViewsFileProvider) { DefaultModel = typeName };
+			var host = new RazorLightHost(Config.ViewsFileProvider);
+
+			if (modelTypeInfo != null)
+			{
+				host.DefaultModel = modelTypeInfo.TemplateTypeName;
+			}
+
+			return host;
 		}
 	}
 }

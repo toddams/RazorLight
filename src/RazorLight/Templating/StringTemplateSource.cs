@@ -8,6 +8,8 @@ namespace RazorLight.Templating
     {
 	    public string Template { get; private set; }
 	    public string TemplateFile { get; private set; }
+	    public bool IsPhysicalPage { get; }
+	    public string TemplateKey { get; }
 
 	    public StringTemplateSource(string content)
 	    {
@@ -17,9 +19,17 @@ namespace RazorLight.Templating
 		    }
 
 		    this.Template = content;
+		    this.IsPhysicalPage = false;
+		    this.TemplateKey = GetRandomString();
+		    this.TemplateFile = null;
 	    }
 
-		public TextReader CreateReader()
+	    private string GetRandomString()
+	    {
+		    return Path.GetFileName(Path.GetRandomFileName());
+	    }
+
+	    public TextReader CreateReader()
 	    {
 			return new StringReader(Template);
 	    }

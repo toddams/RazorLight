@@ -17,8 +17,6 @@ namespace Sandbox
 
 			var r = engine.ParseFile("Test.cshtml", new TestViewModel());
 
-			var r2 = engine.ParseFile("Test.cshtml", new TestViewModel());
-
 			Console.WriteLine(r);
 		}
 	}

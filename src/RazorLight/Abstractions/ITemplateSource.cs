@@ -8,6 +8,10 @@ namespace RazorLight.Abstractions
 
 		string TemplateFile { get; }
 
+		bool IsPhysicalPage { get; }
+
+		string TemplateKey { get; }
+
 	    TextReader CreateReader();
     }
 }

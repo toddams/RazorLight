@@ -26,13 +26,6 @@ namespace RazorLight
 
 	    public ModelTypeInfo ModelTypeInfo { get; set; }
 
-		/// <summary>
-		/// Indicates if current page is being read from file
-		/// </summary>
-	    public bool IsPhysicalPage { get; set; }
-
 	    public string ExecutingFilePath { get; set; }
-
-	    public string PageKey { get; set; }
 	}
 }
