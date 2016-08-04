@@ -10,10 +10,10 @@ namespace RazorLight
 {
 	public class RazorLightEngine
 	{
-		private readonly EngineCore core;
+		private readonly IEngineCore core;
 		private readonly IPageLookup pageLookup;
 
-		public RazorLightEngine(EngineCore core, IPageLookup pagelookup)
+		public RazorLightEngine(IEngineCore core, IPageLookup pagelookup)
 		{
 			this.core = core;
 			this.pageLookup = pagelookup;

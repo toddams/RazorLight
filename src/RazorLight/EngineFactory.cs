@@ -13,12 +13,12 @@ namespace RazorLight
 				throw new ArgumentNullException(nameof(root));
 			}
 
-			var manager = new FilesystemTemplateManager(root);
-			var compilerCache = new TrackingCompilerCache(root);
-			var core = new EngineCore(manager, compilerCache, EngineConfiguration.Default);
+			ITemplateManager manager = new FilesystemTemplateManager(root);
+			ICompilerCache compilerCache = new TrackingCompilerCache(root);
+			IEngineCore core = new EngineCore(manager, compilerCache, EngineConfiguration.Default);
 
-			var pageFactory = new DefaultPageFactory(core.KeyCompile, compilerCache);
-			var pageLookup = new FilesystemPageLookup(pageFactory);
+			IPageFactoryProvider pageFactory = new DefaultPageFactory(core.KeyCompile, compilerCache);
+			IPageLookup pageLookup = new FilesystemPageLookup(pageFactory);
 
 			return new RazorLightEngine(core, pageLookup);
 		}
