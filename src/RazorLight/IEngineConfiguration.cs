@@ -1,5 +1,5 @@
-﻿using RazorLight.Compilation;
-using RazorLight.Internal;
+﻿using System.Collections.Generic;
+using RazorLight.Compilation;
 
 namespace RazorLight
 {
@@ -10,5 +10,7 @@ namespace RazorLight
 		IRazorTemplateCompiler RazorTemplateCompiler { get; }
 
 		ICompilerService CompilerService { get; }
-    }
+
+		ISet<string> Namespaces { get; set; }
+	}
 }

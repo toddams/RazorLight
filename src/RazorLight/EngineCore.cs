@@ -6,23 +6,37 @@ using RazorLight.Templating;
 
 namespace RazorLight
 {
-    public class EngineCore
-    {
-	    public IEngineConfiguration Configuration { get; }
-	    public ITemplateManager TemplateManager { get; }
+	public class EngineCore
+	{
+		/// <summary>
+		/// Creates <see cref="EngineCore"/> with a default <seealso cref="EngineConfiguration"/>
+		/// </summary>
+		/// <param name="templateManager">Template manager</param>
+		/// <param name="compilerCache">Cache where compilation results are stored</param>
+		public EngineCore(
+			ITemplateManager templateManager,
+			ICompilerCache compilerCache) : this(templateManager, compilerCache, EngineConfiguration.Default)
+		{
+		}
+
+		public EngineCore(
+			ITemplateManager templateManager,
+			ICompilerCache compilerCache,
+			IEngineConfiguration configuration)
+		{
+			if (configuration == null)
+			{
+				throw new ArgumentNullException(nameof(configuration));
+			}
+
+			this.TemplateManager = templateManager;
+			this.CompilerCache = compilerCache;
+			this.Configuration = configuration;
+		}
+
+		public IEngineConfiguration Configuration { get; }
+		public ITemplateManager TemplateManager { get; }
 		public ICompilerCache CompilerCache { get; }
-
-	    public EngineCore(ITemplateManager templateManager, ICompilerCache compilerCache, IEngineConfiguration configuration)
-	    {
-		    if (configuration == null)
-		    {
-			    throw new ArgumentNullException(nameof(configuration));
-		    }
-
-		    this.TemplateManager = templateManager;
-		    this.CompilerCache = compilerCache;
-		    this.Configuration = configuration;
-	    }
 
 		public string GenerateRazorTemplate(ITemplateSource templateSource, ModelTypeInfo modelTypeInfo)
 		{
@@ -44,7 +58,9 @@ namespace RazorLight
 			}
 
 			string razorTemplate = GenerateRazorTemplate(templateSource, modelTypeInfo);
-			CompilationResult compilationResult = Configuration.CompilerService.Compile(razorTemplate);
+			var context = new CompilationContext(razorTemplate, Configuration.Namespaces);
+
+			CompilationResult compilationResult = Configuration.CompilerService.Compile(context);
 
 			return compilationResult;
 		}

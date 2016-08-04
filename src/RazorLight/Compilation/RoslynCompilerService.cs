@@ -44,11 +44,11 @@ namespace RazorLight.Compilation
 			this.metadataResolver = metadataResolver;
 		}
 
-		public CompilationResult Compile(string content)
+		public CompilationResult Compile(CompilationContext context)
 		{
 			string assemblyName = Path.GetRandomFileName();
 
-			SourceText sourceText = SourceText.From(content, Encoding.UTF8);
+			SourceText sourceText = SourceText.From(context.Content, Encoding.UTF8);
 			SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(
 				sourceText,
 				path: assemblyName);

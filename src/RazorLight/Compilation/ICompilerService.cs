@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace RazorLight.Compilation
+﻿namespace RazorLight.Compilation
 {
     public interface ICompilerService
     {
-	    CompilationResult Compile(string content);
+	    CompilationResult Compile(CompilationContext context);
     }
 }

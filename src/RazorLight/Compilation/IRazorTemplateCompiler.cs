@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Razor;
+﻿using RazorLight.Host;
 using RazorLight.Templating;
 
 namespace RazorLight.Compilation
 {
     public interface IRazorTemplateCompiler
     {
-	    string CompileTemplate(RazorEngineHost host, ITemplateSource templateSource);
+	    string CompileTemplate(RazorLightHost host, ITemplateSource templateSource);
     }
 }

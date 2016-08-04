@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using RazorLight.Compilation;
-using RazorLight.Internal;
 
 namespace RazorLight
 {
@@ -9,6 +9,8 @@ namespace RazorLight
 	    public IActivator Activator { get; private set; }
 	    public IRazorTemplateCompiler RazorTemplateCompiler { get; private set; } 
 	    public ICompilerService CompilerService { get; private set; }
+
+	    public ISet<string> Namespaces { get; set; }
 
 	    public EngineConfiguration(
 			IActivator activator, 
@@ -34,6 +36,8 @@ namespace RazorLight
 		    this.Activator = activator;
 		    this.RazorTemplateCompiler = razorTemplateCompiler;
 		    this.CompilerService = compilerService;
+
+			this.Namespaces = new HashSet<string>();
 	    }
 
 	    public static EngineConfiguration Default => new EngineConfiguration(

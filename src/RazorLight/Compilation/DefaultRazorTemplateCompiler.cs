@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.CodeGenerators;
 using Microsoft.AspNetCore.Razor.Parser;
+using RazorLight.Host;
 using RazorLight.Templating;
 
 namespace RazorLight.Compilation
 {
 	public class DefaultRazorTemplateCompiler : IRazorTemplateCompiler
 	{
-		public string CompileTemplate(RazorEngineHost host, ITemplateSource templateSource)
+		public string CompileTemplate(RazorLightHost host, ITemplateSource templateSource)
 		{
 			string className = ParserHelpers.SanitizeClassName(templateSource.TemplateKey);
 			var templateEngine = new RazorTemplateEngine(host);

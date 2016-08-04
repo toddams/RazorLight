@@ -181,10 +181,11 @@ namespace RazorLight.Host
 
 			IReadOnlyList<ChunkTree> inheritedChunkTrees = new List<ChunkTree>();
 
+			//TODO: add support for viewimports
 			//Evaluate inherited chunks only for physycal files.
 			//If context.SourceFile is null - we are parsing a string
 			//and ViewImports will not be applied
-			if (!string.IsNullOrEmpty(context.SourceFile))
+			if (!string.IsNullOrEmpty(context.SourceFile) && this._viewsFileProvider != null)
 			{
 				inheritedChunkTrees = ChunkInheritanceUtility
 				.GetInheritedChunkTreeResults(context.SourceFile)
