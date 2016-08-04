@@ -1,6 +1,7 @@
 ﻿using System;
 using RazorLight.Caching;
 using RazorLight.Templating;
+using RazorLight.Templating.FileSystem;
 
 namespace RazorLight
 {

@@ -57,7 +57,7 @@ namespace RazorLight
 				throw new ArgumentNullException(nameof(content));
 			}
 
-			ITemplateSource templateSource = new StringTemplateSource(content);
+			ITemplateSource templateSource = new LoadedTemplateSource(content);
 
 			ModelTypeInfo modelTypeInfo = new ModelTypeInfo(modelType);
 			CompilationResult result = core.CompileSource(templateSource, modelTypeInfo);
