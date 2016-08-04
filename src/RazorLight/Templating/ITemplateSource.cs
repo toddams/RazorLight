@@ -1,14 +1,12 @@
 ﻿using System.IO;
 
-namespace RazorLight.Abstractions
+namespace RazorLight.Templating
 {
     public interface ITemplateSource
     {
-		string Template { get; }
+		string Content { get; }
 
-		string TemplateFile { get; }
-
-		bool IsPhysicalPage { get; }
+		string FilePath { get; }
 
 		string TemplateKey { get; }
 

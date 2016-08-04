@@ -6,38 +6,33 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
-using RazorLight.Abstractions;
+using RazorLight.Compilation;
 
-namespace RazorLight.Compilation
+namespace RazorLight.Caching
 {
-	/// <summary>
-	/// Caches the result of runtime compilation of Razor files for the duration of the application lifetime.
-	/// </summary>
-	public class CompilerCache : ICompilerCache, IDisposable
-	{
-		private readonly IFileProvider _fileProvider;
+    public class TrackingCompilerCache : ICompilerCache, IDisposable
+    {
 		private readonly IMemoryCache _cache;
+		private readonly PhysicalFileProvider _fileProvider;
 		private readonly object _cacheLock = new object();
 
 		private readonly ConcurrentDictionary<string, string> _normalizedPathLookup =
 			new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="CompilerCache"/>.
-		/// </summary>
-		/// <param name="fileProvider"><see cref="IFileProvider"/> used to locate Razor views.</param>
-		public CompilerCache(IFileProvider fileProvider)
-		{
-			if (fileProvider == null)
-			{
-				throw new ArgumentNullException(nameof(fileProvider));
-			}
+		public string Root { get; }
 
-			_fileProvider = fileProvider;
-			_cache = new MemoryCache(new MemoryCacheOptions { CompactOnMemoryPressure = false });
+		public TrackingCompilerCache(string root)
+	    {
+		    if (string.IsNullOrEmpty(root))
+		    {
+				throw new ArgumentNullException(nameof(root));
+		    }
+
+			Root = root;
+			_fileProvider = new PhysicalFileProvider(Root);
+			_cache = new MemoryCache(new MemoryCacheOptions() { CompactOnMemoryPressure = false} );
 		}
 
-		/// <inheritdoc />
 		public CompilerCacheResult GetOrAdd(
 			string relativePath,
 			Func<string, CompilationResult> compile)
@@ -165,11 +160,9 @@ namespace RazorLight.Compilation
 		}
 
 		public void Dispose()
-		{
-			if(_cache != null)
-			{
-				_cache.Dispose();
-			}
-		}
-	}
+	    {
+		    _fileProvider?.Dispose();
+			_cache?.Dispose();
+	    }
+    }
 }

@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.Extensions.Primitives;
-using RazorLight.Abstractions;
+using RazorLight.Compilation;
 
-namespace RazorLight.Compilation
+namespace RazorLight.Caching
 {
 	/// <summary>
 	/// Result of <see cref="ICompilerCache"/>.

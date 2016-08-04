@@ -1,14 +1,12 @@
 ﻿using System;
 using System.IO;
-using RazorLight.Abstractions;
 
 namespace RazorLight.Templating
 {
     public class StringTemplateSource : ITemplateSource
     {
-	    public string Template { get; private set; }
-	    public string TemplateFile { get; private set; }
-	    public bool IsPhysicalPage { get; }
+	    public string Content { get; private set; }
+	    public string FilePath { get; private set; }
 	    public string TemplateKey { get; }
 
 	    public StringTemplateSource(string content)
@@ -18,10 +16,9 @@ namespace RazorLight.Templating
 			    throw new ArgumentNullException(nameof(content));
 		    }
 
-		    this.Template = content;
-		    this.IsPhysicalPage = false;
+		    this.Content = content;
 		    this.TemplateKey = GetRandomString();
-		    this.TemplateFile = null;
+		    this.FilePath = null;
 	    }
 
 	    private string GetRandomString()
@@ -31,7 +28,7 @@ namespace RazorLight.Templating
 
 	    public TextReader CreateReader()
 	    {
-			return new StringReader(Template);
+			return new StringReader(Content);
 	    }
     }
 }

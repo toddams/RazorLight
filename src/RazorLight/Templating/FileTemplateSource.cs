@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Microsoft.Extensions.FileProviders;
-using RazorLight.Abstractions;
 using RazorLight.Internal;
 
 namespace RazorLight.Templating
@@ -23,12 +22,11 @@ namespace RazorLight.Templating
 			}
 
 			this.FileInfo = fileInfo;
-			this.IsPhysicalPage = true;
-			this.TemplateFile = PathNormalizer.GetNormalizedPath(fileInfo.PhysicalPath);
+			this.FilePath = PathNormalizer.GetNormalizedPath(fileInfo.PhysicalPath);
 			this.TemplateKey = relativeFilePath;
 		}
 
-		public string Template
+		public string Content
 	    {
 		    get
 		    {
@@ -43,13 +41,11 @@ namespace RazorLight.Templating
 			    return template;
 		    }
 	    }
-	    public string TemplateFile { get; }
-	    public bool IsPhysicalPage { get; }
+	    public string FilePath { get; }
 	    public string TemplateKey { get; }
 
 	    public IFileInfo FileInfo { get; private set; }
 
-	    
 	    public TextReader CreateReader()
 	    {
 			return new StreamReader(FileInfo.CreateReadStream());

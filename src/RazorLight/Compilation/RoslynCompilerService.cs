@@ -11,14 +11,13 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.DependencyModel;
-using RazorLight.Abstractions;
+using RazorLight.Internal;
 
 namespace RazorLight.Compilation
 {
 	public class RoslynCompilerService : ICompilerService
 	{
-		private readonly ConfigurationOptions _config;
-
+		private readonly IMetadataResolver metadataResolver;
 		private IList<MetadataReference> _compilationReferences;
 		private object _compilationReferencesLock = new object();
 		private bool _compilationReferencesInitialized;
@@ -31,18 +30,18 @@ namespace RazorLight.Compilation
 					ref _compilationReferences,
 					ref _compilationReferencesInitialized,
 					ref _compilationReferencesLock,
-					GetMetadataReferences);
+					metadataResolver.GetMetadataReferences);
 			}
 		}
 
-		public RoslynCompilerService(ConfigurationOptions options)
+		public RoslynCompilerService(IMetadataResolver metadataResolver)
 		{
-			if(options == null)
+			if(metadataResolver == null)
 			{
-				throw new ArgumentNullException(nameof(options));
+				throw new ArgumentNullException(nameof(metadataResolver));
 			}
 
-			this._config = options;
+			this.metadataResolver = metadataResolver;
 		}
 
 		public CompilationResult Compile(string content)
@@ -92,37 +91,6 @@ namespace RazorLight.Compilation
 					}
 				}
 			}
-		}
-
-		private List<MetadataReference> GetMetadataReferences()
-		{
-			var metadataReferences = new List<MetadataReference>();
-
-			if (_config.LoadDependenciesFromEntryAssembly)
-			{
-				DependencyContext entryAssemblyDependencies = DependencyContext.Load(Assembly.GetEntryAssembly());
-				foreach (CompilationLibrary compilationLibrary in entryAssemblyDependencies.CompileLibraries)
-				{
-					List<string> assemblyPaths = compilationLibrary.ResolveReferencePaths().ToList();
-					if (assemblyPaths.Any())
-					{
-						metadataReferences.Add(MetadataReference.CreateFromFile(assemblyPaths.First()));
-					}
-				}
-
-				if (!metadataReferences.Any())
-				{
-					throw new RazorLightException("Can't load metadata reference from the entry assembly. " +
-						"Make sure preserveCompilationContext is set to true in compilerOptions section of project.json");
-				}
-			}
-
-			foreach(var metadata in _config.AdditionalCompilationReferences)
-			{
-				metadataReferences.Add(metadata);
-			}
-
-			return metadataReferences;
 		}
 	}
 }

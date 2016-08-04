@@ -1,32 +1,32 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using RazorLight.Abstractions;
-using RazorLight.Rendering;
+using RazorLight.Caching;
 using RazorLight.Templating;
 
-namespace RazorLight
+namespace RazorLight.Rendering
 {
 	public class PageRenderer : IDisposable
 	{
 		private readonly IViewBufferScope _bufferScope;
 		private readonly HtmlEncoder _htmlEncoder;
 
+		private readonly TemplatePage razorPage;
+		private readonly IPageLookup pageLookup;
+
 		public PageRenderer(TemplatePage page, IPageLookup pageLookup)
 		{
 			this.razorPage = page;
 			this.pageLookup = pageLookup;
 
-			_bufferScope = new MemoryPoolViewBufferScope();
 			_htmlEncoder = HtmlEncoder.Default;
+			_bufferScope = new MemoryPoolViewBufferScope();
 			ViewStartPages = new List<TemplatePage>();
 		}
-
-		private readonly TemplatePage razorPage;
-		private readonly IPageLookup pageLookup;
+		
 
 		public List<TemplatePage> ViewStartPages { get; }
 
@@ -212,31 +212,14 @@ namespace RazorLight
 
 		private TemplatePage GetLayoutPage(string executingFilePath, string layoutPath)
 		{
-			RazorPageResult layoutPageResult = pageLookup.GetPage(executingFilePath, layoutPath);
-			IEnumerable<string> originalLocations = layoutPageResult.SearchedLocations;
-			if (layoutPageResult.Page == null)
+			PageCacheResult layoutPageResult = pageLookup.GetPage(layoutPath);
+			if (!layoutPageResult.Success)
 			{
-				layoutPageResult = pageLookup.FindPage(layoutPath);
+				throw new InvalidOperationException($"Layout cannot be located ({layoutPath})");
 			}
 
-			if (layoutPageResult.Page == null)
-			{
-				var locations = string.Empty;
-				if (originalLocations.Any())
-				{
-					locations = Environment.NewLine + string.Join(Environment.NewLine, originalLocations);
-				}
+			TemplatePage layoutPage = layoutPageResult.ViewEntry.PageFactory();
 
-				if (layoutPageResult.SearchedLocations.Any())
-				{
-					locations +=
-						Environment.NewLine + string.Join(Environment.NewLine, layoutPageResult.SearchedLocations);
-				}
-
-				throw new InvalidOperationException("Layout cannot be located"); //TODO: add locations
-			}
-
-			var layoutPage = layoutPageResult.Page;
 			return layoutPage;
 		}
 
