@@ -6,7 +6,7 @@ using Microsoft.Extensions.Primitives;
 using RazorLight.Caching;
 using RazorLight.Host.Directives;
 
-namespace RazorLight.Templating
+namespace RazorLight.Templating.FileSystem
 {
 	public class FilesystemPageLookup : IPageLookup
 	{

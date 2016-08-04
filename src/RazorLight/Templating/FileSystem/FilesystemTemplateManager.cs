@@ -2,7 +2,7 @@
 using System.IO;
 using Microsoft.Extensions.FileProviders;
 
-namespace RazorLight.Templating
+namespace RazorLight.Templating.FileSystem
 {
     public class FilesystemTemplateManager : ITemplateManager, IDisposable
     {
