@@ -20,7 +20,7 @@ namespace RazorLight
 		}
 
 		public IEngineConfiguration Configuration { get; }
-		
+
 		/// <summary>
 		/// Parses a template with a given <paramref name="key" />
 		/// </summary>
@@ -50,11 +50,14 @@ namespace RazorLight
 				throw new RazorLightException($"Can't find a view with a specified key ({key})");
 			}
 
-			TemplatePage page = result.ViewEntry.PageFactory();
-			page.PageContext = new PageContext()
+			var pageContext = new PageContext { ModelTypeInfo = new ModelTypeInfo(modelType) };
+			foreach (var viewStartPage in result.ViewStartEntries)
 			{
-				ModelTypeInfo = new ModelTypeInfo(modelType)
-			};
+				pageContext.ViewStartPages.Add(viewStartPage.PageFactory());
+			}
+
+			TemplatePage page = result.ViewEntry.PageFactory();
+			page.PageContext = pageContext;
 
 			return RunTemplate(page, model);
 		}
@@ -105,7 +108,7 @@ namespace RazorLight
 		/// <returns>Template page</returns>
 		public TemplatePage Activate(Type compiledType)
 		{
-			return (TemplatePage) Configuration.Activator.CreateInstance(compiledType);
+			return (TemplatePage)Configuration.Activator.CreateInstance(compiledType);
 		}
 
 		/// <summary>
@@ -125,6 +128,7 @@ namespace RazorLight
 
 				using (var renderer = new PageRenderer(page, pageLookup))
 				{
+					renderer.ViewStartPages.AddRange(page.PageContext.ViewStartPages);
 					renderer.RenderAsync(page.PageContext).Wait();
 					return writer.ToString();
 				}

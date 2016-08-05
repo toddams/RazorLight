@@ -157,7 +157,7 @@ namespace RazorLight.Rendering
 					throw new InvalidOperationException("Layout cannot be rendered");
 				}
 
-				TemplatePage layoutPage = GetLayoutPage(previousPage.Path, previousPage.Layout);
+				TemplatePage layoutPage = GetLayoutPage(previousPage.Layout);
 
 				if (renderedLayouts.Count > 0 &&
 					renderedLayouts.Any(l => string.Equals(l.Path, layoutPage.Path, StringComparison.Ordinal)))
@@ -210,12 +210,12 @@ namespace RazorLight.Rendering
 			}
 		}
 
-		private TemplatePage GetLayoutPage(string executingFilePath, string layoutPath)
+		private TemplatePage GetLayoutPage(string layoutKey)
 		{
-			PageCacheResult layoutPageResult = pageLookup.GetPage(layoutPath);
+			PageCacheResult layoutPageResult = pageLookup.GetPage(layoutKey);
 			if (!layoutPageResult.Success)
 			{
-				throw new InvalidOperationException($"Layout cannot be located ({layoutPath})");
+				throw new InvalidOperationException($"Layout cannot be located ({layoutKey})");
 			}
 
 			TemplatePage layoutPage = layoutPageResult.ViewEntry.PageFactory();
