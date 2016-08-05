@@ -17,19 +17,19 @@ namespace RazorLight.Host.Directives
 	/// </summary>
 	public class ChunkInheritanceUtility
 	{
-		private readonly LightRazorHost _razorHost;
+		private readonly RazorLightHost _razorHost;
 		private readonly IReadOnlyList<Chunk> _defaultInheritedChunks;
 		private readonly IChunkTreeCache _chunkTreeCache;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ChunkInheritanceUtility"/>.
 		/// </summary>
-		/// <param name="razorHost">The <see cref="LightRazorHost"/> used to parse <c>_ViewImports</c> pages.</param>
+		/// <param name="razorHost">The <see cref="RazorLightHost"/> used to parse <c>_ViewImports</c> pages.</param>
 		/// <param name="chunkTreeCache"><see cref="IChunkTreeCache"/> that caches <see cref="ChunkTree"/> instances.
 		/// </param>
 		/// <param name="defaultInheritedChunks">Sequence of <see cref="Chunk"/>s inherited by default.</param>
 		public ChunkInheritanceUtility(
-			LightRazorHost razorHost,
+			RazorLightHost razorHost,
 			IReadOnlyList<Chunk> defaultInheritedChunks,
 			IChunkTreeCache chunkTreeCache)
 		{
