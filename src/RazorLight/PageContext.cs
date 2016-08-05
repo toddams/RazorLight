@@ -24,6 +24,9 @@ namespace RazorLight
 		/// <value>The view bag.</value>
 		public dynamic ViewBag => viewBag;
 
+		/// <summary>
+		/// Gets the info of the template model
+		/// </summary>
 	    public ModelTypeInfo ModelTypeInfo { get; set; }
 
 	    public string ExecutingFilePath { get; set; }

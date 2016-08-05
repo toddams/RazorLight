@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyModel;
 
 namespace RazorLight
 {
-    public class DefaultMetadataResolver : IMetadataResolver
+    public class UseEntryAssemblyMetadataResolver : IMetadataResolver
     {
 	    public IList<MetadataReference> GetMetadataReferences()
 	    {

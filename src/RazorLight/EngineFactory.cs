@@ -7,6 +7,11 @@ namespace RazorLight
 {
 	public static class EngineFactory
 	{
+		/// <summary>
+		/// Creates a <see cref="RazorLightEngine"/> that resolves templates by searching them on physical storage
+		/// and tracks file changes with <seealso cref="System.IO.FileSystemWatcher"/>
+		/// </summary>
+		/// <param name="root">Root folder where views are stored</param>
 		public static RazorLightEngine CreatePhysical(string root)
 		{
 			if (string.IsNullOrEmpty(root))

@@ -6,10 +6,24 @@ namespace RazorLight
 {
     public class EngineConfiguration : IEngineConfiguration
     {
+		/// <summary>
+		/// Activator used to create an instance of the compiled templates
+		/// </summary>
 	    public IActivator Activator { get; private set; }
-	    public IRazorTemplateCompiler RazorTemplateCompiler { get; private set; } 
-	    public ICompilerService CompilerService { get; private set; }
 
+		/// <summary>
+		/// Class used to compile razor templates into *.cs file
+		/// </summary>
+		public IRazorTemplateCompiler RazorTemplateCompiler { get; private set; }
+
+		/// <summary>
+		/// Class used to compile razor templates
+		/// </summary>
+		public ICompilerService CompilerService { get; private set; }
+
+		/// <summary>
+		/// Additional namespace to include into template (_ViewImports like)
+		/// </summary>
 	    public ISet<string> Namespaces { get; set; }
 
 	    public EngineConfiguration(
@@ -40,10 +54,13 @@ namespace RazorLight
 			this.Namespaces = new HashSet<string>();
 	    }
 
+		/// <summary>
+		/// Creates an <see cref="EngineConfiguration"/> with a default settings
+		/// </summary>
 	    public static EngineConfiguration Default => new EngineConfiguration(
 		    new DefaultActivator(), 
 		    new DefaultRazorTemplateCompiler(), 
 		    new RoslynCompilerService(
-				new DefaultMetadataResolver()));
+				new UseEntryAssemblyMetadataResolver()));
     }
 }
