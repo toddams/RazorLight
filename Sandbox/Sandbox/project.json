@@ -10,7 +10,7 @@
       "type": "platform",
       "version": "1.0.0"
     },
-    "RazorLight": "0.0.1-*"
+    "RazorLight": "1.0.0-beta1"
   },
 
   "frameworks": {

@@ -8,16 +8,7 @@ namespace Sandbox
 	{
 		public static void Main(string[] args)
 		{
-			var options = new ConfigurationOptions()
-			{
-				ViewsFolder = @"D:\MyProjects\RazorLight\sandbox\Sandbox\Views"
-			};
-
-			var engine = new RazorLightEngine(options);
-
-			var r = engine.ParseFile("Test.cshtml", new TestViewModel());
-
-			Console.WriteLine(r);
+			
 		}
 	}
 }
