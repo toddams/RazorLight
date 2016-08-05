@@ -11,13 +11,13 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.DependencyModel;
+using RazorLight.Internal;
 
 namespace RazorLight.Compilation
 {
-	public class RoslynCompilerService
+	public class RoslynCompilerService : ICompilerService
 	{
-		private readonly ConfigurationOptions _config;
-
+		private readonly IMetadataResolver metadataResolver;
 		private IList<MetadataReference> _compilationReferences;
 		private object _compilationReferencesLock = new object();
 		private bool _compilationReferencesInitialized;
@@ -30,25 +30,25 @@ namespace RazorLight.Compilation
 					ref _compilationReferences,
 					ref _compilationReferencesInitialized,
 					ref _compilationReferencesLock,
-					GetMetadataReferences);
+					metadataResolver.GetMetadataReferences);
 			}
 		}
 
-		public RoslynCompilerService(ConfigurationOptions options)
+		public RoslynCompilerService(IMetadataResolver metadataResolver)
 		{
-			if(options == null)
+			if(metadataResolver == null)
 			{
-				throw new ArgumentNullException(nameof(options));
+				throw new ArgumentNullException(nameof(metadataResolver));
 			}
 
-			this._config = options;
+			this.metadataResolver = metadataResolver;
 		}
 
-		public Type Compile(string content)
+		public CompilationResult Compile(CompilationContext context)
 		{
 			string assemblyName = Path.GetRandomFileName();
 
-			SourceText sourceText = SourceText.From(content, Encoding.UTF8);
+			SourceText sourceText = SourceText.From(context.Content, Encoding.UTF8);
 			SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(
 				sourceText,
 				path: assemblyName);
@@ -76,8 +76,7 @@ namespace RazorLight.Compilation
 							.Where(d => d.IsWarningAsError || d.Severity == DiagnosticSeverity.Error)
 							.Select(d => d.GetMessage());
 
-						throw new RazorLightCompilationException(
-							"Failed to compile generated razor view. See CompilationErrors for detailed information", errors);
+						return new CompilationResult(errors);
 					}
 					else
 					{
@@ -88,41 +87,10 @@ namespace RazorLight.Compilation
 
 						Type type = assembly.GetExportedTypes().FirstOrDefault(a => !a.IsNested);
 
-						return type;
+						return new CompilationResult(type);
 					}
 				}
 			}
-		}
-
-		private List<MetadataReference> GetMetadataReferences()
-		{
-			var metadataReferences = new List<MetadataReference>();
-
-			if (_config.LoadDependenciesFromEntryAssembly)
-			{
-				DependencyContext entryAssemblyDependencies = DependencyContext.Load(Assembly.GetEntryAssembly());
-				foreach (CompilationLibrary compilationLibrary in entryAssemblyDependencies.CompileLibraries)
-				{
-					List<string> assemblyPaths = compilationLibrary.ResolveReferencePaths().ToList();
-					if (assemblyPaths.Any())
-					{
-						metadataReferences.Add(MetadataReference.CreateFromFile(assemblyPaths.First()));
-					}
-				}
-
-				if (!metadataReferences.Any())
-				{
-					throw new RazorLightException("Can't load metadata reference from the entry assembly. " +
-						"Make sure preserveCompilationContext is set to true in compilerOptions section of project.json");
-				}
-			}
-
-			foreach(var metadata in _config.AdditionalCompilationReferences)
-			{
-				metadataReferences.Add(metadata);
-			}
-
-			return metadataReferences;
 		}
 	}
 }

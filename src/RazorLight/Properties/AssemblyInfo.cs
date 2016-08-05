@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyConfiguration("")]
@@ -13,3 +14,5 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("2a493354-5fda-4581-b1b2-f44ff3856123")]
+
+[assembly: InternalsVisibleTo("RazorLight.Tests")]
