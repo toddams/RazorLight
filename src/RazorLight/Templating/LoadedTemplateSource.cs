@@ -9,7 +9,7 @@ namespace RazorLight.Templating
 	    public string FilePath { get; private set; }
 	    public string TemplateKey { get; }
 
-	    public LoadedTemplateSource(string key) : this(key, GetRandomString())
+	    public LoadedTemplateSource(string content) : this(GetRandomString(), content)
 	    {
 	    }
 
