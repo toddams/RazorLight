@@ -33,7 +33,7 @@ var model = new TestModel()
 	Description = "Some text here"
 };
 
-string result = engine.ParseFile("Test.cshtml", model);
+string result = engine.Parse("Test.cshtml", model);
 
 ```
 
