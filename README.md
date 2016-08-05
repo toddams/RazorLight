@@ -55,6 +55,34 @@ string result = engine.ParseString(content, model); //Output: Hello John Doe, We
 
 *Note:* when you parse a string - result is not cached
 
+### Parse Embedded resources
+
+Include your resource as embeded in *project.json*
+````Javascript
+"buildOptions": {
+    "embed": [
+      "Test.cshtml"
+    ]
+  },
+````
+
+Then create a RazorLightEngine for embedded resources
+
+```CSharp
+//typeof(TestViewModel) - root object inside your resource assembly
+var engine = EngineFactory.CreateEmbedded(typeof(TestViewModel)) 
+
+var model = new TestModel()
+{
+    Title = "Hello, world",
+    Description = "Some text here"
+};
+
+//Note: pass the name of the view without extension
+string result = engine.Parse("Test", model); 
+
+````
+
 ## FAQ
 ### I'm getting "Can't load metadata reference from the entry assembly" exception
 Just set ```preserveCompilationContext": true``` in your project.json
