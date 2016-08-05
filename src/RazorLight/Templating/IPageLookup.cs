@@ -1,4 +1,5 @@
-﻿using RazorLight.Caching;
+﻿using System;
+using RazorLight.Caching;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace RazorLight.Templating

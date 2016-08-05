@@ -8,78 +8,15 @@ using RazorLight.Host.Directives;
 
 namespace RazorLight.Templating.FileSystem
 {
-	public class FilesystemPageLookup : IPageLookup
+	public class FilesystemPageLookup : DefaultPageLookup
 	{
 		public static readonly string ViewExtension = ".cshtml";
-		private static readonly TimeSpan _cacheExpirationDuration = TimeSpan.FromMinutes(20);
 
-		public IMemoryCache ViewLookupCache { get; }
-		public IPageFactoryProvider PageFactoryProvider { get; }
-
-		public FilesystemPageLookup(IPageFactoryProvider pageFactoryProvider)
+		public FilesystemPageLookup(IPageFactoryProvider pageFactoryProvider) : base(pageFactoryProvider)
 		{
-			this.PageFactoryProvider = pageFactoryProvider;
-			this.ViewLookupCache = new MemoryCache(new MemoryCacheOptions() { CompactOnMemoryPressure = false });
 		}
 
-		public PageCacheResult GetPage(string key)
-		{
-			if (string.IsNullOrEmpty(key))
-			{
-				throw new ArgumentException(nameof(key));
-			}
-
-			PageCacheResult cacheResult;
-			if (!ViewLookupCache.TryGetValue(key, out cacheResult))
-			{
-				var expirationTokens = new HashSet<IChangeToken>();
-				cacheResult = CreateCacheResult(expirationTokens, key);
-
-				var cacheEntryOptions = new MemoryCacheEntryOptions();
-				cacheEntryOptions.SetSlidingExpiration(_cacheExpirationDuration);
-
-				foreach (IChangeToken expirationToken in expirationTokens)
-				{
-					cacheEntryOptions.AddExpirationToken(expirationToken);
-				}
-
-				// No views were found at the specified location. Create a not found result.
-				if (cacheResult == null)
-				{
-					cacheResult = new PageCacheResult();
-				}
-
-				cacheResult = ViewLookupCache.Set(
-					key,
-					cacheResult,
-					cacheEntryOptions);
-			}
-
-			return cacheResult;
-		}
-
-		private PageCacheResult CreateCacheResult(HashSet<IChangeToken> expirationTokens, string key)
-		{
-			PageFactoryResult factoryResult = PageFactoryProvider.CreateFactory(key);
-			if (factoryResult.ExpirationTokens != null)
-			{
-				for (var i = 0; i < factoryResult.ExpirationTokens.Count; i++)
-				{
-					expirationTokens.Add(factoryResult.ExpirationTokens[i]);
-				}
-			}
-
-			if (factoryResult.Success)
-			{
-				IReadOnlyList<PageCacheItem> viewStartPages = GetViewStartPages(key, expirationTokens);
-
-				return new PageCacheResult(new PageCacheItem(key, factoryResult.PageFactory), viewStartPages);
-			}
-
-			return null;
-		}
-
-		private IReadOnlyList<PageCacheItem> GetViewStartPages(
+		protected override IReadOnlyList<PageCacheItem> GetViewStartPages(
 			string path,
 			HashSet<IChangeToken> expirationTokens)
 		{

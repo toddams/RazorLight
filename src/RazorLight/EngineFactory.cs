@@ -1,6 +1,7 @@
 ﻿using System;
 using RazorLight.Caching;
 using RazorLight.Templating;
+using RazorLight.Templating.Embedded;
 using RazorLight.Templating.FileSystem;
 
 namespace RazorLight
@@ -27,6 +28,29 @@ namespace RazorLight
 			IPageLookup pageLookup = new FilesystemPageLookup(pageFactory);
 
 			return new RazorLightEngine(core, pageLookup);
+		}
+
+		/// <summary>
+		/// Creates a <see cref="RazorLightEngine"/> that resolves templates inside given type assembly as a EmbeddedResource
+		/// </summary>
+		/// <param name="rootType">Root type where resource is located</param>
+		public static RazorLightEngine CreateEmbedded(Type rootType)
+		{
+			ITemplateManager manager = new EmbeddedResourceTemplateManager(rootType);
+			var dependencies = CreateDefaultDependencies(manager);
+
+			return new RazorLightEngine(dependencies.Item1, dependencies.Item2);
+		}
+
+		private static Tuple<IEngineCore, IPageLookup> CreateDefaultDependencies(ITemplateManager manager)
+		{
+			ICompilerCache compilerCache = new DefaultCompilerCache();
+			IEngineCore core = new EngineCore(manager, compilerCache, EngineConfiguration.Default);
+
+			IPageFactoryProvider pageFactory = new DefaultPageFactory(core.KeyCompile, compilerCache);
+			IPageLookup lookup = new DefaultPageLookup(pageFactory);
+
+			return new Tuple<IEngineCore, IPageLookup>(core, lookup);
 		}
 	}
 }
