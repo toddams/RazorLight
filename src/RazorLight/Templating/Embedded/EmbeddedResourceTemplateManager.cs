@@ -29,7 +29,7 @@ namespace RazorLight.Templating.Embedded
 	    {
 		    Assembly assembly = this.RootType.GetTypeInfo().Assembly;
 
-			using (var stream = assembly.GetManifestResourceStream(key + ".cshtml"))
+			using (var stream = assembly.GetManifestResourceStream(this.RootType.Namespace + "." + key + ".cshtml"))
 			{
 				if (stream == null)
 				{
