@@ -3,8 +3,8 @@
   "name": "RazorLight",
   "language": "en",
   "version": "1.0.0-beta1",
-  "description": "A lightweight fork of Microsoft Razor template engine which allows you to parse a string or *.cshtml files without any efforts. ",
-  "authors": ["toddams"],
+  "description": "Use Razor template engine to parse strings / files / EmbeddedResources for .NET Core ",
+  "authors": [ "toddams" ],
 
   "dependencies": {
     "System.Runtime.InteropServices": "4.1.0",
