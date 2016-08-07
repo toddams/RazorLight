@@ -6,12 +6,12 @@ Install the nuget package
 	Install-Package RazorEngine
 
 
-A lightweight fork of Microsoft [Razor template engine](https://github.com/aspnet/Razor) which allows you to parse strings / files / embedded resources without any efforts. With RazorLight you can use Razor syntax to build dynamic templates. From the very beginning library was built for [.NET Core](https://dotnet.github.io/) projects, but with a release of [.NET Platform Standard](https://github.com/dotnet/corefx/blob/master/Documentation/architecture/net-platform-standard.md) - it is also possible to use it on full .NET Framework (>= 4.6.2)
+Use [Razor template engine](https://github.com/aspnet/Razor) to parse strings / files / embedded resources without any efforts. With RazorLight you can use Razor syntax to build dynamic templates. From the very beginning library was built for [.NET Core](https://dotnet.github.io/) projects, but with a release of [.NET Platform Standard](https://github.com/dotnet/corefx/blob/master/Documentation/architecture/net-platform-standard.md) - it is also possible to use it on full .NET Framework (>= 4.6.2)
 
 ## Features
 * Pass a model to your views (aka @model MyTestViewModel)
 * Parse strings / files / embedded resources
-* Layout page (like in ASP.NET MVC)
+* Layout page and sections (like in ASP.NET MVC)
 * ViewStart page (like in ASP.NET MVC)
 * Custom namespaces (like _ViewStart)
 * Templates are compiled once and cached. Next time you parse a template with the same key - you'll get it from the cache
