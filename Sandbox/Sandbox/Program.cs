@@ -1,5 +1,10 @@
 ﻿using System;
+using System.IO;
+using Microsoft.Extensions.FileProviders;
 using RazorLight;
+using RazorLight.Caching;
+using RazorLight.Templating;
+using RazorLight.Templating.FileSystem;
 
 namespace Sandbox
 {
@@ -7,17 +12,18 @@ namespace Sandbox
 	{
 		public static void Main(string[] args)
 		{
-			//var engine = EngineFactory.CreatePhysical(@"D:\MyProjects\RazorLight\sandbox\Sandbox");
+			//var engine = EngineFactory.CreatePhysical(@"D:\MyProjects\RazorLight\sandbox\Sandbox\LayoutSections");
 
-			//var result = engine.Parse("Test.cshtml", new TestViewModel());
+			string root = @"D:\MyProjects\RazorLight\sandbox\Sandbox\Views\LayoutSections";
+			var views = new PhysicalFileProvider(root);
 
-			//Console.WriteLine(result);
+			var engine = new EngineCore(new FilesystemTemplateManager(root), new DefaultCompilerCache());
 
-			var engine2 = EngineFactory.CreateEmbedded(typeof(TestViewModel));
+			string result =
+				engine.GenerateRazorTemplate(new FileTemplateSource(
+					views.GetFileInfo("With_Layout.cshtml"), "With_Layout.cshtml"), new ModelTypeInfo(typeof(TestViewModel)));
 
-			string result = engine2.Parse("Views.Test", new TestViewModel());
-
-			Console.WriteLine(result);
+			System.IO.File.WriteAllText(Path.Combine(root, "With_Layout.txt"), result);
 		}
 	}
 }

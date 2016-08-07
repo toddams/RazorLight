@@ -193,7 +193,8 @@ namespace RazorLight
 		{
 			if (PreviousSectionWriters == null)
 			{
-				throw new InvalidOperationException($"Method \"{methodName}\" cannot be called");
+				string message = $"{methodName} invocation is invalid";
+				throw new InvalidOperationException(message);
 			}
 		}
 
@@ -220,14 +221,14 @@ namespace RazorLight
 				if (sectionsNotIgnored.Length > 0)
 				{
 					var sectionNames = string.Join(", ", sectionsNotIgnored);
-					throw new InvalidOperationException($"Sections not rendered: { sectionNames }");
+					throw new InvalidOperationException($"The following sections have been defined but have not been rendered :'{ sectionNames }");
 				}
 			}
 			else if (BodyContent != null && !_renderedBody && !_ignoreBody)
 			{
 				// There are no sections defined, but RenderBody was NOT called.
 				// If a body was defined and the body not ignored, then RenderBody should have been called.
-				var message = "Render body is not called";
+				var message = "Render body has not been called. To ignore call IgnoreBody().";
 				throw new InvalidOperationException(message);
 			}
 		}
@@ -252,7 +253,7 @@ namespace RazorLight
 
 			if (SectionWriters.ContainsKey(name))
 			{
-				throw new InvalidOperationException($"Section \"{name}\" is already defined");
+				throw new InvalidOperationException($"Section '{name}' is already defined");
 			}
 
 			SectionWriters[name] = section;
@@ -363,7 +364,7 @@ namespace RazorLight
 		{
 			if (_renderedSections.Contains(sectionName))
 			{
-				var message = $"Section {sectionName} is already rendered";
+				var message = $"Section '{sectionName}' is already rendered";
 				throw new InvalidOperationException(message);
 			}
 
@@ -380,7 +381,7 @@ namespace RazorLight
 			else if (required)
 			{
 				// If the section is not found, and it is not optional, throw an error.
-				throw new InvalidOperationException($"Section {sectionName} is not defined");
+				throw new InvalidOperationException($"Layout page cannot find section '{sectionName}' in the content page");
 			}
 			else
 			{
@@ -403,7 +404,7 @@ namespace RazorLight
 			if (!PreviousSectionWriters.ContainsKey(sectionName))
 			{
 				// If the section is not defined, throw an error.
-				throw new InvalidOperationException($"Section {sectionName} is not defined");
+				throw new InvalidOperationException($"Layout page cannot find section '{sectionName}' in the content page");
 			}
 
 			if (_ignoredSections == null)
@@ -432,7 +433,7 @@ namespace RazorLight
 			// Layout.
 			if (!IsLayoutBeingRendered && !string.IsNullOrEmpty(Layout))
 			{
-				throw new InvalidOperationException("Layout cannot be rendered");
+				throw new InvalidOperationException("Layout page cannot be rendered after 'FlushAsync' has been invoked.");
 			}
 
 			await Output.FlushAsync();
