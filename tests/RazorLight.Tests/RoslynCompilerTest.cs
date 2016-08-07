@@ -20,12 +20,12 @@ namespace RazorLight.Tests
 		    return razorCompiler.CompileTemplate(new RazorLightHost(null), source);
 	    }
 
-	    private CompilationResult TestCompilation()
+	    private CompilationResult TestCompilation(ISet<string> namespaces = null)
 	    {
 		    if (testCompilation == null)
 		    {
 				var compiler = new RoslynCompilerService(metadataResolver);
-				var context = new CompilationContext(GetRazorTemplate(), new HashSet<string>());
+				var context = new CompilationContext(GetRazorTemplate(), namespaces ?? new HashSet<string>());
 
 			    testCompilation = compiler.Compile(context);
 		    }

@@ -53,7 +53,8 @@ namespace RazorLight.Compilation
 				sourceText,
 				path: assemblyName);
 
-			CSharpCompilationOptions compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+			CSharpCompilationOptions compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+				.WithUsings(context.IncludeNamespaces);
 
 			CSharpCompilation compilation = CSharpCompilation.Create(
 				assemblyName,

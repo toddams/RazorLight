@@ -9,7 +9,7 @@ namespace RazorLight.Tests
 	    {
 		    var engine = EngineFactory.CreateEmbedded(typeof(Sandbox.TestViewModel));
 
-		    string result = engine.Parse("Test", new Sandbox.TestViewModel());
+		    string result = engine.Parse("Views.Test", new Sandbox.TestViewModel());
 
 			Assert.NotNull(result);
 	    }
@@ -17,7 +17,7 @@ namespace RazorLight.Tests
 		[Fact]
 	    public void Can_Parse_Physical_Files()
 		{
-			string root = @"D:\MyProjects\RazorLight\sandbox\Sandbox";
+			string root = @"D:\MyProjects\RazorLight\sandbox\Sandbox\Views";
 
 			var engine = EngineFactory.CreatePhysical(root);
 

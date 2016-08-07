@@ -9,11 +9,13 @@ namespace Sandbox
 		{
 			//var engine = EngineFactory.CreatePhysical(@"D:\MyProjects\RazorLight\sandbox\Sandbox");
 
-			//Console.WriteLine(engine.Parse("Test.cshtml", new TestViewModel()));
+			//var result = engine.Parse("Test.cshtml", new TestViewModel());
+
+			//Console.WriteLine(result);
 
 			var engine2 = EngineFactory.CreateEmbedded(typeof(TestViewModel));
 
-			string result = engine2.Parse("Test", new TestViewModel());
+			string result = engine2.Parse("Views.Test", new TestViewModel());
 
 			Console.WriteLine(result);
 		}
