@@ -21,9 +21,9 @@ namespace RazorLight
 			}
 
 			ITemplateManager manager = new FilesystemTemplateManager(root);
-			ICompilerCache compilerCache = new TrackingCompilerCache(root);
-			IEngineCore core = new EngineCore(manager, compilerCache, EngineConfiguration.Default);
+			IEngineCore core = new EngineCore(manager, EngineConfiguration.Default);
 
+			ICompilerCache compilerCache = new TrackingCompilerCache(root);
 			IPageFactoryProvider pageFactory = new DefaultPageFactory(core.KeyCompile, compilerCache);
 			IPageLookup pageLookup = new FilesystemPageLookup(pageFactory);
 
@@ -44,9 +44,9 @@ namespace RazorLight
 
 		private static Tuple<IEngineCore, IPageLookup> CreateDefaultDependencies(ITemplateManager manager)
 		{
-			ICompilerCache compilerCache = new DefaultCompilerCache();
-			IEngineCore core = new EngineCore(manager, compilerCache, EngineConfiguration.Default);
+			IEngineCore core = new EngineCore(manager, EngineConfiguration.Default);
 
+			ICompilerCache compilerCache = new DefaultCompilerCache();
 			IPageFactoryProvider pageFactory = new DefaultPageFactory(core.KeyCompile, compilerCache);
 			IPageLookup lookup = new DefaultPageLookup(pageFactory);
 

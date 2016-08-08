@@ -12,10 +12,8 @@ namespace RazorLight
 		/// Creates <see cref="EngineCore"/> with a default <seealso cref="EngineConfiguration"/>
 		/// </summary>
 		/// <param name="templateManager">Template manager</param>
-		/// <param name="compilerCache">Cache where compilation results are stored</param>
 		public EngineCore(
-			ITemplateManager templateManager,
-			ICompilerCache compilerCache) : this(templateManager, compilerCache, EngineConfiguration.Default)
+			ITemplateManager templateManager) : this(templateManager, EngineConfiguration.Default)
 		{
 		}
 
@@ -23,11 +21,9 @@ namespace RazorLight
 		/// Creates <see cref="EngineCore" /> with specified <seealso cref="EngineConfiguration"/>/>
 		/// </summary>
 		/// <param name="templateManager">Template manager</param>
-		/// <param name="compilerCache">Cache where compilation results are stored</param>
 		/// <param name="configuration">Engine configuration options</param>
 		public EngineCore(
 			ITemplateManager templateManager,
-			ICompilerCache compilerCache,
 			IEngineConfiguration configuration)
 		{
 			if (configuration == null)
@@ -36,13 +32,11 @@ namespace RazorLight
 			}
 
 			this.TemplateManager = templateManager;
-			this.CompilerCache = compilerCache;
 			this.Configuration = configuration;
 		}
 
 		public IEngineConfiguration Configuration { get; }
 		public ITemplateManager TemplateManager { get; }
-		public ICompilerCache CompilerCache { get; }
 
 		/// <summary>
 		/// Generates razor template by parsing given <param name="templateSource" />
