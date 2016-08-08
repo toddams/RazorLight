@@ -28,7 +28,7 @@ namespace RazorLight.Tests
 		public void Layout_Page_Renders_Defined_Sections_OnViews()
 	    {
 			var views = new PhysicalFileProvider(root);
-			var engine = new EngineCore(new FilesystemTemplateManager(root), new DefaultCompilerCache());
+			var engine = new EngineCore(new FilesystemTemplateManager(root));
 
 			string result =
 				engine.GenerateRazorTemplate(new FileTemplateSource(

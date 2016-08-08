@@ -17,7 +17,7 @@ namespace Sandbox
 			string root = @"D:\MyProjects\RazorLight\sandbox\Sandbox\Views\LayoutSections";
 			var views = new PhysicalFileProvider(root);
 
-			var engine = new EngineCore(new FilesystemTemplateManager(root), new DefaultCompilerCache());
+			var engine = new EngineCore(new FilesystemTemplateManager(root));
 
 			string result =
 				engine.GenerateRazorTemplate(new FileTemplateSource(
