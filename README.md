@@ -6,11 +6,11 @@ Install the nuget package
 	Install-Package RazorLight -Pre
 
 
-Use [Razor template engine](https://github.com/aspnet/Razor) to parse strings / files / embedded resources without any efforts. With RazorLight you can use Razor syntax to build dynamic templates. From the very beginning library was built for [.NET Core](https://dotnet.github.io/) projects, but with a release of [.NET Platform Standard](https://github.com/dotnet/corefx/blob/master/Documentation/architecture/net-platform-standard.md) - it is also possible to use it on full .NET Framework (>= 4.6.2)
+Use [Razor parsing engine](https://github.com/aspnet/Razor) to build dynamic templates from strings / files / embedded resources without any efforts. From the very beginning library was built for [.NET Core](https://dotnet.github.io/) projects, but with a release of [.NET Platform Standard](https://github.com/dotnet/corefx/blob/master/Documentation/architecture/net-platform-standard.md) - it is also possible to use it on full .NET Framework (>= 4.6.2)
 
 ## Features
 * Pass a model to your views (aka @model MyTestViewModel)
-* Parse strings / files / embedded resources
+* Build templates from strings / files / embedded resources
 * Layout page and sections (like in ASP.NET MVC)
 * ViewStart page (like in ASP.NET MVC)
 * Custom namespaces (like _ViewStart)
@@ -21,7 +21,7 @@ Use [Razor template engine](https://github.com/aspnet/Razor) to parse strings / 
 
 ## Examples
 
-### Parse files
+### Files
 In real world scenario you have a special folder where you store all your views files. You might also want to have some caching enabled. When you parse a file, RazorLight compiles a view and result is put into MemoryCache. Files in cache are tracked by FileWatcher, so you can safely modify your views. Once it detects that file was changed - template will be automatically recompiled and cached again.
 
 ```Csharp
@@ -40,7 +40,7 @@ string result = engine.Parse("Test.cshtml", model);
 *Note:* if you specify a model directly in a file and pass an anonymous object as a model parameter - you will get an ```InvalidCastException```
 
 
-### Parse strings
+### Strings
 ```Csharp
 string content = "Hello @Model.Name. Welcome to @Model.Title repository";
 
@@ -55,7 +55,7 @@ string result = engine.ParseString(content, model); //Output: Hello John Doe, We
 
 *Note:* when you parse a string - result is not cached
 
-### Parse Embedded resources
+### Embedded resources
 
 Include your resource as embeded in *project.json*
 ````Javascript
