@@ -14,6 +14,16 @@ namespace RazorLight
 
 		public RazorLightEngine(IEngineCore core, IPageLookup pagelookup)
 		{
+			if (core == null)
+			{
+				throw new ArgumentNullException(nameof(core));
+			}
+
+			if (pagelookup == null)
+			{
+				throw new ArgumentNullException();
+			}
+
 			this.core = core;
 			this.pageLookup = pagelookup;
 			this.Configuration = core.Configuration;
