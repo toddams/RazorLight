@@ -41,7 +41,7 @@ namespace RazorLight
 			IEngineCore core = new EngineCore(manager, configuration);
 
 			ICompilerCache compilerCache = new TrackingCompilerCache(root);
-			IPageFactoryProvider pageFactory = new DefaultPageFactory(core.KeyCompile, compilerCache);
+			IPageFactoryProvider pageFactory = new CachingPageFactory(core.KeyCompile, compilerCache);
 			IPageLookup pageLookup = new FilesystemPageLookup(pageFactory);
 
 			return new RazorLightEngine(core, pageLookup);
@@ -81,8 +81,7 @@ namespace RazorLight
 		{
 			IEngineCore core = new EngineCore(manager, configuration);
 
-			ICompilerCache compilerCache = new DefaultCompilerCache();
-			IPageFactoryProvider pageFactory = new DefaultPageFactory(core.KeyCompile, compilerCache);
+			IPageFactoryProvider pageFactory = new DefaultPageFactory(core.KeyCompile);
 			IPageLookup lookup = new DefaultPageLookup(pageFactory);
 
 			return new Tuple<IEngineCore, IPageLookup>(core, lookup);

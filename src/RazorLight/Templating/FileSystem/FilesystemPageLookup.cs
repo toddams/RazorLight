@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Primitives;
-using RazorLight.Caching;
 using RazorLight.Host.Directives;
 
 namespace RazorLight.Templating.FileSystem
@@ -16,21 +13,12 @@ namespace RazorLight.Templating.FileSystem
 		{
 		}
 
-		protected override IReadOnlyList<PageLookupItem> GetViewStartPages(
-			string path,
-			HashSet<IChangeToken> expirationTokens)
+		protected override IReadOnlyList<PageLookupItem> GetViewStartPages(string path)
 		{
 			var viewStartPages = new List<PageLookupItem>();
 			foreach (var viewStartPath in ViewHierarchyUtility.GetViewStartLocations(path))
 			{
 				PageFactoryResult result = PageFactoryProvider.CreateFactory(viewStartPath);
-				if (result.ExpirationTokens != null)
-				{
-					for (var i = 0; i < result.ExpirationTokens.Count; i++)
-					{
-						expirationTokens.Add(result.ExpirationTokens[i]);
-					}
-				}
 
 				if (result.Success)
 				{

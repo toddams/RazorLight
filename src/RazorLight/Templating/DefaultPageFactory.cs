@@ -1,35 +1,30 @@
 ﻿using System;
-using RazorLight.Caching;
 using RazorLight.Compilation;
 
 namespace RazorLight.Templating
 {
     public class DefaultPageFactory : IPageFactoryProvider
     {
-		private readonly Func<string, CompilationResult> _compileDelegate;
-		private readonly ICompilerCache _compilerCache;
+        private readonly Func<string, CompilationResult> _compileDelegate;
 
-		public DefaultPageFactory(Func<string, CompilationResult> compileDelegate, ICompilerCache compilerCache)
-	    {
-		    this._compileDelegate = compileDelegate;
-		    this._compilerCache = compilerCache;
-	    }
+        public DefaultPageFactory(Func<string, CompilationResult> compileDelegate)
+        {
+            _compileDelegate = compileDelegate;
+        }
 
-		public PageFactoryResult CreateFactory(string key)
-	    {
-			if (key.StartsWith("~/", StringComparison.Ordinal))
-			{
-				// For tilde slash paths, drop the leading ~ to make it work with the underlying IFileProvider.
-				key = key.Substring(1);
-			}
+        public PageFactoryResult CreateFactory(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
 
-		    CompilerCacheResult compilerCacheResult = _compilerCache.GetOrAdd(key, _compileDelegate);
+            CompilationResult result = _compileDelegate(key);
+            result.EnsureSuccessful();
 
-		    return new PageFactoryResult()
-		    {
-			    PageFactory = compilerCacheResult.PageFactory,
-				ExpirationTokens = compilerCacheResult.ExpirationTokens
-		    };
-	    }
+            var pageFactory = new Func<TemplatePage>(() => (TemplatePage)Activator.CreateInstance(result.CompiledType));
+
+            return new PageFactoryResult(pageFactory, expirationTokens: null);
+        }
     }
 }
