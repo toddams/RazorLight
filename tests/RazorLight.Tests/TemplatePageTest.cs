@@ -520,7 +520,7 @@ namespace RazorLight.Tests
 			}
 		}
 
-		private static TestableRazorPage CreatePage(
+		internal static TestableRazorPage CreatePage(
 			Action<TestableRazorPage> executeAction,
 			PageContext context = null)
 		{
@@ -532,7 +532,7 @@ namespace RazorLight.Tests
 		}
 
 
-		private static TestableRazorPage CreatePage(
+        internal static TestableRazorPage CreatePage(
 			Func<TestableRazorPage, Task> executeAction,
 			PageContext context = null)
 		{

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Dynamic;
 using System.IO;
 using RazorLight.Caching;
 using RazorLight.Compilation;
@@ -40,8 +41,21 @@ namespace RazorLight
 		/// <returns>Returns parsed string</returns>
 		public string Parse<T>(string key, T model)
 		{
-			return Parse(key, model, typeof(T));
+			return Parse(key, model, typeof(T), viewBag: null);
 		}
+
+        /// <summary>
+		/// Parses a template with a given <paramref name="key" /> and viewBag
+		/// </summary>
+		/// <param name="key">Key used to resolve a template</param>
+		/// <param name="model">Template model</param>
+		/// <param name="viewBag">Dynamic ViewBag (can be null)</param>
+		/// <returns>Returns parsed string</returns>
+		/// <remarks>Result is stored in cache</remarks>
+	    public string Parse<T>(string key, T model, ExpandoObject viewBag)
+	    {
+	        return Parse(key, model, typeof(T), viewBag);
+	    }
 
 		/// <summary>
 		/// Parses a template with a given <paramref name="key" />
@@ -49,9 +63,10 @@ namespace RazorLight
 		/// <param name="key">Key used to resolve a template</param>
 		/// <param name="model">Template model</param>
 		/// <param name="modelType">Type of the model</param>
+		/// <param name="viewBag">Dynamic ViewBag (can be null)</param>
 		/// <returns>Returns parsed string</returns>
 		/// <remarks>Result is stored in cache</remarks>
-		public string Parse(string key, object model, Type modelType)
+		public string Parse(string key, object model, Type modelType, ExpandoObject viewBag)
 		{
 			PageCacheResult result = pageLookup.GetPage(key);
 
@@ -60,7 +75,7 @@ namespace RazorLight
 				throw new RazorLightException($"Can't find a view with a specified key ({key})");
 			}
 
-			var pageContext = new PageContext { ModelTypeInfo = new ModelTypeInfo(modelType) };
+			var pageContext = new PageContext(viewBag) { ModelTypeInfo = new ModelTypeInfo(modelType) };
 			foreach (var viewStartPage in result.ViewStartEntries)
 			{
 				pageContext.ViewStartPages.Add(viewStartPage.PageFactory());

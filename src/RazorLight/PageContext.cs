@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 
@@ -11,9 +10,13 @@ namespace RazorLight
 
 	    public PageContext()
 	    {
-			ViewStartPages = new List<TemplatePage>();
 			viewBag = new ExpandoObject();
 	    }
+
+        public PageContext(ExpandoObject viewBag)
+        {
+            this.viewBag = viewBag ?? new ExpandoObject();
+        }
 
 		/// <summary>
 		/// Gets the current writer.
@@ -27,7 +30,7 @@ namespace RazorLight
 		/// <value>The view bag.</value>
 		public dynamic ViewBag => viewBag;
 
-	    public IList<TemplatePage> ViewStartPages { get; }
+	    public IList<TemplatePage> ViewStartPages { get; } = new List<TemplatePage>();
 
 		/// <summary>
 		/// Gets the info of the template model
