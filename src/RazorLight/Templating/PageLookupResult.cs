@@ -4,7 +4,9 @@ namespace RazorLight.Templating
 {
     public class PageLookupResult
     {
-	    public PageLookupResult()
+        public static PageLookupResult Failed => new PageLookupResult();
+
+	    private PageLookupResult()
 	    {
 		    this.Success = false;
 	    }
