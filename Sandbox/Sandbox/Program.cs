@@ -12,8 +12,6 @@ namespace Sandbox
 	{
 		public static void Main(string[] args)
 		{
-			//var engine = EngineFactory.CreatePhysical(@"D:\MyProjects\RazorLight\sandbox\Sandbox\LayoutSections");
-
 			string root = @"D:\MyProjects\RazorLight\sandbox\Sandbox\Views\LayoutSections";
 			var views = new PhysicalFileProvider(root);
 
