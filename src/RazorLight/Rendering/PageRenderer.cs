@@ -212,7 +212,7 @@ namespace RazorLight.Rendering
 
 		private TemplatePage GetLayoutPage(string layoutKey)
 		{
-			PageCacheResult layoutPageResult = pageLookup.GetPage(layoutKey);
+			PageLookupResult layoutPageResult = pageLookup.GetPage(layoutKey);
 			if (!layoutPageResult.Success)
 			{
 				throw new InvalidOperationException($"Layout cannot be located ({layoutKey})");

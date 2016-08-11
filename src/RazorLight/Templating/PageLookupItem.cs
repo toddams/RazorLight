@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace RazorLight.Caching
+namespace RazorLight.Templating
 {
-    public class PageCacheItem
+    public class PageLookupItem
     {
 	    public string Key { get; set; }
 
 	    public Func<TemplatePage> PageFactory { get; set; }
 
-	    public PageCacheItem(string key, Func<TemplatePage> factory)
+	    public PageLookupItem(string key, Func<TemplatePage> factory)
 	    {
 		    this.Key = key;
 		    this.PageFactory = factory;

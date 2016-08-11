@@ -68,7 +68,7 @@ namespace RazorLight
 		/// <remarks>Result is stored in cache</remarks>
 		public string Parse(string key, object model, Type modelType, ExpandoObject viewBag)
 		{
-			PageCacheResult result = pageLookup.GetPage(key);
+			PageLookupResult result = pageLookup.GetPage(key);
 
 			if (!result.Success)
 			{

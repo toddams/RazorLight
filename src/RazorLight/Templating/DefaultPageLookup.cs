@@ -27,18 +27,18 @@ namespace RazorLight.Templating
 
 		public virtual TimeSpan CacheExpirationDuration { get; } = TimeSpan.FromMinutes(20);
 
-		public virtual PageCacheResult GetPage(string key)
+		public virtual PageLookupResult GetPage(string key)
 		{
 			if (string.IsNullOrEmpty(key))
 			{
 				throw new ArgumentException(nameof(key));
 			}
 
-			PageCacheResult cacheResult;
-			if (!ViewLookupCache.TryGetValue(key, out cacheResult))
+			PageLookupResult lookupResult;
+			if (!ViewLookupCache.TryGetValue(key, out lookupResult))
 			{
 				var expirationTokens = new HashSet<IChangeToken>();
-				cacheResult = CreateCacheResult(expirationTokens, key);
+				lookupResult = CreateCacheResult(expirationTokens, key);
 
 				var cacheEntryOptions = new MemoryCacheEntryOptions();
 				cacheEntryOptions.SetSlidingExpiration(CacheExpirationDuration);
@@ -49,21 +49,21 @@ namespace RazorLight.Templating
 				}
 
 				// No views were found at the specified location. Create a not found result.
-				if (cacheResult == null)
+				if (lookupResult == null)
 				{
-					cacheResult = new PageCacheResult();
+					lookupResult = new PageLookupResult();
 				}
 
-				cacheResult = ViewLookupCache.Set(
+				lookupResult = ViewLookupCache.Set(
 					key,
-					cacheResult,
+					lookupResult,
 					cacheEntryOptions);
 			}
 
-			return cacheResult;
+			return lookupResult;
 		}
 
-		protected virtual PageCacheResult CreateCacheResult(HashSet<IChangeToken> expirationTokens, string key)
+		protected virtual PageLookupResult CreateCacheResult(HashSet<IChangeToken> expirationTokens, string key)
 		{
 			PageFactoryResult factoryResult = PageFactoryProvider.CreateFactory(key);
 			if (factoryResult.ExpirationTokens != null)
@@ -76,19 +76,19 @@ namespace RazorLight.Templating
 
 			if (factoryResult.Success)
 			{
-				IReadOnlyList<PageCacheItem> viewStartPages = GetViewStartPages(key, expirationTokens);
+				IReadOnlyList<PageLookupItem> viewStartPages = GetViewStartPages(key, expirationTokens);
 
-				return new PageCacheResult(new PageCacheItem(key, factoryResult.PageFactory), viewStartPages);
+				return new PageLookupResult(new PageLookupItem(key, factoryResult.PageFactory), viewStartPages);
 			}
 
 			return null;
 		}
 
-		protected virtual IReadOnlyList<PageCacheItem> GetViewStartPages(
+		protected virtual IReadOnlyList<PageLookupItem> GetViewStartPages(
 			string key,
 			HashSet<IChangeToken> expirationTokens)
 		{
-			return new List<PageCacheItem>();
+			return new List<PageLookupItem>();
 		}
 
 	}

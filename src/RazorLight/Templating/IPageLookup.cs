@@ -1,5 +1,4 @@
-﻿using System;
-using RazorLight.Caching;
+﻿using RazorLight.Caching;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace RazorLight.Templating
@@ -10,6 +9,6 @@ namespace RazorLight.Templating
 
 		IPageFactoryProvider PageFactoryProvider { get; }
 
-		PageCacheResult GetPage(string key);
+		PageLookupResult GetPage(string key);
     }
 }

@@ -39,8 +39,8 @@ namespace RazorLight.Tests
 
             var lookup = new Mock<IPageLookup>();
             lookup.Setup(p => p.GetPage(It.IsAny<string>()))
-                .Returns(new PageCacheResult(
-                    new PageCacheItem(It.IsAny<string>(), () => layout), new List<PageCacheItem>()));
+                .Returns(new PageLookupResult(
+                    new PageLookupItem(It.IsAny<string>(), () => layout), new List<PageLookupItem>()));
 
             dynamic viewbag = new ExpandoObject();
             viewbag.Title = "Hello";

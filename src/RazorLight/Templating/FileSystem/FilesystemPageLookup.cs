@@ -16,11 +16,11 @@ namespace RazorLight.Templating.FileSystem
 		{
 		}
 
-		protected override IReadOnlyList<PageCacheItem> GetViewStartPages(
+		protected override IReadOnlyList<PageLookupItem> GetViewStartPages(
 			string path,
 			HashSet<IChangeToken> expirationTokens)
 		{
-			var viewStartPages = new List<PageCacheItem>();
+			var viewStartPages = new List<PageLookupItem>();
 			foreach (var viewStartPath in ViewHierarchyUtility.GetViewStartLocations(path))
 			{
 				PageFactoryResult result = PageFactoryProvider.CreateFactory(viewStartPath);
@@ -37,7 +37,7 @@ namespace RazorLight.Templating.FileSystem
 					// Populate the viewStartPages list so that _ViewStarts appear in the order the need to be
 					// executed (closest last, furthest first). This is the reverse order in which
 					// ViewHierarchyUtility.GetViewStartLocations returns _ViewStarts.
-					viewStartPages.Insert(0, new PageCacheItem(viewStartPath, result.PageFactory));
+					viewStartPages.Insert(0, new PageLookupItem(viewStartPath, result.PageFactory));
 				}
 			}
 
