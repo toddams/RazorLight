@@ -5,7 +5,7 @@ namespace RazorLight.Tests
 {
     public class EngineFactoryTest
     {
-	    private string viewsRoot = @"D:\MyProjects\RazorLight\tests\RazorLight.Tests\Views";
+        private readonly string viewsRoot = PathUtility.GetViewsPath();
 
 		[Fact]
 	    public void PhysicalFactory_Throws_On_RootNull()

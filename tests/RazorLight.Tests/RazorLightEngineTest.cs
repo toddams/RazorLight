@@ -17,11 +17,11 @@ namespace RazorLight.Tests
 		[Fact]
 	    public void Can_Parse_Physical_Files()
 		{
-			string root = @"D:\MyProjects\RazorLight\sandbox\Sandbox\Views";
+		    string root = PathUtility.GetViewsPath();
 
-			var engine = EngineFactory.CreatePhysical(root);
+            var engine = EngineFactory.CreatePhysical(root);
 
-			string result = engine.Parse("Test.cshtml", new Sandbox.TestViewModel());
+			string result = engine.Parse("Test.cshtml", new TestViewModel());
 
 			Assert.NotNull(result);
 		}

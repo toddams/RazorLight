@@ -8,11 +8,6 @@ namespace RazorLight.Templating
     {
         public PageFactoryResult(Func<TemplatePage> pageFactory, IList<IChangeToken> expirationTokens)
         {
-            if (pageFactory == null)
-            {
-                throw new ArgumentNullException(nameof(pageFactory));
-            }
-
             this.PageFactory = pageFactory;
             this.ExpirationTokens = expirationTokens;
         }

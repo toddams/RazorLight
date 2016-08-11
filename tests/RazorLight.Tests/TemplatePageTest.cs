@@ -3,12 +3,10 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Html;
 using Microsoft.Extensions.FileProviders;
 using Moq;
-using RazorLight.Caching;
 using RazorLight.Internal;
 using RazorLight.Rendering;
 using RazorLight.Templating;
@@ -19,25 +17,9 @@ namespace RazorLight.Tests
 {
     public class TemplatePageTest
     {
-		private string root = @"D:\MyProjects\RazorLight\sandbox\Sandbox\Views\LayoutSections";
 		private readonly RenderAsyncDelegate _nullRenderAsyncDelegate = writer => Task.FromResult(0);
 		private readonly Func<TextWriter, Task> NullAsyncWrite = writer => writer.WriteAsync(string.Empty);
 
-
-		[Fact]
-		public void Layout_Page_Renders_Defined_Sections_OnViews()
-	    {
-			var views = new PhysicalFileProvider(root);
-			var engine = new EngineCore(new FilesystemTemplateManager(root));
-
-			string result =
-				engine.GenerateRazorTemplate(new FileTemplateSource(
-					views.GetFileInfo("With_Layout.cshtml"), "With_Layout.cshtml"), new ModelTypeInfo(typeof(Sandbox.TestViewModel)));
-
-		    string expectedOutput = File.ReadAllText(Path.Combine(root, "With_Layout.txt"));
-
-			Assert.Equal(result, expectedOutput, StringComparer.Ordinal);
-		}
 
 		[Fact]
 		public async Task DefineSection_ThrowsIfSectionIsAlreadyDefined()
