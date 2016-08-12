@@ -3,6 +3,7 @@ sudo: required
 dist: trusty  
 env:  
   - CLI_VERSION=latest
+  - IS_TESTING_ENVIRONMENT=true
 addons:  
   apt:
     packages:
