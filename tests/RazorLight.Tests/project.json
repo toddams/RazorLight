@@ -4,6 +4,7 @@
 
   "buildOptions": {
     "preserveCompilationContext": true,
+    "allowUnsafe": true,
     "embed": [
       "Views/*.cshtml"
     ]

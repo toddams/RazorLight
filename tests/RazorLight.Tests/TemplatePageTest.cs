@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Html;
 using Microsoft.Extensions.FileProviders;
@@ -481,7 +482,113 @@ namespace RazorLight.Tests
 			Assert.Same(HtmlString.Empty, actual);
 		}
 
-		public abstract class TestableRazorPage : TemplatePage
+        public static TheoryData WriteAttributeData
+        {
+            get
+            {
+                // AttributeValues, ExpectedOutput
+                return new TheoryData<Tuple<string, int, object, int, bool>[], string>
+                {
+                    {
+                        new[]
+                        {
+                            Tuple.Create(string.Empty, 9, (object)true, 9, false),
+                        },
+                        "someattr=HtmlEncode[[someattr]]"
+                    },
+                    {
+                        new[]
+                        {
+                            Tuple.Create(string.Empty, 9, (object)false, 9, false),
+                        },
+                        string.Empty
+                    },
+                    {
+                        new[]
+                        {
+                            Tuple.Create(string.Empty, 9, (object)null, 9, false),
+                        },
+                        string.Empty
+                    },
+                    {
+                        new[]
+                        {
+                            Tuple.Create("  ", 9, (object)false, 11, false),
+                        },
+                        "someattr=  HtmlEncode[[False]]"
+                    },
+                    {
+                        new[]
+                        {
+                            Tuple.Create("  ", 9, (object)null, 11, false),
+                        },
+                        "someattr="
+                    },
+                    {
+                        new[]
+                        {
+                            Tuple.Create("  ", 9, (object)true, 11, false),
+                            Tuple.Create("  ", 15, (object)"abcd", 17, true),
+                        },
+                        "someattr=  HtmlEncode[[True]]  abcd"
+                    },
+                };
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(WriteAttributeData))]
+        public void WriteAttributeTo_WritesAsExpected(
+            Tuple<string, int, object, int, bool>[] attributeValues,
+            string expectedOutput)
+        {
+            // Arrange
+            var page = CreatePage(p => { });
+            page.HtmlEncoder = new HtmlTestEncoder();
+            var writer = new StringWriter();
+            var prefix = "someattr=";
+            var suffix = string.Empty;
+
+            // Act
+            page.BeginWriteAttributeTo(writer, "someattr", prefix, 0, suffix, 0, attributeValues.Length);
+            foreach (var value in attributeValues)
+            {
+                page.WriteAttributeValueTo(
+                    writer,
+                    value.Item1,
+                    value.Item2,
+                    value.Item3,
+                    value.Item4,
+                    value.Item3?.ToString().Length ?? 0,
+                    value.Item5);
+            }
+            page.EndWriteAttributeTo(writer);
+
+            // Assert
+            Assert.Equal(expectedOutput, writer.ToString());
+        }
+
+        [Fact]
+        public async Task Write_WithHtmlString_WritesValueWithoutEncoding()
+        {
+            // Arrange
+            var buffer = new ViewBuffer(new TestViewBufferScope(), string.Empty, pageSize: 32);
+            var writer = new ViewBufferTextWriter(buffer, Encoding.UTF8);
+
+            var page = CreatePage(p =>
+            {
+                p.Write(new HtmlString("Hello world"));
+            });
+            page.PageContext.Writer = writer;
+
+            // Act
+            await page.ExecuteAsync();
+
+            // Assert
+            Assert.Equal("Hello world", HtmlContentUtilities.HtmlContentToString(buffer));
+        }
+
+        public abstract class TestableRazorPage : TemplatePage
 		{
 			public string RenderedContent
 			{
@@ -572,4 +679,113 @@ namespace RazorLight.Tests
 			return new PagedBufferedTextWriter(ArrayPool<char>.Shared, writer);
 		}
 	}
+
+    public sealed class HtmlTestEncoder : HtmlEncoder
+    {
+        public override int MaxOutputCharactersPerInputCharacter
+        {
+            get { return 1; }
+        }
+
+        public override string Encode(string value)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            if (value.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            return $"HtmlEncode[[{value}]]";
+        }
+
+        public override void Encode(TextWriter output, char[] value, int startIndex, int characterCount)
+        {
+            if (output == null)
+            {
+                throw new ArgumentNullException(nameof(output));
+            }
+
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            if (characterCount == 0)
+            {
+                return;
+            }
+
+            output.Write("HtmlEncode[[");
+            output.Write(value, startIndex, characterCount);
+            output.Write("]]");
+        }
+
+        public override void Encode(TextWriter output, string value, int startIndex, int characterCount)
+        {
+            if (output == null)
+            {
+                throw new ArgumentNullException(nameof(output));
+            }
+
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            if (characterCount == 0)
+            {
+                return;
+            }
+
+            output.Write("HtmlEncode[[");
+            output.Write(value.Substring(startIndex, characterCount));
+            output.Write("]]");
+        }
+
+        public override bool WillEncode(int unicodeScalar)
+        {
+            return false;
+        }
+
+        public override unsafe int FindFirstCharacterToEncode(char* text, int textLength)
+        {
+            return -1;
+        }
+
+        public override unsafe bool TryEncodeUnicodeScalar(
+            int unicodeScalar,
+            char* buffer,
+            int bufferLength,
+            out int numberOfCharactersWritten)
+        {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+
+            numberOfCharactersWritten = 0;
+            return false;
+        }
+    }
+
+    public class HtmlContentUtilities
+    {
+        public static string HtmlContentToString(IHtmlContent content, HtmlEncoder encoder = null)
+        {
+            if (encoder == null)
+            {
+                encoder = new HtmlTestEncoder();
+            }
+
+            using (var writer = new StringWriter())
+            {
+                content.WriteTo(writer, encoder);
+                return writer.ToString();
+            }
+        }
+    }
 }
