@@ -30,7 +30,7 @@ namespace RazorLight.Tests
 	    {
 			IEngineConfiguration configuration = EngineConfiguration.Default;
 
-		    var engine = EngineFactory.CreateEmbedded(typeof(Sandbox.TestViewModel), configuration);
+		    var engine = EngineFactory.CreateEmbedded(typeof(TestViewModel), configuration);
 
 			Assert.Same(configuration, engine.Configuration);
 		}

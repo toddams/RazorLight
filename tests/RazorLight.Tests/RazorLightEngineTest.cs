@@ -7,9 +7,9 @@ namespace RazorLight.Tests
 		[Fact]
 	    public void Can_Parse_Embeded_Resource()
 	    {
-		    var engine = EngineFactory.CreateEmbedded(typeof(Sandbox.TestViewModel));
+		    var engine = EngineFactory.CreateEmbedded(typeof(TestViewModel));
 
-		    string result = engine.Parse("Views.Test", new Sandbox.TestViewModel());
+		    string result = engine.Parse("Views.Test", new TestViewModel());
 
 			Assert.NotNull(result);
 	    }
