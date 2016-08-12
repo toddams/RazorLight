@@ -5,7 +5,9 @@ using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using RazorLight.Internal;
+using RazorLight.Text;
 
 namespace RazorLight
 {
@@ -89,6 +91,16 @@ namespace RazorLight
             _ignoreBody = true;
         }
 
+        /// <summary>
+        /// Returns the specified string as a raw string. This will ensure it is not encoded.
+        /// </summary>
+        /// <param name="rawString">The raw string to write.</param>
+        /// <returns>An instance of <see cref="IRawString"/>.</returns>
+        public IRawString Raw(string rawString)
+        {
+            return new RawString(rawString);
+        }
+
         #region "Razor writers"
 
         public virtual void Write(object value)
@@ -127,6 +139,15 @@ namespace RazorLight
             if (htmlContent != null)
             {
                 htmlContent.WriteTo(writer, encoder);
+
+                return;
+            }
+
+            var rawContent = value as IRawString;
+            if (rawContent != null)
+            {
+                var nullEncoder = NullHtmlEncoder.Default;
+                WriteTo(writer, nullEncoder, rawContent.ToEncodedString());
 
                 return;
             }
