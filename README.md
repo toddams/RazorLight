@@ -1,5 +1,7 @@
 # RazorLight
 
+[![Build Status](https://travis-ci.org/toddams/RazorLight.svg?branch=master)](https://travis-ci.org/toddams/RazorLight)
+
 ## Introduction
 Install the nuget package
 
