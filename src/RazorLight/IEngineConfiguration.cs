@@ -3,8 +3,8 @@ using RazorLight.Compilation;
 
 namespace RazorLight
 {
-    public interface IEngineConfiguration
-    {
+	public interface IEngineConfiguration
+	{
 		/// <summary>
 		/// Activator used to create an instance of the compiled templates
 		/// </summary>

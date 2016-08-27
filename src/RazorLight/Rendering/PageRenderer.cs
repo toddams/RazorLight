@@ -26,7 +26,7 @@ namespace RazorLight.Rendering
 			_bufferScope = new MemoryPoolViewBufferScope();
 			ViewStartPages = new List<TemplatePage>();
 		}
-		
+
 
 		public List<TemplatePage> ViewStartPages { get; }
 

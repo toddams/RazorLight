@@ -6,11 +6,11 @@ using Microsoft.Extensions.DependencyModel;
 
 namespace RazorLight
 {
-    public class UseEntryAssemblyMetadataResolver : IMetadataResolver
-    {
-	    public IList<MetadataReference> GetMetadataReferences()
-	    {
-		    var metadataReferences = new List<MetadataReference>();
+	public class UseEntryAssemblyMetadataResolver : IMetadataResolver
+	{
+		public IList<MetadataReference> GetMetadataReferences()
+		{
+			var metadataReferences = new List<MetadataReference>();
 
 			DependencyContext entryAssemblyDependencies = DependencyContext.Load(Assembly.GetEntryAssembly());
 			foreach (CompilationLibrary compilationLibrary in entryAssemblyDependencies.CompileLibraries)
@@ -29,6 +29,6 @@ namespace RazorLight
 			}
 
 			return metadataReferences;
-	    }
-    }
+		}
+	}
 }

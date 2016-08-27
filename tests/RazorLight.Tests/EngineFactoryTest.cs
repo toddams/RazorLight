@@ -3,12 +3,12 @@ using Xunit;
 
 namespace RazorLight.Tests
 {
-    public class EngineFactoryTest
-    {
-        private readonly string viewsRoot = PathUtility.GetViewsPath();
+	public class EngineFactoryTest
+	{
+		private readonly string viewsRoot = PathUtility.GetViewsPath();
 
 		[Fact]
-	    public void PhysicalFactory_Throws_On_RootNull()
+		public void PhysicalFactory_Throws_On_RootNull()
 		{
 			var action = new Action(() => EngineFactory.CreatePhysical(null));
 
@@ -16,7 +16,7 @@ namespace RazorLight.Tests
 		}
 
 		[Fact]
-	    public void Ensure_Passed_Configuration_Is_Applided_OnPhysical()
+		public void Ensure_Passed_Configuration_Is_Applided_OnPhysical()
 		{
 			IEngineConfiguration configuration = EngineConfiguration.Default;
 
@@ -26,11 +26,11 @@ namespace RazorLight.Tests
 		}
 
 		[Fact]
-	    public void Ensure_Passed_Configuration_Is_Applided_OnEmbedded()
-	    {
+		public void Ensure_Passed_Configuration_Is_Applided_OnEmbedded()
+		{
 			IEngineConfiguration configuration = EngineConfiguration.Default;
 
-		    var engine = EngineFactory.CreateEmbedded(typeof(TestViewModel), configuration);
+			var engine = EngineFactory.CreateEmbedded(typeof(TestViewModel), configuration);
 
 			Assert.Same(configuration, engine.Configuration);
 		}

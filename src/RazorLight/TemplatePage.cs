@@ -124,7 +124,7 @@ namespace RazorLight
 			if (pageResult.Success)
 			{
 				TemplatePage page = pageResult.ViewEntry.PageFactory();
-				page.PageContext = new PageContext(this.PageContext.ViewBag) { Writer = this.PageContext.Writer};
+				page.PageContext = new PageContext(this.PageContext.ViewBag) { Writer = this.PageContext.Writer };
 
 				if (model != null)
 				{

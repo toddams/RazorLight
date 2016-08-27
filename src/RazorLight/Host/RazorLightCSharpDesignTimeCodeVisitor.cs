@@ -8,63 +8,63 @@ using Microsoft.AspNetCore.Razor.CodeGenerators.Visitors;
 
 namespace RazorLight.Host
 {
-    public class RazorLightCSharpDesignTimeCodeVisitor : CSharpDesignTimeCodeVisitor
-    {
-        private const string ModelVariable = "__modelHelper";
-        private ModelChunk _modelChunk;
+	public class RazorLightCSharpDesignTimeCodeVisitor : CSharpDesignTimeCodeVisitor
+	{
+		private const string ModelVariable = "__modelHelper";
+		private ModelChunk _modelChunk;
 
-        public RazorLightCSharpDesignTimeCodeVisitor(
-            CSharpCodeVisitor csharpCodeVisitor,
-            CSharpCodeWriter writer,
-            CodeGeneratorContext context)
-            : base(csharpCodeVisitor, writer, context)
-        {
-        }
+		public RazorLightCSharpDesignTimeCodeVisitor(
+			CSharpCodeVisitor csharpCodeVisitor,
+			CSharpCodeWriter writer,
+			CodeGeneratorContext context)
+			: base(csharpCodeVisitor, writer, context)
+		{
+		}
 
-        protected override void AcceptTreeCore(ChunkTree tree)
-        {
-            base.AcceptTreeCore(tree);
+		protected override void AcceptTreeCore(ChunkTree tree)
+		{
+			base.AcceptTreeCore(tree);
 
-            if (_modelChunk != null)
-            {
-                WriteModelChunkLineMapping();
-            }
-        }
+			if (_modelChunk != null)
+			{
+				WriteModelChunkLineMapping();
+			}
+		}
 
-        public override void Accept(Chunk chunk)
-        {
-            if (chunk is ModelChunk)
-            {
-                Visit((ModelChunk)chunk);
-            }
+		public override void Accept(Chunk chunk)
+		{
+			if (chunk is ModelChunk)
+			{
+				Visit((ModelChunk)chunk);
+			}
 
-            base.Accept(chunk);
-        }
+			base.Accept(chunk);
+		}
 
-        private void Visit(ModelChunk chunk)
-        {
-            Debug.Assert(chunk != null);
-            _modelChunk = chunk;
-        }
+		private void Visit(ModelChunk chunk)
+		{
+			Debug.Assert(chunk != null);
+			_modelChunk = chunk;
+		}
 
-        private void WriteModelChunkLineMapping()
-        {
-            Debug.Assert(Context.Host.DesignTimeMode);
+		private void WriteModelChunkLineMapping()
+		{
+			Debug.Assert(Context.Host.DesignTimeMode);
 
-            using (var lineMappingWriter =
-                Writer.BuildLineMapping(_modelChunk.Start, _modelChunk.ModelType.Length, Context.SourceFile))
-            {
-                // var __modelHelper = default(MyModel);
-                Writer.Write("var ")
-                    .Write(ModelVariable)
-                    .Write(" = default(");
+			using (var lineMappingWriter =
+				Writer.BuildLineMapping(_modelChunk.Start, _modelChunk.ModelType.Length, Context.SourceFile))
+			{
+				// var __modelHelper = default(MyModel);
+				Writer.Write("var ")
+					.Write(ModelVariable)
+					.Write(" = default(");
 
-                lineMappingWriter.MarkLineMappingStart();
-                Writer.Write(_modelChunk.ModelType);
-                lineMappingWriter.MarkLineMappingEnd();
+				lineMappingWriter.MarkLineMappingStart();
+				Writer.Write(_modelChunk.ModelType);
+				lineMappingWriter.MarkLineMappingEnd();
 
-                Writer.WriteLine(");");
-            }
-        }
-    }
+				Writer.WriteLine(");");
+			}
+		}
+	}
 }

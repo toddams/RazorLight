@@ -4,17 +4,17 @@ using Xunit;
 
 namespace RazorLight.Tests
 {
-    public class UseEntryAssemblyResolverTest
-    {
+	public class UseEntryAssemblyResolverTest
+	{
 		[Fact]
-	    public void Entry_Assembly_Resolver_Has_NonEmpty_Output()
-	    {
-		    var resolver = new UseEntryAssemblyMetadataResolver();
+		public void Entry_Assembly_Resolver_Has_NonEmpty_Output()
+		{
+			var resolver = new UseEntryAssemblyMetadataResolver();
 
-		    IList<MetadataReference> references = resolver.GetMetadataReferences();
+			IList<MetadataReference> references = resolver.GetMetadataReferences();
 
 			Assert.NotNull(references);
 			Assert.NotEmpty(references);
-	    }
-    }
+		}
+	}
 }

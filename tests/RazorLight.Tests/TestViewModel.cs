@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace RazorLight.Tests
 {
-    public class TestViewModel
-    {
+	public class TestViewModel
+	{
 		public string Title { get; set; } = "wefefwef";
 	}
 }

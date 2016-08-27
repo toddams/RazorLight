@@ -4,34 +4,34 @@ using Microsoft.Extensions.FileProviders;
 
 namespace RazorLight.Templating.FileSystem
 {
-    public class FilesystemTemplateManager : ITemplateManager, IDisposable
-    {
-	    private readonly PhysicalFileProvider fileProvider;
+	public class FilesystemTemplateManager : ITemplateManager, IDisposable
+	{
+		private readonly PhysicalFileProvider fileProvider;
 
-	    public FilesystemTemplateManager(string root)
-	    {
-		    if (string.IsNullOrEmpty(root))
-		    {
-			    throw new ArgumentNullException(nameof(root));
-		    }
+		public FilesystemTemplateManager(string root)
+		{
+			if (string.IsNullOrEmpty(root))
+			{
+				throw new ArgumentNullException(nameof(root));
+			}
 
-		    this.Root = root;
+			this.Root = root;
 			this.fileProvider = new PhysicalFileProvider(root);
-	    }
+		}
 
-	    public string Root { get; }
+		public string Root { get; }
 
-	    public ITemplateSource Resolve(string key)
-	    {
-		    IFileInfo fileInfo = GetFileInfo(key);
+		public ITemplateSource Resolve(string key)
+		{
+			IFileInfo fileInfo = GetFileInfo(key);
 
 			FileTemplateSource source = new FileTemplateSource(fileInfo, key);
 
-		    return source;
-	    }
+			return source;
+		}
 
-	    private IFileInfo GetFileInfo(string key)
-	    {
+		private IFileInfo GetFileInfo(string key)
+		{
 			if (string.IsNullOrEmpty(key))
 			{
 				throw new ArgumentNullException(nameof(key));
@@ -44,14 +44,14 @@ namespace RazorLight.Templating.FileSystem
 			}
 
 			return fileInfo;
-	    }
+		}
 
-	    public void Dispose()
-	    {
-		    if (fileProvider != null)
-		    {
-			    fileProvider.Dispose();
-		    }
-	    }
-    }
+		public void Dispose()
+		{
+			if (fileProvider != null)
+			{
+				fileProvider.Dispose();
+			}
+		}
+	}
 }

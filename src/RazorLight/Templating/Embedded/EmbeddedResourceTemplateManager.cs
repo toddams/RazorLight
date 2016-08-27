@@ -4,8 +4,8 @@ using System.Reflection;
 
 namespace RazorLight.Templating.Embedded
 {
-    public class EmbeddedResourceTemplateManager : ITemplateManager
-    {
+	public class EmbeddedResourceTemplateManager : ITemplateManager
+	{
 		/// <summary>
 		/// Initializes a new TemplateManager.
 		/// </summary>
@@ -25,9 +25,9 @@ namespace RazorLight.Templating.Embedded
 		/// </summary>
 		public Type RootType { get; }
 
-	    public ITemplateSource Resolve(string key)
-	    {
-		    Assembly assembly = this.RootType.GetTypeInfo().Assembly;
+		public ITemplateSource Resolve(string key)
+		{
+			Assembly assembly = this.RootType.GetTypeInfo().Assembly;
 
 			using (var stream = assembly.GetManifestResourceStream(this.RootType.Namespace + "." + key + ".cshtml"))
 			{
@@ -42,5 +42,5 @@ namespace RazorLight.Templating.Embedded
 				}
 			}
 		}
-    }
+	}
 }

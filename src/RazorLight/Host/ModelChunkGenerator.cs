@@ -7,33 +7,33 @@ using Microsoft.AspNetCore.Razor.Parser.SyntaxTree;
 
 namespace RazorLight.Host
 {
-    public class ModelChunkGenerator : SpanChunkGenerator
-    {
-        public ModelChunkGenerator(string modelType)
-        {
-            ModelType = modelType;
-        }
+	public class ModelChunkGenerator : SpanChunkGenerator
+	{
+		public ModelChunkGenerator(string modelType)
+		{
+			ModelType = modelType;
+		}
 
-        public string ModelType { get; }
+		public string ModelType { get; }
 
-        public override void GenerateChunk(Span target, ChunkGeneratorContext context)
-        {
-            var modelChunk = new ModelChunk(ModelType);
-            context.ChunkTreeBuilder.AddChunk(modelChunk, target, topLevel: true);
-        }
+		public override void GenerateChunk(Span target, ChunkGeneratorContext context)
+		{
+			var modelChunk = new ModelChunk(ModelType);
+			context.ChunkTreeBuilder.AddChunk(modelChunk, target, topLevel: true);
+		}
 
-        public override string ToString() => ModelType;
+		public override string ToString() => ModelType;
 
-        public override bool Equals(object obj)
-        {
-            var other = obj as ModelChunkGenerator;
-            return other != null &&
-                string.Equals(ModelType, other.ModelType, StringComparison.Ordinal);
-        }
+		public override bool Equals(object obj)
+		{
+			var other = obj as ModelChunkGenerator;
+			return other != null &&
+				string.Equals(ModelType, other.ModelType, StringComparison.Ordinal);
+		}
 
-        public override int GetHashCode()
-        {
-            return StringComparer.Ordinal.GetHashCode(ModelType);
-        }
-    }
+		public override int GetHashCode()
+		{
+			return StringComparer.Ordinal.GetHashCode(ModelType);
+		}
+	}
 }

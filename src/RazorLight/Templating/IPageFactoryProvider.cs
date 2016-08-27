@@ -2,8 +2,8 @@
 
 namespace RazorLight.Templating
 {
-    public interface IPageFactoryProvider
-    {
+	public interface IPageFactoryProvider
+	{
 		PageFactoryResult CreateFactory(string key);
-    }
+	}
 }

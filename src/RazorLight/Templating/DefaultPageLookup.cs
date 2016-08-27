@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RazorLight.Templating
 {
-    public class DefaultPageLookup : IPageLookup
+	public class DefaultPageLookup : IPageLookup
 	{
 		public DefaultPageLookup(IPageFactoryProvider pageFactoryProvider)
 		{
@@ -26,15 +26,15 @@ namespace RazorLight.Templating
 
 			PageFactoryResult factoryResult = PageFactoryProvider.CreateFactory(key);
 
-            if (factoryResult.Success)
-            {
-                IReadOnlyList<PageLookupItem> viewStartPages = GetViewStartPages(key);
+			if (factoryResult.Success)
+			{
+				IReadOnlyList<PageLookupItem> viewStartPages = GetViewStartPages(key);
 
-                return new PageLookupResult(new PageLookupItem(key, factoryResult.PageFactory), viewStartPages);
-            }
+				return new PageLookupResult(new PageLookupItem(key, factoryResult.PageFactory), viewStartPages);
+			}
 
-            return PageLookupResult.Failed;
-        }
+			return PageLookupResult.Failed;
+		}
 
 		protected virtual IReadOnlyList<PageLookupItem> GetViewStartPages(string key)
 		{

@@ -5,16 +5,16 @@ using System;
 
 namespace RazorLight.Host.Internal
 {
-    public class RazorPathNormalizer
-    {
-        public virtual string NormalizePath(string path)
-        {
-            if (path == null)
-            {
-                throw new ArgumentNullException(nameof(path));
-            }
+	public class RazorPathNormalizer
+	{
+		public virtual string NormalizePath(string path)
+		{
+			if (path == null)
+			{
+				throw new ArgumentNullException(nameof(path));
+			}
 
-            return path;
-        }
-    }
+			return path;
+		}
+	}
 }

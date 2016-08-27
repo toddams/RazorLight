@@ -10,8 +10,8 @@ using RazorLight.Compilation;
 
 namespace RazorLight.Caching
 {
-    public class TrackingCompilerCache : ICompilerCache, IDisposable
-    {
+	public class TrackingCompilerCache : ICompilerCache, IDisposable
+	{
 		private readonly IMemoryCache _cache;
 		private readonly PhysicalFileProvider _fileProvider;
 		private readonly object _cacheLock = new object();
@@ -22,15 +22,15 @@ namespace RazorLight.Caching
 		public string Root { get; }
 
 		public TrackingCompilerCache(string root)
-	    {
-		    if (string.IsNullOrEmpty(root))
-		    {
+		{
+			if (string.IsNullOrEmpty(root))
+			{
 				throw new ArgumentNullException(nameof(root));
-		    }
+			}
 
 			Root = root;
 			_fileProvider = new PhysicalFileProvider(Root);
-			_cache = new MemoryCache(new MemoryCacheOptions() { CompactOnMemoryPressure = false} );
+			_cache = new MemoryCache(new MemoryCacheOptions() { CompactOnMemoryPressure = false });
 		}
 
 		public CompilerCacheResult GetOrAdd(
@@ -160,9 +160,9 @@ namespace RazorLight.Caching
 		}
 
 		public void Dispose()
-	    {
-		    _fileProvider?.Dispose();
+		{
+			_fileProvider?.Dispose();
 			_cache?.Dispose();
-	    }
-    }
+		}
+	}
 }

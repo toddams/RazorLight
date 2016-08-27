@@ -3,7 +3,7 @@
 namespace RazorLight
 {
 	public class TemplateCompilationException : RazorLightException
-    {
+	{
 		private readonly List<string> compilationErrors;
 
 		public IReadOnlyList<string> CompilationErrors => compilationErrors;
@@ -14,5 +14,5 @@ namespace RazorLight
 			if (errors != null)
 				compilationErrors.AddRange(errors);
 		}
-    }
+	}
 }

@@ -2,11 +2,11 @@
 
 namespace RazorLight
 {
-    public class DefaultActivator : IActivator
-    {
-	    public object CreateInstance(Type type)
-	    {
-		    return Activator.CreateInstance(type);
-	    }
-    }
+	public class DefaultActivator : IActivator
+	{
+		public object CreateInstance(Type type)
+		{
+			return Activator.CreateInstance(type);
+		}
+	}
 }

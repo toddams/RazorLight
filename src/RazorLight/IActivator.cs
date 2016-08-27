@@ -2,8 +2,8 @@
 
 namespace RazorLight
 {
-    public interface IActivator
-    {
-	    object CreateInstance(Type type);
-    }
+	public interface IActivator
+	{
+		object CreateInstance(Type type);
+	}
 }

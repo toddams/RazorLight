@@ -36,7 +36,7 @@ namespace RazorLight.Compilation
 
 		public RoslynCompilerService(IMetadataResolver metadataResolver)
 		{
-			if(metadataResolver == null)
+			if (metadataResolver == null)
 			{
 				throw new ArgumentNullException(nameof(metadataResolver));
 			}

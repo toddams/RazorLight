@@ -7,68 +7,68 @@ using Microsoft.AspNetCore.Razor.CodeGenerators.Visitors;
 
 namespace RazorLight.Host
 {
-    public class RazorLightCSharpCodeGenerator : CSharpCodeGenerator
-    {
-        private readonly string _defaultModel;
+	public class RazorLightCSharpCodeGenerator : CSharpCodeGenerator
+	{
+		private readonly string _defaultModel;
 
-        public RazorLightCSharpCodeGenerator(
-            CodeGeneratorContext context,
-            string defaultModel)
-            : base(context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+		public RazorLightCSharpCodeGenerator(
+			CodeGeneratorContext context,
+			string defaultModel)
+			: base(context)
+		{
+			if (context == null)
+			{
+				throw new ArgumentNullException(nameof(context));
+			}
 
-            if (defaultModel == null)
-            {
-                throw new ArgumentNullException(nameof(defaultModel));
-            }
+			if (defaultModel == null)
+			{
+				throw new ArgumentNullException(nameof(defaultModel));
+			}
 
-            _defaultModel = defaultModel;
-        }
+			_defaultModel = defaultModel;
+		}
 
-        protected override CSharpCodeVisitor CreateCSharpCodeVisitor(
-            CSharpCodeWriter writer,
-            CodeGeneratorContext context)
-        {
-            if (writer == null)
-            {
-                throw new ArgumentNullException(nameof(writer));
-            }
+		protected override CSharpCodeVisitor CreateCSharpCodeVisitor(
+			CSharpCodeWriter writer,
+			CodeGeneratorContext context)
+		{
+			if (writer == null)
+			{
+				throw new ArgumentNullException(nameof(writer));
+			}
 
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+			if (context == null)
+			{
+				throw new ArgumentNullException(nameof(context));
+			}
 
-            var csharpCodeVisitor = base.CreateCSharpCodeVisitor(writer, context);
+			var csharpCodeVisitor = base.CreateCSharpCodeVisitor(writer, context);
 
-            return csharpCodeVisitor;
-        }
+			return csharpCodeVisitor;
+		}
 
-        protected override CSharpDesignTimeCodeVisitor CreateCSharpDesignTimeCodeVisitor(
-            CSharpCodeVisitor csharpCodeVisitor,
-            CSharpCodeWriter writer,
-            CodeGeneratorContext context)
-        {
-            if (csharpCodeVisitor == null)
-            {
-                throw new ArgumentNullException(nameof(csharpCodeVisitor));
-            }
+		protected override CSharpDesignTimeCodeVisitor CreateCSharpDesignTimeCodeVisitor(
+			CSharpCodeVisitor csharpCodeVisitor,
+			CSharpCodeWriter writer,
+			CodeGeneratorContext context)
+		{
+			if (csharpCodeVisitor == null)
+			{
+				throw new ArgumentNullException(nameof(csharpCodeVisitor));
+			}
 
-            if (writer == null)
-            {
-                throw new ArgumentNullException(nameof(writer));
-            }
+			if (writer == null)
+			{
+				throw new ArgumentNullException(nameof(writer));
+			}
 
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+			if (context == null)
+			{
+				throw new ArgumentNullException(nameof(context));
+			}
 
-            return new RazorLightCSharpDesignTimeCodeVisitor(csharpCodeVisitor, writer, context);
-        }
-    }
+			return new RazorLightCSharpDesignTimeCodeVisitor(csharpCodeVisitor, writer, context);
+		}
+	}
 }

@@ -7,11 +7,11 @@ namespace RazorLight
 	/// Use this interface to provide reference metadata resolver 
 	/// to resolve dependencies while compiling razor templates
 	/// </summary>
-    public interface IMetadataResolver
-    {
+	public interface IMetadataResolver
+	{
 		/// <summary>
 		/// Returns a list of <see cref="MetadataReference"/> to resolve dependencies while compiling razor templates
 		/// </summary>
-	    IList<MetadataReference> GetMetadataReferences();
-    }
+		IList<MetadataReference> GetMetadataReferences();
+	}
 }

@@ -76,7 +76,7 @@ namespace RazorLight
 		}
 
 		private static Tuple<IEngineCore, IPageLookup> CreateDefaultDependencies(
-			ITemplateManager manager, 
+			ITemplateManager manager,
 			IEngineConfiguration configuration)
 		{
 			IEngineCore core = new EngineCore(manager, configuration);

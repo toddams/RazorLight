@@ -7,8 +7,8 @@ using System.Runtime.CompilerServices;
 
 namespace RazorLight.Extensions
 {
-    public static class TypeExtensions
-    {
+	public static class TypeExtensions
+	{
 		public static ExpandoObject ToExpando(this object anonymousObject)
 		{
 			IDictionary<string, object> expando = new ExpandoObject();

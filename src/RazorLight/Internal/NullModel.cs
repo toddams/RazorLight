@@ -1,6 +1,6 @@
 ﻿namespace RazorLight.Internal
 {
-    public class NullModel
-    {
-    }
+	public class NullModel
+	{
+	}
 }

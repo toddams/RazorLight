@@ -15,7 +15,7 @@ namespace RazorLight.Internal
 
 			var builder = new StringBuilder(relativePath);
 			builder.Replace('\\', '/');
-			
+
 			return builder.ToString();
 		}
 	}

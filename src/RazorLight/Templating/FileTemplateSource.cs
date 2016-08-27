@@ -5,9 +5,9 @@ using RazorLight.Internal;
 
 namespace RazorLight.Templating
 {
-    public class FileTemplateSource : ITemplateSource
-    {
-	    private string template;
+	public class FileTemplateSource : ITemplateSource
+	{
+		private string template;
 
 		public FileTemplateSource(IFileInfo fileInfo, string relativeFilePath)
 		{
@@ -27,29 +27,29 @@ namespace RazorLight.Templating
 		}
 
 		public string Content
-	    {
-		    get
-		    {
-			    if (string.IsNullOrEmpty(template))
-			    {
-				    using (var reader = CreateReader())
-				    {
-					    template = reader.ReadToEnd();
-				    }
-			    }
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(template))
+				{
+					using (var reader = CreateReader())
+					{
+						template = reader.ReadToEnd();
+					}
+				}
 
-			    return template;
-		    }
-	    }
-	    public string FilePath { get; }
-	    public string TemplateKey { get; }
+				return template;
+			}
+		}
+		public string FilePath { get; }
+		public string TemplateKey { get; }
 
-	    public IFileInfo FileInfo { get; private set; }
+		public IFileInfo FileInfo { get; private set; }
 
-	    public TextReader CreateReader()
-	    {
+		public TextReader CreateReader()
+		{
 			return new StreamReader(FileInfo.CreateReadStream());
-	    }
-    }
+		}
+	}
 }
 

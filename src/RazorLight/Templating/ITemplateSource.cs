@@ -2,14 +2,14 @@
 
 namespace RazorLight.Templating
 {
-    public interface ITemplateSource
-    {
+	public interface ITemplateSource
+	{
 		string Content { get; }
 
 		string FilePath { get; }
 
 		string TemplateKey { get; }
 
-	    TextReader CreateReader();
-    }
+		TextReader CreateReader();
+	}
 }

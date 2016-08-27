@@ -6,34 +6,34 @@ using System.IO;
 
 namespace RazorLight.Host.Internal
 {
-    public class DesignTimeRazorPathNormalizer : RazorPathNormalizer
-    {
-        private readonly string _applicationRoot;
+	public class DesignTimeRazorPathNormalizer : RazorPathNormalizer
+	{
+		private readonly string _applicationRoot;
 
-        public DesignTimeRazorPathNormalizer(string applicationRoot)
-        {
-            if (applicationRoot == null)
-            {
-                throw new ArgumentNullException(nameof(applicationRoot));
-            }
+		public DesignTimeRazorPathNormalizer(string applicationRoot)
+		{
+			if (applicationRoot == null)
+			{
+				throw new ArgumentNullException(nameof(applicationRoot));
+			}
 
-            _applicationRoot = applicationRoot;
-        }
+			_applicationRoot = applicationRoot;
+		}
 
-        public override string NormalizePath(string path)
-        {
-            if (path == null)
-            {
-                throw new ArgumentNullException(nameof(path));
-            }
+		public override string NormalizePath(string path)
+		{
+			if (path == null)
+			{
+				throw new ArgumentNullException(nameof(path));
+			}
 
-            // Need to convert path to application relative (rooted paths are passed in during design time).
-            if (Path.IsPathRooted(path) && path.StartsWith(_applicationRoot, StringComparison.Ordinal))
-            {
-                path = path.Substring(_applicationRoot.Length);
-            }
+			// Need to convert path to application relative (rooted paths are passed in during design time).
+			if (Path.IsPathRooted(path) && path.StartsWith(_applicationRoot, StringComparison.Ordinal))
+			{
+				path = path.Substring(_applicationRoot.Length);
+			}
 
-            return path;
-        }
-    }
+			return path;
+		}
+	}
 }

@@ -4,19 +4,19 @@ using System.IO;
 
 namespace RazorLight
 {
-    public class PageContext
-    {
+	public class PageContext
+	{
 		private readonly dynamic viewBag;
 
-	    public PageContext()
-	    {
+		public PageContext()
+		{
 			viewBag = new ExpandoObject();
-	    }
+		}
 
-        public PageContext(ExpandoObject viewBag)
-        {
-            this.viewBag = viewBag ?? new ExpandoObject();
-        }
+		public PageContext(ExpandoObject viewBag)
+		{
+			this.viewBag = viewBag ?? new ExpandoObject();
+		}
 
 		/// <summary>
 		/// Gets the current writer.
@@ -30,13 +30,13 @@ namespace RazorLight
 		/// <value>The view bag.</value>
 		public dynamic ViewBag => viewBag;
 
-	    public IList<TemplatePage> ViewStartPages { get; } = new List<TemplatePage>();
+		public IList<TemplatePage> ViewStartPages { get; } = new List<TemplatePage>();
 
 		/// <summary>
 		/// Gets the info of the template model
 		/// </summary>
-	    public ModelTypeInfo ModelTypeInfo { get; set; }
+		public ModelTypeInfo ModelTypeInfo { get; set; }
 
-	    public string ExecutingFilePath { get; set; }
+		public string ExecutingFilePath { get; set; }
 	}
 }
