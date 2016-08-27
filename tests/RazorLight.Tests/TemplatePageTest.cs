@@ -611,6 +611,43 @@ namespace RazorLight.Tests
             }
         }
 
+		[Fact]
+		public async Task Ensure_Include_Works_Correctly()
+		{
+			string actual = null;
+			string expected = "FirstSecond";
+
+			var toIncludePage = CreatePage(v =>
+			{
+				v.Write("Second");
+			});
+
+			var testLookup = new Mock<IPageLookup>();
+			testLookup
+				.Setup(v => v.GetPage(It.IsAny<string>()))
+				.Returns(new PageLookupResult(
+					new PageLookupItem(It.IsAny<string>(), new Func<TemplatePage>(() => toIncludePage)), 
+					new List<PageLookupItem>()));
+
+
+			using(var writer = new StringWriter())
+			{
+				var context = new PageContext() { Writer = writer };
+				var outerPage = CreatePage(async v =>
+				{
+					v.Write("First");
+					await v.IncludeAsync("whatever");
+				}, context);
+
+				outerPage.PageLookup = testLookup.Object;
+				await outerPage.ExecuteAsync();
+
+				actual = writer.ToString();
+			}
+
+			Assert.Equal(expected, actual);
+		}
+
         #region "Testing helpers"
 
         public abstract class TestableRazorPage : TemplatePage
