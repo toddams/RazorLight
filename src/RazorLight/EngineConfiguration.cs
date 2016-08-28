@@ -9,22 +9,22 @@ namespace RazorLight
 		/// <summary>
 		/// Activator used to create an instance of the compiled templates
 		/// </summary>
-		public IActivator Activator { get; private set; }
+		public IActivator Activator { get; set; }
 
 		/// <summary>
 		/// Class used to compile razor templates into *.cs file
 		/// </summary>
-		public IRazorTemplateCompiler RazorTemplateCompiler { get; private set; }
+		public IRazorTemplateCompiler RazorTemplateCompiler { get; set; }
 
 		/// <summary>
 		/// Class used to compile razor templates
 		/// </summary>
-		public ICompilerService CompilerService { get; private set; }
+		public ICompilerService CompilerService { get; set; }
 
 		/// <summary>
 		/// Additional namespace to include into template (_ViewImports like)
 		/// </summary>
-		public ISet<string> Namespaces { get; set; }
+		public ISet<string> Namespaces { get; private set; }
 
 		public EngineConfiguration(
 			IActivator activator,

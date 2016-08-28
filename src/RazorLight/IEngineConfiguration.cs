@@ -23,6 +23,6 @@ namespace RazorLight
 		/// <summary>
 		/// Additional namespace to include into template (_ViewImports like)
 		/// </summary>
-		ISet<string> Namespaces { get; set; }
+		ISet<string> Namespaces { get; }
 	}
 }
