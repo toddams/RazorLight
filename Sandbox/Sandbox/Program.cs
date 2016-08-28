@@ -1,10 +1,5 @@
-﻿using System;
-using System.IO;
-using Microsoft.Extensions.FileProviders;
-using RazorLight;
-using RazorLight.Caching;
-using RazorLight.Templating;
-using RazorLight.Templating.FileSystem;
+﻿using RazorLight;
+using System.Linq;
 
 namespace Sandbox
 {
@@ -12,16 +7,22 @@ namespace Sandbox
 	{
 		public static void Main(string[] args)
 		{
-			string root = @"D:\MyProjects\RazorLight\sandbox\Sandbox\Views\LayoutSections";
-			var views = new PhysicalFileProvider(root);
+			var engine = EngineFactory.CreatePhysical(@"D:\MyProjects\RazorLight\sandbox\Sandbox\Views");
+			var model = new TestViewModel();
 
-			var engine = new EngineCore(new FilesystemTemplateManager(root));
+			try
+			{
+				engine.PreRenderCallbacks.Add(p => System.Console.WriteLine("wefwef"));
+				string result2 = engine.Parse("Test.cshtml", model);
 
-			string result =
-				engine.GenerateRazorTemplate(new FileTemplateSource(
-					views.GetFileInfo("With_Layout.cshtml"), "With_Layout.cshtml"), new ModelTypeInfo(typeof(TestViewModel)));
+				System.Console.WriteLine(result2);
+			}
+			catch (System.AggregateException ex)
+			{
+				var e = ex.InnerException as TemplateCompilationException;
 
-			System.IO.File.WriteAllText(Path.Combine(root, "With_Layout.txt"), result);
+				System.Console.WriteLine(e.CompilationErrors.First());
+			}
 		}
 	}
 }
