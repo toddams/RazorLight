@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+#if NETSTANDARD1_6
 using Microsoft.Extensions.DependencyModel;
+#endif
 
 namespace RazorLight
 {
@@ -12,7 +14,9 @@ namespace RazorLight
 		{
 			var metadataReferences = new List<MetadataReference>();
 
+#if NETSTANDARD1_6
 			DependencyContext entryAssemblyDependencies = DependencyContext.Load(Assembly.GetEntryAssembly());
+
 			foreach (CompilationLibrary compilationLibrary in entryAssemblyDependencies.CompileLibraries)
 			{
 				List<string> assemblyPaths = compilationLibrary.ResolveReferencePaths().ToList();
@@ -27,6 +31,18 @@ namespace RazorLight
 				throw new RazorLightException("Can't load metadata reference from the entry assembly. " +
 					"Make sure preserveCompilationContext is set to true in compilerOptions section of project.json");
 			}
+#elif NET451
+			//DependencyContext works also on 4.5.1, but requires new project.json project structure
+			System.AppDomain.CurrentDomain
+				.GetAssemblies()
+				.Where(a => !a.IsDynamic
+							&& System.IO.File.Exists(a.Location))
+				.GroupBy(a => a.GetName().Name)
+				.Select(grp => grp.First(y => y.GetName().Version == grp.Max(x => x.GetName().Version)))
+				.Select(a => MetadataReference.CreateFromFile(a.Location))
+				.ToList()
+				.ForEach(a => metadataReferences.Add(a));
+#endif
 
 			return metadataReferences;
 		}

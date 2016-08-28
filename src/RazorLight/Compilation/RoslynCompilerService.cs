@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+#if NETSTANDARD1_6
 using System.Runtime.Loader;
+#endif
 using System.Text;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.DependencyModel;
-using RazorLight.Internal;
 
 namespace RazorLight.Compilation
 {
@@ -84,10 +84,13 @@ namespace RazorLight.Compilation
 						assemblyStream.Seek(0, SeekOrigin.Begin);
 						pdbStream.Seek(0, SeekOrigin.Begin);
 
+#if NETSTANDARD1_6
 						Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(assemblyStream, pdbStream);
+#elif NET451
+						Assembly assembly = Assembly.Load(assemblyStream.ToArray(), pdbStream.ToArray());
+#endif
 
 						Type type = assembly.GetExportedTypes().FirstOrDefault(a => !a.IsNested);
-
 						return new CompilationResult(type);
 					}
 				}
