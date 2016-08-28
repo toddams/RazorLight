@@ -4,10 +4,11 @@ using System.IO;
 using RazorLight.Compilation;
 using RazorLight.Rendering;
 using RazorLight.Templating;
+using RazorLight.Internal;
 
 namespace RazorLight
 {
-	public class RazorLightEngine
+	public class RazorLightEngine : IRazorLightEngine
 	{
 		private readonly IEngineCore core;
 		private readonly IPageLookup pageLookup;
@@ -27,9 +28,12 @@ namespace RazorLight
 			this.core = core;
 			this.pageLookup = pagelookup;
 			this.Configuration = core.Configuration;
+			this.PreRenderCallbacks = new PreRenderActionList();
 		}
 
 		public IEngineConfiguration Configuration { get; }
+
+		public PreRenderActionList PreRenderCallbacks { get; set; }
 
 		/// <summary>
 		/// Parses a template with a given <paramref name="key" />
@@ -149,6 +153,11 @@ namespace RazorLight
 			using (var writer = new StringWriter())
 			{
 				page.PageContext.Writer = writer;
+
+				foreach(var callback in this.PreRenderCallbacks)
+				{
+					callback(page);
+				}
 
 				using (var renderer = new PageRenderer(page, pageLookup))
 				{
