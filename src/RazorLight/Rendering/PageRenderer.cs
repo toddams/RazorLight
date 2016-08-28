@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using RazorLight.Caching;
 using RazorLight.Templating;
 
 namespace RazorLight.Rendering
@@ -27,7 +26,6 @@ namespace RazorLight.Rendering
 			ViewStartPages = new List<TemplatePage>();
 		}
 
-
 		public List<TemplatePage> ViewStartPages { get; }
 
 		public virtual async Task RenderAsync(PageContext context)
@@ -37,13 +35,14 @@ namespace RazorLight.Rendering
 				throw new ArgumentNullException(nameof(context));
 			}
 
-			ViewBufferTextWriter bodyWriter = await RenderPageAsync(razorPage, context, invokeViewStarts: true);
+			ViewBufferTextWriter bodyWriter = await RenderPageAsync(this.razorPage, context, invokeViewStarts: true);
 			await RenderLayoutAsync(context, bodyWriter);
 		}
 
 		private Task RenderPageCoreAsync(TemplatePage page, PageContext context)
 		{
 			page.PageContext = context;
+			page.PageLookup = this.pageLookup;
 			return page.ExecuteAsync();
 		}
 

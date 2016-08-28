@@ -149,7 +149,6 @@ namespace RazorLight
 			using (var writer = new StringWriter())
 			{
 				page.PageContext.Writer = writer;
-				page.PageLookup = this.pageLookup;
 
 				using (var renderer = new PageRenderer(page, pageLookup))
 				{
