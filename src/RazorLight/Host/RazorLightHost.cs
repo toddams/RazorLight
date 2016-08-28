@@ -116,6 +116,10 @@ namespace RazorLight.Host
 			}
 		}
 
+		/// <summary>
+		/// Gets the model type used by default when no model is specified.
+		/// </summary>
+		/// <remarks>This value is used as the generic type argument for the base type </remarks>
 		public virtual string DefaultModel
 		{
 			get
@@ -126,6 +130,15 @@ namespace RazorLight.Host
 			{
 				_defaultModel = value;
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets the name attribute that is used to decorate properties that are injected and need to be
+		/// activated.
+		/// </summary>
+		public virtual string InjectAttribute
+		{
+			get { return "RazorLight.Host.Internal.RazorInjectAttribute"; }
 		}
 
 		public virtual IReadOnlyList<Chunk> DefaultInheritedChunks
@@ -200,7 +213,8 @@ namespace RazorLight.Host
 
 			return new RazorLightCSharpCodeGenerator(
 				context,
-				DefaultModel);
+				DefaultModel,
+				InjectAttribute);
 		}
 	}
 }

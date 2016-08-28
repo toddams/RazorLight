@@ -10,10 +10,12 @@ namespace RazorLight.Host
 	public class RazorLightCSharpCodeGenerator : CSharpCodeGenerator
 	{
 		private readonly string _defaultModel;
+		private readonly string _injectAttribute;
 
 		public RazorLightCSharpCodeGenerator(
 			CodeGeneratorContext context,
-			string defaultModel)
+			string defaultModel,
+			string injectAttribute)
 			: base(context)
 		{
 			if (context == null)
@@ -26,7 +28,13 @@ namespace RazorLight.Host
 				throw new ArgumentNullException(nameof(defaultModel));
 			}
 
+			if (injectAttribute == null)
+			{
+				throw new ArgumentNullException(nameof(injectAttribute));
+			}
+
 			_defaultModel = defaultModel;
+			_injectAttribute = injectAttribute;
 		}
 
 		protected override CSharpCodeVisitor CreateCSharpCodeVisitor(
@@ -69,6 +77,24 @@ namespace RazorLight.Host
 			}
 
 			return new RazorLightCSharpDesignTimeCodeVisitor(csharpCodeVisitor, writer, context);
+		}
+
+		protected override void BuildConstructor(CSharpCodeWriter writer)
+		{
+			if (writer == null)
+			{
+				throw new ArgumentNullException(nameof(writer));
+			}
+
+			base.BuildConstructor(writer);
+
+			writer.WriteLineHiddenDirective();
+
+			var injectVisitor = new InjectChunkVisitor(writer, Context, _injectAttribute);
+			injectVisitor.Accept(Context.ChunkTreeBuilder.Root.Children);
+
+			writer.WriteLine();
+			writer.WriteLineHiddenDirective();
 		}
 	}
 }

@@ -5,18 +5,22 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Chunks.Generators;
 using Microsoft.AspNetCore.Razor.Parser;
+using Microsoft.AspNetCore.Razor.Parser.SyntaxTree;
+using Microsoft.AspNetCore.Razor.Tokenizer.Symbols;
 
 namespace RazorLight.Host
 {
 	public class RazorLightCodeParser : CSharpCodeParser
 	{
 		private const string ModelKeyword = "model";
+		private const string InjectKeyword = "inject";
 		private SourceLocation? _endInheritsLocation;
 		private bool _modelStatementFound;
 
 		public RazorLightCodeParser()
 		{
 			MapDirectives(ModelDirective, ModelKeyword);
+			MapDirectives(InjectDirective, InjectKeyword);
 		}
 
 		protected override void InheritsDirective()
@@ -63,6 +67,81 @@ namespace RazorLight.Host
 			_modelStatementFound = true;
 
 			CheckForInheritsAndModelStatements();
+		}
+
+		protected virtual void InjectDirective()
+		{
+			// @inject MyApp.MyService MyServicePropertyName
+			AssertDirective(InjectKeyword);
+			var startLocation = CurrentLocation;
+			AcceptAndMoveNext();
+
+			Context.CurrentBlock.Type = BlockType.Directive;
+
+			// Accept whitespace
+			var remainingWhitespace = AcceptSingleWhiteSpaceCharacter();
+			var keywordwithSingleWhitespaceLength = Span.GetContent().Value.Length;
+			if (Span.Symbols.Count > 1)
+			{
+				Span.EditHandler.AcceptedCharacters = AcceptedCharacters.None;
+			}
+			Output(SpanKind.MetaCode);
+
+			if (remainingWhitespace != null)
+			{
+				Accept(remainingWhitespace);
+			}
+			var remainingWhitespaceLength = Span.GetContent().Value.Length;
+
+			// Consume any other whitespace tokens.
+			AcceptWhile(IsSpacingToken(includeNewLines: false, includeComments: true));
+
+			var hasTypeError = !At(CSharpSymbolType.Identifier);
+			if (hasTypeError)
+			{
+				Context.OnError(
+					startLocation, 
+					"Inject keyword must be followed by type name",
+					InjectKeyword.Length);
+			}
+
+			// Accept 'MyApp.MyService'
+			NamespaceOrTypeName();
+
+			// typeName now contains the token 'MyApp.MyService'
+			var typeName = Span.GetContent().Value;
+
+			AcceptWhile(IsSpacingToken(includeNewLines: false, includeComments: true));
+
+			if (!hasTypeError && (EndOfFile || At(CSharpSymbolType.NewLine)))
+			{
+				// Add an error for the property name only if we successfully read the type name
+				Context.OnError(
+					startLocation, 
+					"Property name is required",
+					keywordwithSingleWhitespaceLength + remainingWhitespaceLength + typeName.Length);
+			}
+
+			// Read until end of line. Span now contains 'MyApp.MyService MyServiceName'.
+			AcceptUntil(CSharpSymbolType.NewLine);
+			if (!Context.DesignTimeMode)
+			{
+				// We want the newline to be treated as code, but it causes issues at design-time.
+				Optional(CSharpSymbolType.NewLine);
+			}
+
+			// Parse out 'MyServicePropertyName' from the Span.
+			var propertyName = Span.GetContent()
+				.Value
+				.Substring(typeName.Length);
+
+			// ';' is optional
+			propertyName = RemoveWhitespaceAndTrailingSemicolons(propertyName);
+			Span.ChunkGenerator = new InjectParameterGenerator(typeName.Trim(), propertyName);
+
+			// Output the span and finish the block
+			CompleteBlock();
+			Output(SpanKind.Code, AcceptedCharacters.AnyExceptNewline);
 		}
 
 		private SpanChunkGenerator CreateModelChunkGenerator(string model)
