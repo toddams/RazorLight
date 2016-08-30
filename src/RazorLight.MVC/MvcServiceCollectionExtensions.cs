@@ -56,8 +56,18 @@ namespace RazorLight.MVC
 				p.GetService<ICompilerCache>()));
 
 			services.AddSingleton<IPageLookup, FilesystemPageLookup>();
+			services.AddSingleton<PropertyInjector>();
 
-			services.AddSingleton<IRazorLightEngine, RazorLightEngine>();
+			services.AddSingleton<IRazorLightEngine, RazorLightEngine>(p => 
+			{
+				var engine = new RazorLightEngine(
+					p.GetRequiredService<IEngineCore>(),
+					p.GetRequiredService<IPageLookup>());
+
+				AddEngineRenderCallbacks(engine, p);
+
+				return engine;
+			});
 		}
 
 		public static void AddRazorLight(this IServiceCollection services, Type rootType)
@@ -88,6 +98,13 @@ namespace RazorLight.MVC
 			services.AddSingleton<IPageLookup, DefaultPageLookup>();
 
 			services.AddSingleton<IRazorLightEngine, RazorLightEngine>();
+		}
+
+		private static void AddEngineRenderCallbacks(IRazorLightEngine engine, IServiceProvider services)
+		{
+			var injector = services.GetRequiredService<PropertyInjector>();
+
+			engine.PreRenderCallbacks.Add(template => injector.Inject(template));
 		}
 	}
 }
