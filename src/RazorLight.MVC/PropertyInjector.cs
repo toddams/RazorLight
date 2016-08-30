@@ -14,12 +14,22 @@ namespace RazorLight.MVC
 
 		public PropertyInjector(IServiceProvider services)
 		{
+			if(services == null)
+			{
+				throw new ArgumentNullException(nameof(services));
+			}
+
 			this.services = services;
 			this._propertyCache = new ConcurrentDictionary<PropertyInfo, FastPropertySetter>();
 		}
 
 		public void Inject(TemplatePage page)
 		{
+			if(page == null)
+			{
+				throw new ArgumentNullException(nameof(page));
+			}
+
 			PropertyInfo[] properties = page.GetType().GetRuntimeProperties()
 			   .Where(p =>
 			   {
