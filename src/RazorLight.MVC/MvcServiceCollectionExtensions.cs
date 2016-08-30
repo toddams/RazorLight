@@ -90,7 +90,8 @@ namespace RazorLight.MVC
 			var configuration = EngineConfiguration.Default;
 			config?.Invoke(configuration);
 
-			services.AddSingleton(p => configuration);
+			services.AddSingleton<IEngineConfiguration>(configuration);
+
 			services.AddTransient<ITemplateManager>(p => new EmbeddedResourceTemplateManager(rootType));
 			services.AddSingleton<IEngineCore, EngineCore>();
 
