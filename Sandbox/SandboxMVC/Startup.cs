@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RazorLight;
 using RazorLight.MVC;
 
 namespace SandboxMVC
@@ -34,7 +33,9 @@ namespace SandboxMVC
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
-			services.AddRazorLight("~/Views", EngineConfiguration.Default);
+			services.AddTransient<TestViewModel>();
+
+			services.AddRazorLight("~/Views");
 
             services.AddMvc();
         }
