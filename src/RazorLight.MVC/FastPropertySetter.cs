@@ -26,7 +26,6 @@ namespace RazorLight.MVC
 
 			Property = property;
 			Name = property.Name;
-			_valueSetter = MakeFastPropertySetter(Property);
 		}
 
 		private Action<object, object> _valueSetter;
