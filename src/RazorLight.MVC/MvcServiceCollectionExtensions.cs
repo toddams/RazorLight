@@ -10,12 +10,13 @@ namespace RazorLight.MVC
 {
 	public static class MvcServiceCollectionExtensions
     {
-		public static void AddRazorLight(this IServiceCollection services, string root)
-		{
-			services.AddRazorLight(root, null);
-		}
-
-		public static void AddRazorLight(this IServiceCollection services, string root, Action<IEngineConfiguration> config)
+		/// <summary>
+		/// Adds RazorLight services that resolve templates from a given <paramref name="root"/>
+		/// </summary>
+		/// <param name="services">Service collection</param>
+		/// <param name="root">Root views folder</param>
+		/// <param name="config">Configuration (can be null)</param>
+		public static void AddRazorLight(this IServiceCollection services, string root, Action<IEngineConfiguration> config = null)
 		{
 			if (services == null)
 			{
@@ -70,12 +71,13 @@ namespace RazorLight.MVC
 			});
 		}
 
-		public static void AddRazorLight(this IServiceCollection services, Type rootType)
-		{
-			services.AddRazorLight(rootType, null);
-		}
-
-		public static void AddRazorLight(this IServiceCollection services, Type rootType, Action<IEngineConfiguration> config)
+		/// <summary>
+		/// Creates RazorLight services that resolves templates inside given type assembly as a EmbeddedResource
+		/// </summary>
+		/// <param name="services">Service collection</param>
+		/// <param name="rootType">Root type where</param>
+		/// <param name="config">Configuration (can be null)</param>
+		public static void AddRazorLight(this IServiceCollection services, Type rootType, Action<IEngineConfiguration> config = null)
 		{
 			if (services == null)
 			{
