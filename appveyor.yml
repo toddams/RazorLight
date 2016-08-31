@@ -12,5 +12,7 @@ before_build:
 build_script:
   - dotnet build "src\RazorLight" -c %CONFIGURATION% --no-dependencies
   - dotnet build "tests\RazorLight.Tests" -c %CONFIGURATION% --no-dependencies
+  - dotnet build "tests\RazorLight.MVC.Tests" -c %CONFIGURATION% --no-dependencies
 test_script:
   - dotnet test "tests\RazorLight.Tests" -c %CONFIGURATION%
+  - dotnet test "tests\RazorLight.MVC.Tests" -c %CONFIGURATION%
