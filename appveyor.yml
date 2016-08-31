@@ -11,7 +11,7 @@ before_build:
   - appveyor-retry dotnet restore -v Minimal
 build_script:
   - dotnet build "src\RazorLight" -c %CONFIGURATION% --no-dependencies
-  - dotnet build "src\RazorLight.MVC -c %CONFIGURATION% --no-dependencies
+  - dotnet build "src\RazorLight.MVC" -c %CONFIGURATION% --no-dependencies
   - dotnet build "tests\RazorLight.Tests" -c %CONFIGURATION% --no-dependencies
   - dotnet build "tests\RazorLight.MVC.Tests" -c %CONFIGURATION% --no-dependencies
 test_script:
