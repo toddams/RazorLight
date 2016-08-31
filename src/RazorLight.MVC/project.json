@@ -2,7 +2,7 @@
   "title": "RazorLight ASP.NET MVC Core integration",
   "name": "RazorLight.MVC",
   "language": "en",
-  "version": "1.0.0-beta1",
+  "version": "1.0.0",
   "description": "This package adds integration to ASP.NET MVC Core",
   "authors": [ "toddams" ],
 
@@ -16,5 +16,11 @@
       },
       "imports": "dnxcore50"
     }
+  },
+
+  "scripts": {
+    "postcompile": [
+      "../../makeNuget.cmd %compile:Configuration% Release ../../nuget"
+    ]
   }
 }
