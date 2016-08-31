@@ -7,16 +7,14 @@ Install the nuget package
 	Install-Package RazorLight -Pre
 
 
-Use [Razor parsing engine](https://github.com/aspnet/Razor) to build dynamic templates from strings / files / embedded resources without any efforts. From the very beginning library was built for [.NET Core](https://dotnet.github.io/) projects, but with a release of [.NET Platform Standard](https://github.com/dotnet/corefx/blob/master/Documentation/architecture/net-platform-standard.md) - it is also possible to use it on full .NET Framework (>= 4.6.2)
+Use [Razor parsing engine](https://github.com/aspnet/Razor) to build dynamic templates from strings / files / embedded resources without any efforts. From the very beginning library was built for [.NET Core](https://dotnet.github.io/) projects (NetStandard 1.6), but now Full .NET Framework v4.5.1 (and higher) is also supported.
 
 ## Features
 * Pass a model to your views (aka @model MyTestViewModel)
 * Build templates from strings / files / embedded resources
-* Layout page and sections (like in ASP.NET MVC)
-* ViewStart page (like in ASP.NET MVC)
-* Custom namespaces (like _ViewStart)
-* Templates are compiled once and cached. Next time you parse a template with the same key - you'll get it from the cache
-* Templates are recompiled when RazorLight detects that template file was changed
+* Layout pages, sections and ViewStart pages (like in ASP.NET MVC)
+* ASP.NET MVC Integration ([RazorLight.MVC](https://www.nuget.org/packages/RazorLight.MVC/)). Inject services in your templates using @inject feature (Dependency Injection)
+* Performance. After template is compiled - result is put in MemoryCache. Templates are recompiled when RazorLight detects that template file was changed
 * Create a custom ITemplateManager to resolve templates for ex. from your database
 
 
