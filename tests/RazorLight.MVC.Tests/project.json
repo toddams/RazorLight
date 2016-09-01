@@ -1,13 +1,17 @@
-﻿{
+{
   "version": "1.0.0-*",
   "testRunner": "xunit",
+  "buildOptions": {
+    "preserveCompilationContext": true
+  },
 
   "dependencies": {
     "xunit": "2.2.0-beta2-build3300",
     "RazorLight.MVC": "1.0.0-beta*",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "System.Runtime": "4.1.0",
-    "Moq": "4.6.36-alpha"
+    "Moq": "4.6.36-alpha",
+    "Microsoft.Extensions.DependencyInjection": "1.0.0"
   },
 
   "frameworks": {
