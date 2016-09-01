@@ -82,6 +82,36 @@ string result = engine.Parse("Test", model);
 
 ````
 
+## ASP.NET MVC Core integration
+- **Add package**
+
+    ````Install-Package RazorLight.MVC````
+
+- **Add RazorLight services in Startup.cs**
+
+````CSharp
+public void ConfigureServices(IServiceCollection services)
+{
+     ....
+    services.AddRazorLight("/Views"); // <- This one
+     ....
+}
+````
+
+- **Retreive IRazorLightEngine instance from controller constructor**
+````CSharp
+private readonly IRazorLightEngine engine;
+
+public HomeController(IRazorLightEngine engine)
+{
+    this.engine = engine;
+}
+````
+- **Inject services to your templates**
+````CSharp
+@inject MyProject.TestViewModel myModel
+````
+
 ## FAQ
 ### I'm getting "Can't load metadata reference from the entry assembly" exception
 Just set ```preserveCompilationContext": true``` in your project.json
