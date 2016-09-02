@@ -109,7 +109,7 @@ public HomeController(IRazorLightEngine engine)
 ````
 - **Inject services to your templates**
 ````CSharp
-@inject MyProject.TestViewModel myModel
+@inject MyProject.TestService myService
 ````
 
 ## FAQ
