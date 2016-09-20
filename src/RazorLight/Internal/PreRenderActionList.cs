@@ -27,6 +27,29 @@ namespace RazorLight.Internal
 			}
 		}
 
+		public void AddRange(IEnumerable<Action<TemplatePage>> items)
+		{
+			if(items == null)
+			{
+				throw new ArgumentNullException(nameof(items));
+			}
+
+			lock (_lock)
+			{
+				this.items.AddRange(items);
+			}
+		}
+
+		public int Count
+		{
+			get
+			{
+				lock (_lock)
+				{
+					return items.Count;
+				}
+			}
+		}
 
 		public IEnumerator<Action<TemplatePage>> GetEnumerator()
 		{

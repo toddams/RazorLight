@@ -33,7 +33,7 @@ namespace RazorLight
 
 		public IEngineConfiguration Configuration { get; }
 
-		public PreRenderActionList PreRenderCallbacks { get; set; }
+		public PreRenderActionList PreRenderCallbacks { get; private set; }
 
 		/// <summary>
 		/// Parses a template with a given <paramref name="key" />
@@ -154,14 +154,10 @@ namespace RazorLight
 			{
 				page.PageContext.Writer = writer;
 
-				foreach(var callback in this.PreRenderCallbacks)
-				{
-					callback(page);
-				}
-
 				using (var renderer = new PageRenderer(page, pageLookup))
 				{
 					renderer.ViewStartPages.AddRange(page.PageContext.ViewStartPages);
+					renderer.PreRenderCallbacks.AddRange(this.PreRenderCallbacks);
 					renderer.RenderAsync(page.PageContext).Wait();
 					return writer.ToString();
 				}

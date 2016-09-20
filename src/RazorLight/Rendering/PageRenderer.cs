@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using RazorLight.Templating;
+using RazorLight.Internal;
 
 namespace RazorLight.Rendering
 {
@@ -24,9 +25,11 @@ namespace RazorLight.Rendering
 			_htmlEncoder = HtmlEncoder.Default;
 			_bufferScope = new MemoryPoolViewBufferScope();
 			ViewStartPages = new List<TemplatePage>();
+			PreRenderCallbacks = new PreRenderActionList();
 		}
 
 		public List<TemplatePage> ViewStartPages { get; }
+		public PreRenderActionList PreRenderCallbacks { get; }
 
 		public virtual async Task RenderAsync(PageContext context)
 		{
@@ -79,6 +82,21 @@ namespace RazorLight.Rendering
 
 			try
 			{
+				if(PreRenderCallbacks?.Count > 0)
+				{
+					foreach(var callback in PreRenderCallbacks)
+					{
+						try
+						{
+							callback(page);
+						}
+						catch (Exception)
+						{
+							//Ignore
+						}
+					}
+				}
+
 				if (invokeViewStarts)
 				{
 					// Execute view starts using the same context + writer as the page to render.
