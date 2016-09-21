@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using System.Reflection;
 #if NETSTANDARD1_6
 using Microsoft.Extensions.DependencyModel;
 #endif
@@ -42,6 +42,11 @@ namespace RazorLight
 				.Select(a => MetadataReference.CreateFromFile(a.Location))
 				.ToList()
 				.ForEach(a => metadataReferences.Add(a));
+
+			//Ensure RuntimeBinder assembly is added to support Dynamic
+			var binderReference = MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly.Location);
+			if (!metadataReferences.Contains(binderReference))
+				metadataReferences.Add(binderReference);
 #endif
 
 			return metadataReferences;
