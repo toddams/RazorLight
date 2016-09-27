@@ -2,7 +2,7 @@
   "title": "RazorLight ASP.NET MVC Core integration",
   "name": "RazorLight.MVC",
   "language": "en",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This package adds integration to ASP.NET MVC Core",
   "authors": [ "toddams" ],
 
