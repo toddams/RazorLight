@@ -1,6 +1,10 @@
 # RazorLight
 
-[![Build Status](https://travis-ci.org/toddams/RazorLight.svg?branch=master)](https://travis-ci.org/toddams/RazorLight) [![Build status](https://ci.appveyor.com/api/projects/status/x4x8y0ue3w8cswhf?svg=true)](https://ci.appveyor.com/project/toddams/razorlight)
+| Build status | Nuget package |
+| --- | --- |
+| [![Build Status](https://travis-ci.org/toddams/RazorLight.svg?branch=master)](https://travis-ci.org/toddams/RazorLight)  [![Build status](https://ci.appveyor.com/api/projects/status/x4x8y0ue3w8cswhf?svg=true)](https://ci.appveyor.com/project/toddams/razorlight) | [![NuGet Pre Release](https://img.shields.io/nuget/vpre/RazorLight.svg?maxAge=2592000?style=flat-square)](https://www.nuget.org/packages/RazorLight/) |
+
+
 ## Introduction
 Install the nuget package
 
