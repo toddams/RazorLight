@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using RazorLight.Compilation;
+using RazorLight.Internal;
 
 namespace RazorLight
 {
@@ -52,6 +53,7 @@ namespace RazorLight
 			this.CompilerService = compilerService;
 
 			this.Namespaces = new HashSet<string>();
+			this.PreRenderCallbacks = new PreRenderActionList();
 		}
 
 		/// <summary>
@@ -62,5 +64,7 @@ namespace RazorLight
 			new DefaultRazorTemplateCompiler(),
 			new RoslynCompilerService(
 				new UseEntryAssemblyMetadataResolver()));
+
+		public PreRenderActionList PreRenderCallbacks { get; private set; }
 	}
 }

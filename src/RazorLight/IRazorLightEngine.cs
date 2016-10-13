@@ -8,7 +8,7 @@ namespace RazorLight
     {
 		IEngineConfiguration Configuration { get; }
 
-		PreRenderActionList PreRenderCallbacks { get; }
+		IEngineCore Core { get; }
 
 		/// <summary>
 		/// Parses a template with a given <paramref name="key" />
@@ -39,25 +39,6 @@ namespace RazorLight
 		/// <returns>Returns parsed string</returns>
 		/// <remarks>Result is stored in cache</remarks>
 		string Parse(string key, object model, Type modelType, ExpandoObject viewBag);
-
-		/// <summary>
-		/// Parses a string
-		/// </summary>
-		/// <typeparam name="T">Type of the model</typeparam>
-		/// <param name="content">Template to parse</param>
-		/// <param name="model">Template model</param>
-		/// <returns>Returns parsed string</returns>
-		/// <remarks>Result is not cached</remarks>
-		string ParseString<T>(string content, T model);
-
-		/// <summary>
-		/// Parses a string
-		/// </summary>
-		/// <param name="content">Template to parse</param>
-		/// <param name="model">Template model</param>
-		/// <param name="modelType">Type of the model</param>
-		/// <returns></returns>
-		string ParseString(string content, object model, Type modelType);
 
 		/// <summary>
 		/// Creates an instance of the compiled type and casts it to TemplatePage

@@ -36,10 +36,14 @@ namespace RazorLight.Templating
 			return PageLookupResult.Failed;
 		}
 
+		/// <summary>
+		/// When overriden in derived class - returns a list of viewstart pages for the page with a given key
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		protected virtual IReadOnlyList<PageLookupItem> GetViewStartPages(string key)
 		{
 			return new List<PageLookupItem>();
 		}
-
 	}
 }

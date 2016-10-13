@@ -37,8 +37,8 @@ namespace RazorLight
 				throw new ArgumentNullException(nameof(configuration));
 			}
 
-			ITemplateManager manager = new FilesystemTemplateManager(root);
-			IEngineCore core = new EngineCore(manager, configuration);
+			ITemplateManager templateManager = new FilesystemTemplateManager(root);
+			IEngineCore core = new EngineCore(templateManager, configuration);
 
 			ICompilerCache compilerCache = new TrackingCompilerCache(root);
 			IPageFactoryProvider pageFactory = new CachingPageFactory(core.KeyCompile, compilerCache);

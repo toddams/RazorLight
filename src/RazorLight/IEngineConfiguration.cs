@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using RazorLight.Compilation;
+using RazorLight.Internal;
 
 namespace RazorLight
 {
@@ -24,5 +25,7 @@ namespace RazorLight
 		/// Additional namespace to include into template (_ViewImports like)
 		/// </summary>
 		ISet<string> Namespaces { get; }
+
+		PreRenderActionList PreRenderCallbacks { get; }
 	}
 }

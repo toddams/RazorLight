@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Dynamic;
 using System.IO;
-using RazorLight.Compilation;
 using RazorLight.Rendering;
 using RazorLight.Templating;
-using RazorLight.Internal;
 
 namespace RazorLight
 {
@@ -28,13 +26,12 @@ namespace RazorLight
 			this.core = core;
 			this.pageLookup = pagelookup;
 			this.Configuration = core.Configuration;
-			this.PreRenderCallbacks = new PreRenderActionList();
 		}
 
 		public IEngineConfiguration Configuration { get; }
 
-		public PreRenderActionList PreRenderCallbacks { get; private set; }
-
+		public IEngineCore Core => core;
+		
 		/// <summary>
 		/// Parses a template with a given <paramref name="key" />
 		/// </summary>
@@ -91,45 +88,6 @@ namespace RazorLight
 		}
 
 		/// <summary>
-		/// Parses a string
-		/// </summary>
-		/// <typeparam name="T">Type of the model</typeparam>
-		/// <param name="content">Template to parse</param>
-		/// <param name="model">Template model</param>
-		/// <returns>Returns parsed string</returns>
-		/// <remarks>Result is not cached</remarks>
-		public string ParseString<T>(string content, T model)
-		{
-			return ParseString(content, model, typeof(T));
-		}
-
-		/// <summary>
-		/// Parses a string
-		/// </summary>
-		/// <param name="content">Template to parse</param>
-		/// <param name="model">Template model</param>
-		/// <param name="modelType">Type of the model</param>
-		/// <returns></returns>
-		public string ParseString(string content, object model, Type modelType)
-		{
-			if (string.IsNullOrEmpty(content))
-			{
-				throw new ArgumentNullException(nameof(content));
-			}
-
-			ITemplateSource templateSource = new LoadedTemplateSource(content);
-
-			ModelTypeInfo modelTypeInfo = new ModelTypeInfo(modelType);
-			CompilationResult result = core.CompileSource(templateSource, modelTypeInfo);
-			result.EnsureSuccessful();
-
-			TemplatePage page = Activate(result.CompiledType);
-			page.PageContext = new PageContext() { ModelTypeInfo = modelTypeInfo };
-
-			return RunTemplate(page, model);
-		}
-
-		/// <summary>
 		/// Creates an instance of the compiled type and casts it to TemplatePage
 		/// </summary>
 		/// <param name="compiledType">Type to activate</param>
@@ -157,7 +115,7 @@ namespace RazorLight
 				using (var renderer = new PageRenderer(page, pageLookup))
 				{
 					renderer.ViewStartPages.AddRange(page.PageContext.ViewStartPages);
-					renderer.PreRenderCallbacks.AddRange(this.PreRenderCallbacks);
+					renderer.PreRenderCallbacks.AddRange(Configuration.PreRenderCallbacks);
 					renderer.RenderAsync(page.PageContext).Wait();
 					return writer.ToString();
 				}

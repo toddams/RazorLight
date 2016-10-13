@@ -107,7 +107,7 @@ namespace RazorLight.MVC
 		{
 			var injector = services.GetRequiredService<PropertyInjector>();
 
-			engine.PreRenderCallbacks.Add(template => injector.Inject(template));
+			engine.Configuration.PreRenderCallbacks.Add(template => injector.Inject(template));
 		}
 	}
 }
