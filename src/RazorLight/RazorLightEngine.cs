@@ -116,7 +116,7 @@ namespace RazorLight
 				{
 					renderer.ViewStartPages.AddRange(page.PageContext.ViewStartPages);
 					renderer.PreRenderCallbacks.AddRange(Configuration.PreRenderCallbacks);
-					renderer.RenderAsync(page.PageContext).Wait();
+					renderer.RenderAsync(page.PageContext).GetAwaiter().GetResult();
 					return writer.ToString();
 				}
 			}
