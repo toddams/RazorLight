@@ -2,7 +2,7 @@
   "title": "RazorLight",
   "name": "RazorLight",
   "language": "en",
-  "version": "1.0.0-beta6",
+  "version": "1.0.0-rc1",
   "description": "Use Razor template engine to parse strings / files / EmbeddedResources for .NET Core ",
   "authors": [ "toddams" ],
 
