@@ -232,7 +232,7 @@ namespace RazorLight.Rendering
 			PageLookupResult layoutPageResult = pageLookup.GetPage(layoutKey);
 			if (!layoutPageResult.Success)
 			{
-				throw new InvalidOperationException($"Layout cannot be located ({layoutKey})");
+				throw new RazorLightException($"Layout cannot be located ({layoutKey})");
 			}
 
 			TemplatePage layoutPage = layoutPageResult.ViewEntry.PageFactory();
