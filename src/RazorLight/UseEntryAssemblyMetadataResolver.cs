@@ -29,7 +29,7 @@ namespace RazorLight
 			if (!metadataReferences.Any())
 			{
 				throw new RazorLightException("Can't load metadata reference from the entry assembly. " +
-					"Make sure preserveCompilationContext is set to true in compilerOptions section of project.json");
+					"Make sure preserveCompilationContext is set to true in buildOptions section of project.json");
 			}
 #elif NET451
 			//DependencyContext works also on 4.5.1, but requires new project.json project structure

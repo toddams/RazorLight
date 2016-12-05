@@ -118,4 +118,20 @@ public HomeController(IRazorLightEngine engine)
 
 ## FAQ
 ### I'm getting "Can't load metadata reference from the entry assembly" exception
-Just set ```preserveCompilationContext": true``` in your project.json
+Just set ```preserveCompilationContext": true``` under the buildOptions section in your project.json.
+
+Example project.json:
+```
+{
+    "version": "x.x.x.x",
+    
+    ...
+    
+    "buildOptions": {
+        ...
+        "preserveCompilationContext": true
+    }
+
+    ...
+}
+```
