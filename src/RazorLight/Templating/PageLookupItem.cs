@@ -6,9 +6,9 @@ namespace RazorLight.Templating
 	{
 		public string Key { get; set; }
 
-		public Func<TemplatePage> PageFactory { get; set; }
+		public Func<ITemplatePage> PageFactory { get; set; }
 
-		public PageLookupItem(string key, Func<TemplatePage> factory)
+		public PageLookupItem(string key, Func<ITemplatePage> factory)
 		{
 			this.Key = key;
 			this.PageFactory = factory;

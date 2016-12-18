@@ -4,17 +4,17 @@ using System.Collections.Generic;
 
 namespace RazorLight.Internal
 {
-	public class PreRenderActionList : IEnumerable<Action<TemplatePage>>
+	public class PreRenderActionList : IEnumerable<Action<ITemplatePage>>
 	{
-		private readonly List<Action<TemplatePage>> items;
+		private readonly List<Action<ITemplatePage>> items;
 		private readonly object _lock = new object();
 
 		public PreRenderActionList()
 		{
-			this.items = new List<Action<TemplatePage>>();
+			this.items = new List<Action<ITemplatePage>>();
 		}
 
-		public void Add(Action<TemplatePage> item)
+		public void Add(Action<ITemplatePage> item)
 		{
 			if (item == null)
 			{
@@ -27,7 +27,7 @@ namespace RazorLight.Internal
 			}
 		}
 
-		public void AddRange(IEnumerable<Action<TemplatePage>> items)
+		public void AddRange(IEnumerable<Action<ITemplatePage>> items)
 		{
 			if(items == null)
 			{
@@ -51,11 +51,11 @@ namespace RazorLight.Internal
 			}
 		}
 
-		public IEnumerator<Action<TemplatePage>> GetEnumerator()
+		public IEnumerator<Action<ITemplatePage>> GetEnumerator()
 		{
 			lock (_lock)
 			{
-				return new SafeEnumerator<Action<TemplatePage>>(items.GetEnumerator(), _lock);
+				return new SafeEnumerator<Action<ITemplatePage>>(items.GetEnumerator(), _lock);
 			}
 		}
 

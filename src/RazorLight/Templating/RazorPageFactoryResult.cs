@@ -29,7 +29,7 @@ namespace RazorLight.Templating
 		/// <param name="razorPageFactory">The <see cref="TemplatePage"/> factory.</param>
 		/// <param name="expirationTokens">One or more <see cref="IChangeToken"/> instances.</param>
 		public RazorPageFactoryResult(
-			Func<TemplatePage> razorPageFactory,
+			Func<ITemplatePage> razorPageFactory,
 			IList<IChangeToken> expirationTokens)
 		{
 			if (razorPageFactory == null)
@@ -50,7 +50,7 @@ namespace RazorLight.Templating
 		/// The <see cref="TemplatePage"/> factory.
 		/// </summary>
 		/// <remarks>This property is <c>null</c> when <see cref="Success"/> is <c>false</c>.</remarks>
-		public Func<TemplatePage> RazorPageFactory { get; }
+		public Func<ITemplatePage> RazorPageFactory { get; }
 
 		/// <summary>
 		/// One or more <see cref="IChangeToken"/>s associated with this instance of

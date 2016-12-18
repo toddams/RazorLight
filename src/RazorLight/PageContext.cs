@@ -30,7 +30,7 @@ namespace RazorLight
 		/// <value>The view bag.</value>
 		public dynamic ViewBag => viewBag;
 
-		public IList<TemplatePage> ViewStartPages { get; } = new List<TemplatePage>();
+		public IList<ITemplatePage> ViewStartPages { get; } = new List<ITemplatePage>();
 
 		/// <summary>
 		/// Gets the info of the template model

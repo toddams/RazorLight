@@ -23,7 +23,7 @@ namespace RazorLight.MVC
 			this._propertyCache = new ConcurrentDictionary<PropertyInfo, FastPropertySetter>();
 		}
 
-		public void Inject(TemplatePage page)
+		public void Inject(ITemplatePage page)
 		{
 			if(page == null)
 			{

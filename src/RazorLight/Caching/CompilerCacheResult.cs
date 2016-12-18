@@ -48,7 +48,7 @@ namespace RazorLight.Caching
 			MemberAssignment propertyBindExpression = Expression.Bind(pathProperty, Expression.Constant(relativePath));
 			MemberInitExpression objectInitializeExpression = Expression.MemberInit(newExpression, propertyBindExpression);
 			PageFactory = Expression
-				.Lambda<Func<TemplatePage>>(objectInitializeExpression)
+				.Lambda<Func<ITemplatePage>>(objectInitializeExpression)
 				.Compile();
 		}
 
@@ -82,7 +82,7 @@ namespace RazorLight.Caching
 		/// <summary>
 		/// Gets a delegate that creates an instance of the <see cref="IRazorPage"/>.
 		/// </summary>
-		public Func<TemplatePage> PageFactory { get; }
+		public Func<ITemplatePage> PageFactory { get; }
 
 	}
 }

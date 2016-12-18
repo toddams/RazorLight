@@ -94,7 +94,7 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="compiledType"></param>
 		/// <returns></returns>
-		public TemplatePage Activate(Type compiledType)
+		public ITemplatePage Activate(Type compiledType)
 		{
 			return (TemplatePage)Configuration.Activator.CreateInstance(compiledType);
 		}

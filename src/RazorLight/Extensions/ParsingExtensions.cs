@@ -39,7 +39,7 @@ namespace RazorLight.Extensions
 			CompilationResult result = engine.Core.CompileSource(templateSource, modelTypeInfo);
 			result.EnsureSuccessful();
 
-			TemplatePage page = engine.Activate(result.CompiledType);
+			ITemplatePage page = engine.Activate(result.CompiledType);
 			page.PageContext = new PageContext() { ModelTypeInfo = modelTypeInfo };
 
 			return engine.RunTemplate(page, model);
