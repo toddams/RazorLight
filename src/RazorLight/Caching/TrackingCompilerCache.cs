@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -85,12 +86,12 @@ namespace RazorLight.Caching
 					return cacheEntry;
 				}
 
-				string[] patterns = {
+				List<string> patterns = new List<string> {
 					normalizedPath,
-					$"{normalizedPath}.cshtml",
-					$"Shared/{normalizedPath}",
-					$"Shared/{normalizedPath}.cshtml"
+					$"Shared/{normalizedPath}"
 				};
+				if (normalizedPath.StartsWith("/Views/")) patterns.Add(normalizedPath.Substring("/Views/".Length));
+
 				var fileInfos = patterns.Select(p => _fileProvider.GetFileInfo(p));
 				fileInfo = (from p in fileInfos
 							where p.Exists

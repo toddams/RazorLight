@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.FileProviders;
@@ -38,12 +39,11 @@ namespace RazorLight.Templating.FileSystem
 				throw new ArgumentNullException(nameof(key));
 			}
 
-			string[] patterns = {
+			List<string> patterns = new List<string> {
 				key,
-				$"{key}.cshtml",
-				$"Shared/{key}",
-				$"Shared/{key}.cshtml"
+				$"Shared/{key}"
 			};
+			if (key.StartsWith("/Views/")) patterns.Add(key.Substring("/Views/".Length));
 			var fileInfos = patterns.Select(p => fileProvider.GetFileInfo(p));
 			IFileInfo fileInfo = (from p in fileInfos
 								  where p.Exists
