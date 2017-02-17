@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace RazorLight.Compilation
 {
@@ -61,7 +62,18 @@ namespace RazorLight.Compilation
 		{
 			if (CompilationFailures != null)
 			{
-				throw new TemplateCompilationException("Failed to compile generated razor view. See CompilationErrors for detailed information", CompilationFailures);
+				StringBuilder builder = new StringBuilder();
+				builder.AppendLine("Failed to compile generated Razor template:");
+
+				foreach(var error in CompilationFailures)
+				{
+					builder.AppendLine($"- {error}");
+				}
+
+				builder.AppendLine("\nSee CompilationErrors for detailed information");
+
+
+				throw new TemplateCompilationException(builder.ToString(), CompilationFailures);
 			}
 		}
 	}
