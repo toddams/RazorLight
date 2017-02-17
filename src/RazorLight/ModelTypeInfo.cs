@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Dynamic;
 using RazorLight.Extensions;
+using System.Reflection;
+using System.Linq;
 
 namespace RazorLight
 {
@@ -50,7 +52,26 @@ namespace RazorLight
 			this.Type = type;
 			this.IsStrongType = type != typeof(ExpandoObject) && !Type.IsAnonymousType();
 			this.TemplateType = IsStrongType ? Type : typeof(ExpandoObject);
-			this.TemplateTypeName = IsStrongType ? Type.Name : "dynamic";
+			this.TemplateTypeName = IsStrongType ? GetFriendlyName(Type) : "dynamic";
+		}
+
+		public static string GetFriendlyName(Type type)
+		{
+			if (IsGenericType(type))
+				return type.Namespace + "." + type.Name.Split('`')[0] + "<" + string.Join(", ", type.GetGenericArguments().Select(x => GetFriendlyName(x)).ToArray()) + ">";
+			else
+				return $"{type.Namespace}.{type.Name}";
+		}
+
+		private static bool IsGenericType(Type type)
+		{
+#if NETSTANDARD1_6
+			return type.GetTypeInfo().IsGenericType;
+#endif
+
+#if NET451
+			return type.IsGenericType;
+#endif
 		}
 	}
 }
