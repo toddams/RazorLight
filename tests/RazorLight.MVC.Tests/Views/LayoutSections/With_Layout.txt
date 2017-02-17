@@ -1,0 +1,33 @@
+namespace RazorLight.GeneratedTemplates
+{
+    using System;
+    using System.Linq;
+    using System.Collections.Generic;
+    using RazorLight.Internal;
+    using System.Threading.Tasks;
+
+    public class With_Layout_cshtml : RazorLight.TemplatePage<Sandbox.TestViewModel>
+    {
+        #line hidden
+        public With_Layout_cshtml()
+        {
+        }
+
+        #pragma warning disable 1998
+        public override async Task ExecuteAsync()
+        {
+            WriteLiteral("<div>Hello ");
+#line 3 "D:/MyProjects/RazorLight/sandbox/Sandbox/Views/LayoutSections/With_Layout.cshtml"
+      Write(Model.Title);
+
+#line default
+#line hidden
+            WriteLiteral("</div>\r\n\r\n");
+            DefineSection("Go", async(__razor_section_writer) => {
+                WriteLiteralTo(__razor_section_writer, "\r\n    <div>Inner section content</div>\r\n");
+            }
+            );
+        }
+        #pragma warning restore 1998
+    }
+}

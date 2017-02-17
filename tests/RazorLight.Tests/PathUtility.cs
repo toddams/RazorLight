@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 
 namespace RazorLight.Tests
 {
@@ -7,14 +8,18 @@ namespace RazorLight.Tests
 	{
 		public static string GetViewsPath()
 		{
-			string isTesting = Environment.GetEnvironmentVariable("IS_TESTING_ENVIRONMENT");
+			//string isTesting = Environment.GetEnvironmentVariable("IS_TESTING_ENVIRONMENT");
 
-			if (!string.IsNullOrEmpty(isTesting) && isTesting.Equals("true"))
-			{
-				return Path.Combine(Directory.GetCurrentDirectory(), "tests", "RazorLight.Tests", "Views");
-			}
+			//if (!string.IsNullOrEmpty(isTesting) && isTesting.Equals("true"))
+			//{
+			//	return Path.Combine(Directory.GetCurrentDirectory(), "tests", "RazorLight.Tests", "Views");
+			//}
 
-			return Path.Combine(Directory.GetCurrentDirectory(), "Views");
+			string assemblyLocation = typeof(PathUtility).GetTypeInfo().Assembly.Location;
+			string assemblyDir = Path.GetDirectoryName(assemblyLocation);
+			
+
+			return Path.Combine(assemblyDir, "Views");
 		}
 	}
 }

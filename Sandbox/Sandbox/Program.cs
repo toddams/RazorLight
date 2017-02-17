@@ -16,6 +16,12 @@ namespace Sandbox
 			string result = engine.ParseString("Hello @Model.Title ", model);
 
 			System.Console.WriteLine(result);
+
+		}
+
+		class Test
+		{
+			public int NAme { get; set; }
 		}
 	}
 }

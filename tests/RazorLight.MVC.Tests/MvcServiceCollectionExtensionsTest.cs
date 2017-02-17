@@ -16,7 +16,7 @@ namespace RazorLight.MVC.Tests
 		public void AddEngine_By_PhysicalRoot_Adds_Filesystem_Components()
 		{
 			var services = GetServices();
-			services.AddRazorLight("Fixtures");
+			services.AddRazorLight("/");
 
 			var provider = services.BuildServiceProvider();
 
@@ -56,7 +56,7 @@ namespace RazorLight.MVC.Tests
 		{
 			var services = GetServices();
 
-			services.AddRazorLight("Fixtures", o => o.Namespaces.Add("System.Diagnostics"));
+			services.AddRazorLight("/", o => o.Namespaces.Add("System.Diagnostics"));
 
 			var provider = services.BuildServiceProvider();
 			var engine = provider.GetRequiredService<IRazorLightEngine>();
