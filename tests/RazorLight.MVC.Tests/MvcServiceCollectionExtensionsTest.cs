@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using RazorLight.Caching;
 using RazorLight.Templating;
 using RazorLight.Templating.FileSystem;
 using Xunit;
 using Moq;
+using Microsoft.AspNetCore.Hosting;
 
 namespace RazorLight.MVC.Tests
 {

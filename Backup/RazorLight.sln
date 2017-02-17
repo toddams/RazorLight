@@ -1,27 +1,30 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26206.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3D0063BE-919D-4B3D-912B-C40E649D48F9}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RazorLight", "src\RazorLight\RazorLight.xproj", "{2A493354-5FDA-4581-B1B2-F44FF3856123}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sandbox", "sandbox", "{95F4EFD4-466D-448F-943E-5E2BF3F0A6E9}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Sandbox", "sandbox\Sandbox\Sandbox.xproj", "{7D90F0D9-C3DB-40D2-AAC4-A9B16ED6E6BC}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EFEB90D1-E91D-4175-BFEB-C58382193CBC}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2FCFF4F4-F1E8-41CD-B45F-7A14E04AAFF6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorLight", "src\RazorLight\RazorLight.csproj", "{2A493354-5FDA-4581-B1B2-F44FF3856123}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RazorLight.Tests", "tests\RazorLight.Tests\RazorLight.Tests.xproj", "{366D984F-1950-4924-89DF-410E7B1A5D13}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox", "sandbox\Sandbox\Sandbox.csproj", "{7D90F0D9-C3DB-40D2-AAC4-A9B16ED6E6BC}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RazorLight.MVC", "src\RazorLight.MVC\RazorLight.MVC.xproj", "{01399608-FEBB-4D81-97C9-7E04CC0A18CC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorLight.Tests", "tests\RazorLight.Tests\RazorLight.Tests.csproj", "{366D984F-1950-4924-89DF-410E7B1A5D13}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SandboxMVC", "sandbox\SandboxMVC\SandboxMVC.xproj", "{FFDB8127-4366-4D0E-A06C-8BAB00A8E0E1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorLight.MVC", "src\RazorLight.MVC\RazorLight.MVC.csproj", "{01399608-FEBB-4D81-97C9-7E04CC0A18CC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SandboxMVC", "sandbox\SandboxMVC\SandboxMVC.csproj", "{FFDB8127-4366-4D0E-A06C-8BAB00A8E0E1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorLight.MVC.Tests", "tests\RazorLight.MVC.Tests\RazorLight.MVC.Tests.csproj", "{4A4CEF3C-F76A-4E87-9F23-BD14AC72A9C2}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RazorLight.MVC.Tests", "tests\RazorLight.MVC.Tests\RazorLight.MVC.Tests.xproj", "{4A4CEF3C-F76A-4E87-9F23-BD14AC72A9C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,24 @@
+There are 3 default namespaces you should not enter manually:
+
++ System;
++ System.Linq;
++ System.Collections.Generic;
+
+As soon as you are using types from other namespaces, you must write those namespaces. 
+You can include them with "using" statement at the top of your template
+
+@using MyLibrary;
+
+But what if you want to have some kind of global namespaces, which you want your every template to have?
+ASP.NET MVC allows you to create a **ViewImports** file for that. So at the moment Razor parses your template - it also looking for ViewImports file on the same folder your view is located and on *Shared* folder.
+
+RazorLight supports files / embedded resources / custom sources. As *ViewImports* file is only appropriate while using files, in order to add namespaces to your templates use **IEngineConfiguration** for that.
+
+### Example
+
+````CSharp
+var config = EngineConfiguration.Default;
+config.Namespaces.Add("MyLibrary.Models");
+
+var engine = new EngineFactory.CreateEmbedded(typeof(SomeTypeInsideAssembly), config);
+````

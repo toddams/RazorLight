@@ -1,5 +1,5 @@
 ﻿using RazorLight;
-using System.Linq;
+using RazorLight.Extensions;
 
 namespace Sandbox
 {
@@ -7,10 +7,15 @@ namespace Sandbox
 	{
 		public static void Main(string[] args)
 		{
-			var engine = EngineFactory.CreatePhysical(@"D:\MyProjects\RazorLight\sandbox\Sandbox\Views");
-			var model = new TestViewModel();
+			var model = new TestViewModel()
+			{
+				Title = "Vasya"
+			};
 
+			var engine = EngineFactory.CreatePhysical(@"D:\");
+			string result = engine.ParseString("Hello @Model.Title ", model);
 
+			System.Console.WriteLine(result);
 		}
 	}
 }

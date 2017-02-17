@@ -8,7 +8,7 @@
     ]
   },
   "dependencies": {
-    "RazorLight": "1.0.0-beta*"
+    "RazorLight": "1.0.0-rc1"
   },
   "frameworks": {
     "netcoreapp1.0": {

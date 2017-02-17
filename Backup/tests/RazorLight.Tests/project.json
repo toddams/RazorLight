@@ -1,17 +1,21 @@
 {
   "version": "1.0.0-*",
   "testRunner": "xunit",
+
   "buildOptions": {
-    "preserveCompilationContext": true
+    "preserveCompilationContext": true,
+    "allowUnsafe": true,
+    "embed": [
+      "Views/*.cshtml"
+    ]
   },
 
   "dependencies": {
     "xunit": "2.2.0-beta2-build3300",
-    "RazorLight.MVC": "1.0.*",
+    "RazorLight": "1.0.0-rc*",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "System.Runtime": "4.1.0",
-    "Moq": "4.6.36-alpha",
-    "Microsoft.Extensions.DependencyInjection": "1.0.0"
+    "Moq": "4.6.36-alpha"
   },
 
   "frameworks": {
@@ -19,7 +23,7 @@
       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
-          "version": "1.0.0"
+          "version": "1.0.1"
         }
       }
     }
