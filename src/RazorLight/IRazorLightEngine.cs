@@ -5,7 +5,7 @@ using System.Dynamic;
 namespace RazorLight
 {
 	public interface IRazorLightEngine
-    {
+	{
 		IEngineConfiguration Configuration { get; }
 
 		IEngineCore Core { get; }
@@ -27,7 +27,7 @@ namespace RazorLight
 		/// <param name="viewBag">Dynamic ViewBag (can be null)</param>
 		/// <returns>Returns parsed string</returns>
 		/// <remarks>Result is stored in cache</remarks>
-		string Parse<T>(string key, T model, ExpandoObject viewBag);
+		string Parse<T>(string key, T model, dynamic viewBag);
 
 		/// <summary>
 		/// Parses a template with a given <paramref name="key" />
@@ -38,7 +38,7 @@ namespace RazorLight
 		/// <param name="viewBag">Dynamic ViewBag (can be null)</param>
 		/// <returns>Returns parsed string</returns>
 		/// <remarks>Result is stored in cache</remarks>
-		string Parse(string key, object model, Type modelType, ExpandoObject viewBag);
+		string Parse(string key, object model, Type modelType, dynamic viewBag);
 
 		/// <summary>
 		/// Creates an instance of the compiled type and casts it to TemplatePage

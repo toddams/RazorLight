@@ -13,7 +13,7 @@ namespace RazorLight
 			viewBag = new ExpandoObject();
 		}
 
-		public PageContext(ExpandoObject viewBag)
+		public PageContext(dynamic viewBag)
 		{
 			this.viewBag = viewBag ?? new ExpandoObject();
 		}
