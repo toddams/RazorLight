@@ -13,7 +13,7 @@ namespace RazorLight
 		/// and tracks file changes with <seealso cref="System.IO.FileSystemWatcher"/>
 		/// </summary>
 		/// <param name="root">Root folder where views are stored</param>
-		public static RazorLightEngine CreatePhysical(string root)
+		public static IRazorLightEngine CreatePhysical(string root)
 		{
 			return CreatePhysical(root, EngineConfiguration.Default);
 		}
@@ -25,7 +25,7 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="root">Root folder where views are stored</param>
 		/// <param name="configuration">Engine configuration</param>
-		public static RazorLightEngine CreatePhysical(string root, IEngineConfiguration configuration)
+		public static IRazorLightEngine CreatePhysical(string root, IEngineConfiguration configuration)
 		{
 			if (string.IsNullOrEmpty(root))
 			{
@@ -51,7 +51,7 @@ namespace RazorLight
 		/// Creates a <see cref="RazorLightEngine"/> that resolves templates inside given type assembly as a EmbeddedResource
 		/// </summary>
 		/// <param name="rootType">Root type where resource is located</param>
-		public static RazorLightEngine CreateEmbedded(Type rootType)
+		public static IRazorLightEngine CreateEmbedded(Type rootType)
 		{
 			return CreateEmbedded(rootType, EngineConfiguration.Default);
 		}
@@ -62,7 +62,7 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="rootType">Root type where resource is located</param>
 		/// <param name="configuration">Engine configuration</param>
-		public static RazorLightEngine CreateEmbedded(Type rootType, IEngineConfiguration configuration)
+		public static IRazorLightEngine CreateEmbedded(Type rootType, IEngineConfiguration configuration)
 		{
 			ITemplateManager manager = new EmbeddedResourceTemplateManager(rootType);
 			var dependencies = CreateDefaultDependencies(manager, configuration);
