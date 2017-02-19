@@ -45,7 +45,7 @@
     <PackageReference Include="xunit" Version="2.2.0-rc4-build3536" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
     <PackageReference Include="Moq" Version="4.6.38-alpha" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

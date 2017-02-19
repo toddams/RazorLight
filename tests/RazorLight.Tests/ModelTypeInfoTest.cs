@@ -1,4 +1,5 @@
-﻿using System.Dynamic;
+﻿using System.Collections.Generic;
+using System.Dynamic;
 using Xunit;
 
 namespace RazorLight.Tests
@@ -52,6 +53,27 @@ namespace RazorLight.Tests
 			var info = new ModelTypeInfo(typeof(TestViewModel));
 
 			Assert.Equal(info.TemplateType, typeof(TestViewModel));
+		}
+
+		[Fact]
+		public void Return_Corrent_FriendlyName()
+		{
+			var info = new ModelTypeInfo(typeof(TestViewModel));
+
+			string expectedTypeName = "RazorLight.Tests.TestViewModel";
+
+			Assert.Equal(info.TemplateTypeName, expectedTypeName);
+		}
+
+		[Fact]
+		public void Return_Correct_FriendlyName_On_Generic()
+		{
+			var model = new List<List<TestViewModel>>();
+			var info = new ModelTypeInfo(model.GetType());
+
+			string expectedTypeName = "System.Collections.Generic.List<System.Collections.Generic.List<RazorLight.Tests.TestViewModel>>";
+
+			Assert.Equal(info.TemplateTypeName, expectedTypeName);
 		}
 	}
 }
