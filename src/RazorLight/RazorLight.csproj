@@ -31,9 +31,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
-  <Target Name="PostcompileScript" AfterTargets="Build" Condition=" '$(IsCrossTargetingBuild)' != 'true' ">
+  <!--<Target Name="PostcompileScript" AfterTargets="Build" Condition=" '$(IsCrossTargetingBuild)' != 'true' ">
     <Exec Command="../../makeNuget.cmd $(Configuration) Release ../../nuget" />
-  </Target>
+  </Target>-->
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <PackageReference Include="System.Runtime.Loader" Version="4.0.0" />
