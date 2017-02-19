@@ -2,7 +2,7 @@
 
 | Build status | Nuget package |
 | --- | --- |
-| [![Build Status](https://travis-ci.org/toddams/RazorLight.svg?branch=master)](https://travis-ci.org/toddams/RazorLight)  [![Build status](https://ci.appveyor.com/api/projects/status/x4x8y0ue3w8cswhf?svg=true)](https://ci.appveyor.com/project/toddams/razorlight) | [![NuGet Pre Release](https://img.shields.io/nuget/vpre/RazorLight.svg?maxAge=2592000?style=flat-square)](https://www.nuget.org/packages/RazorLight/) |
+| [![Build Status](https://travis-ci.org/toddams/RazorLight.svg?branch=master)](https://travis-ci.org/toddams/RazorLight) | [![NuGet Pre Release](https://img.shields.io/nuget/vpre/RazorLight.svg?maxAge=2592000?style=flat-square)](https://www.nuget.org/packages/RazorLight/) |
 
 
 ## Introduction
@@ -118,7 +118,7 @@ public HomeController(IRazorLightEngine engine)
 
 ## FAQ
 ### I'm getting "Can't load metadata reference from the entry assembly" exception
-Just set ```preserveCompilationContext": true``` under the buildOptions section in your project.json.
+Just set ```preserveCompilationContext": true``` under the buildOptions section in your project.json OR *.csproj file
 
 Example project.json:
 ```
@@ -135,3 +135,9 @@ Example project.json:
     ...
 }
 ```
+Example *.csproj:
+````
+<TargetFramework>netcoreapp1.1</TargetFramework>
+<DefineConstants>DEBUG;TRACE</DefineConstants>
+<PreserveCompilationContext>true</PreserveCompilationContext>
+````
