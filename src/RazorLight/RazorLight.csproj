@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>Use Razor template engine to parse strings / files / EmbeddedResources for .NET Core </Description>
     <AssemblyTitle>RazorLight</AssemblyTitle>
-    <VersionPrefix>1.0.0-rc1</VersionPrefix>
+    <VersionPrefix>1.0.0-rc2</VersionPrefix>
     <Authors>toddams</Authors>
     <TargetFrameworks>net451;netstandard1.6</TargetFrameworks>
     <AssemblyName>RazorLight</AssemblyName>
