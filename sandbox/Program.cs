@@ -1,13 +1,12 @@
 ﻿using System;
-using RazorLight;
-using RazorLight.Extensions;
 
-namespace Sandbox
+namespace RazorLight.Sandbox
 {
     class Program
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Hello World!");
         }
     }
 }

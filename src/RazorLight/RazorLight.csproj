@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>Use Razor template engine to parse strings / files / EmbeddedResources for .NET Core </Description>
     <AssemblyTitle>RazorLight</AssemblyTitle>
-    <VersionPrefix>1.0.0-rc2</VersionPrefix>
+    <VersionPrefix>1.0.0</VersionPrefix>
     <Authors>toddams</Authors>
     <TargetFrameworks>net451;netstandard1.6</TargetFrameworks>
     <AssemblyName>RazorLight</AssemblyName>
@@ -14,15 +14,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Buffers" Version="4.0.0" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="4.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor" Version="1.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Runtime" Version="1.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="1.0.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="1.3.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="1.3.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor" Version="1.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Runtime" Version="1.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="1.1.0" />
+    <PackageReference Include="System.Buffers" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
@@ -35,8 +33,8 @@
   </Target>-->
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <PackageReference Include="System.Runtime.Loader" Version="4.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.0.0-*" />
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.1.1" />
   </ItemGroup>
 
 </Project>

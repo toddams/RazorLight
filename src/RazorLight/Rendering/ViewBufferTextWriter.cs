@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Razor.Internal;
+using RazorLight.Internal;
 
 namespace RazorLight.Rendering
 {
