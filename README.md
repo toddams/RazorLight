@@ -8,7 +8,7 @@
 ## Introduction
 Install the nuget package
 
-	Install-Package RazorLight -Pre
+	Install-Package RazorLight
 
 
 Use [Razor parsing engine](https://github.com/aspnet/Razor) to build dynamic templates from strings / files / embedded resources without any efforts. From the very beginning library was built for [.NET Core](https://dotnet.github.io/) projects (NetStandard 1.6), but now Full .NET Framework v4.5.1 (and higher) is also supported.
@@ -115,6 +115,13 @@ public HomeController(IRazorLightEngine engine)
 ````CSharp
 @inject MyProject.TestService myService
 ````
+## Roadmap
+* async/await
+* Tag helpers
+* Precompiled views
+* Fluent API
+* Extensible template sources
+* More flexible caching
 
 ## FAQ
 ### I'm getting "Can't load metadata reference from the entry assembly" exception
