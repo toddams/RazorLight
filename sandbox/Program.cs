@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using RazorLight;
 
 namespace RazorLight.Sandbox
 {
@@ -6,7 +8,6 @@ namespace RazorLight.Sandbox
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-        }
+		}
     }
 }
