@@ -6,7 +6,7 @@ using RazorLight.Templating.FileSystem;
 
 namespace RazorLight
 {
-	public static class EngineFactory
+	public class EngineFactory : IEngineFactory
 	{
 		/// <summary>
 		/// Creates a <see cref="RazorLightEngine"/> that resolves templates by searching them on physical storage
@@ -16,6 +16,26 @@ namespace RazorLight
 		public static IRazorLightEngine CreatePhysical(string root)
 		{
 			return CreatePhysical(root, EngineConfiguration.Default);
+		}
+
+		IRazorLightEngine IEngineFactory.CreatePhysical(string root, IEngineConfiguration configuration)
+		{
+			return CreatePhysical(root, configuration);
+		}
+
+		IRazorLightEngine IEngineFactory.CreateEmbedded(Type rootType)
+		{
+			return CreateEmbedded(rootType);
+		}
+
+		IRazorLightEngine IEngineFactory.CreateEmbedded(Type rootType, IEngineConfiguration configuration)
+		{
+			return CreateEmbedded(rootType, configuration);
+		}
+
+		IRazorLightEngine IEngineFactory.CreatePhysical(string root)
+		{
+			return CreatePhysical(root);
 		}
 
 		/// <summary>

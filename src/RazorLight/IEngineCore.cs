@@ -36,7 +36,7 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="compiledType"></param>
 		/// <returns></returns>
-		TemplatePage Activate(Type compiledType);
+		ITemplatePage Activate(Type compiledType);
 
 	}
 }

@@ -62,7 +62,7 @@ namespace RazorLight.Tests
 			Type type = testCore.CompileSource(source, modelInfo).CompiledType;
 			var page = Activator.CreateInstance(type);
 
-			Assert.IsAssignableFrom<TemplatePage>(page);
+			Assert.IsAssignableFrom<ITemplatePage>(page);
 		}
     }
 }

@@ -14,21 +14,21 @@ namespace RazorLight.Rendering
 		private readonly IViewBufferScope _bufferScope;
 		private readonly HtmlEncoder _htmlEncoder;
 
-		private readonly TemplatePage razorPage;
+		private readonly ITemplatePage razorPage;
 		private readonly IPageLookup pageLookup;
 
-		public PageRenderer(TemplatePage page, IPageLookup pageLookup)
+		public PageRenderer(ITemplatePage page, IPageLookup pageLookup)
 		{
 			this.razorPage = page;
 			this.pageLookup = pageLookup;
 
 			_htmlEncoder = HtmlEncoder.Default;
 			_bufferScope = new MemoryPoolViewBufferScope();
-			ViewStartPages = new List<TemplatePage>();
+			ViewStartPages = new List<ITemplatePage>();
 			PreRenderCallbacks = new PreRenderActionList();
 		}
 
-		public List<TemplatePage> ViewStartPages { get; }
+		public List<ITemplatePage> ViewStartPages { get; }
 		public PreRenderActionList PreRenderCallbacks { get; }
 
 		public virtual async Task RenderAsync(PageContext context)
@@ -42,7 +42,7 @@ namespace RazorLight.Rendering
 			await RenderLayoutAsync(context, bodyWriter);
 		}
 
-		private Task RenderPageCoreAsync(TemplatePage page, PageContext context)
+		private Task RenderPageCoreAsync(ITemplatePage page, PageContext context)
 		{
 			page.PageContext = context;
 			page.PageLookup = this.pageLookup;
@@ -50,7 +50,7 @@ namespace RazorLight.Rendering
 		}
 
 		private async Task<ViewBufferTextWriter> RenderPageAsync(
-			TemplatePage page,
+			ITemplatePage page,
 			PageContext context,
 			bool invokeViewStarts)
 		{
@@ -157,7 +157,7 @@ namespace RazorLight.Rendering
 			// A layout page can specify another layout page. We'll need to continue
 			// looking for layout pages until they're no longer specified.
 			var previousPage = razorPage;
-			var renderedLayouts = new List<TemplatePage>();
+			var renderedLayouts = new List<ITemplatePage>();
 
 			// This loop will execute Layout pages from the inside to the outside. With each
 			// iteration, bodyWriter is replaced with the aggregate of all the "body" content
@@ -174,7 +174,7 @@ namespace RazorLight.Rendering
 					throw new InvalidOperationException("Layout cannot be rendered");
 				}
 
-				TemplatePage layoutPage = GetLayoutPage(previousPage.Layout);
+				ITemplatePage layoutPage = GetLayoutPage(previousPage.Layout);
 
 				if (renderedLayouts.Count > 0 &&
 					renderedLayouts.Any(l => string.Equals(l.Path, layoutPage.Path, StringComparison.Ordinal)))
@@ -227,7 +227,7 @@ namespace RazorLight.Rendering
 			}
 		}
 
-		private TemplatePage GetLayoutPage(string layoutKey)
+		private ITemplatePage GetLayoutPage(string layoutKey)
 		{
 			PageLookupResult layoutPageResult = pageLookup.GetPage(layoutKey);
 			if (!layoutPageResult.Success)
@@ -235,7 +235,7 @@ namespace RazorLight.Rendering
 				throw new RazorLightException($"Layout cannot be located ({layoutKey})");
 			}
 
-			TemplatePage layoutPage = layoutPageResult.ViewEntry.PageFactory();
+			ITemplatePage layoutPage = layoutPageResult.ViewEntry.PageFactory();
 
 			return layoutPage;
 		}

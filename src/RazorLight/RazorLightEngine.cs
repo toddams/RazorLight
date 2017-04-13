@@ -81,7 +81,7 @@ namespace RazorLight
 				pageContext.ViewStartPages.Add(viewStartPage.PageFactory());
 			}
 
-			TemplatePage page = result.ViewEntry.PageFactory();
+			ITemplatePage page = result.ViewEntry.PageFactory();
 			page.PageContext = pageContext;
 
 			return RunTemplate(page, model);
@@ -92,7 +92,7 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="compiledType">Type to activate</param>
 		/// <returns>Template page</returns>
-		public TemplatePage Activate(Type compiledType)
+		public ITemplatePage Activate(Type compiledType)
 		{
 			return (TemplatePage)Configuration.Activator.CreateInstance(compiledType);
 		}
@@ -102,7 +102,7 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="page">Page to run</param>
 		/// <param name="model">Mode of the page</param>
-		public string RunTemplate(TemplatePage page, object model)
+		public string RunTemplate(ITemplatePage page, object model)
 		{
 			object pageModel = page.PageContext.ModelTypeInfo.CreateTemplateModel(model);
 			page.SetModel(pageModel);

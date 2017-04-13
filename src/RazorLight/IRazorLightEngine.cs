@@ -45,13 +45,13 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="compiledType">Type to activate</param>
 		/// <returns>Template page</returns>
-		TemplatePage Activate(Type compiledType);
+		ITemplatePage Activate(Type compiledType);
 
 		/// <summary>
 		/// Runs a template, renders a Layout pages and sections.
 		/// </summary>
 		/// <param name="page">Page to run</param>
 		/// <param name="model">Mode of the page</param>
-		string RunTemplate(TemplatePage page, object model);
+		string RunTemplate(ITemplatePage page, object model);
 	}
 }

@@ -22,7 +22,7 @@ namespace RazorLight.Templating
 			CompilationResult result = _compileDelegate(key);
 			result.EnsureSuccessful();
 
-			var pageFactory = new Func<TemplatePage>(() => (TemplatePage)Activator.CreateInstance(result.CompiledType));
+			var pageFactory = new Func<ITemplatePage>(() => (TemplatePage)Activator.CreateInstance(result.CompiledType));
 
 			return new PageFactoryResult(pageFactory, expirationTokens: null);
 		}

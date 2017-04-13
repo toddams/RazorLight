@@ -626,7 +626,7 @@ namespace RazorLight.Tests
 			testLookup
 				.Setup(v => v.GetPage(It.IsAny<string>()))
 				.Returns(new PageLookupResult(
-					new PageLookupItem(It.IsAny<string>(), new Func<TemplatePage>(() => toIncludePage)),
+					new PageLookupItem(It.IsAny<string>(), new Func<ITemplatePage>(() => toIncludePage)),
 					new List<PageLookupItem>()));
 
 

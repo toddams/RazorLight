@@ -15,7 +15,7 @@ namespace RazorLight
 	/// <summary>
 	/// Lightweight Razor page with a <see cref="TextWriter"/> for the generated output
 	/// </summary>
-	public abstract class TemplatePage
+	public abstract class TemplatePage : ITemplatePage
 	{
 		private readonly HashSet<string> _renderedSections = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		private HashSet<string> _ignoredSections;
@@ -123,7 +123,7 @@ namespace RazorLight
 			PageLookupResult pageResult = PageLookup.GetPage(key);
 			if (pageResult.Success)
 			{
-				TemplatePage page = pageResult.ViewEntry.PageFactory();
+				ITemplatePage page = pageResult.ViewEntry.PageFactory();
 				page.PageContext = new PageContext(this.PageContext.ViewBag) { Writer = this.PageContext.Writer };
 
 				if (model != null)
