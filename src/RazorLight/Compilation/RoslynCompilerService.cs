@@ -73,11 +73,21 @@ namespace RazorLight.Compilation
 
 					if (!result.Success)
 					{
-						var errors = result.Diagnostics
+						List<Diagnostic> errorsDiagnostics = result.Diagnostics
 							.Where(d => d.IsWarningAsError || d.Severity == DiagnosticSeverity.Error)
-							.Select(d => d.GetMessage());
+							.ToList();
 
-						return new CompilationResult(errors);
+						var errorMessages = new List<string>();
+
+						foreach(Diagnostic diagnostic in errorsDiagnostics)
+						{
+							FileLinePositionSpan lineSpan = diagnostic.Location.SourceTree.GetMappedLineSpan(diagnostic.Location.SourceSpan);
+							string errorMessage = diagnostic.GetMessage();
+
+							errorMessages.Add($"({lineSpan.StartLinePosition.Line}:{lineSpan.StartLinePosition.Character}) {errorMessage}");
+						}
+
+						return new CompilationResult(errorMessages);
 					}
 					else
 					{
