@@ -11,6 +11,11 @@ namespace RazorLight.Extensions
 	{
 		public static ExpandoObject ToExpando(this object anonymousObject)
 		{
+			if(anonymousObject is ExpandoObject exp)
+			{
+				return exp;
+			}
+
 			IDictionary<string, object> expando = new ExpandoObject();
 			foreach (var propertyDescriptor in anonymousObject.GetType().GetTypeInfo().GetProperties())
 			{
