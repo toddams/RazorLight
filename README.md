@@ -148,3 +148,12 @@ Example *.csproj:
 <DefineConstants>DEBUG;TRACE</DefineConstants>
 <PreserveCompilationContext>true</PreserveCompilationContext>
 ````
+
+### Restoring nuget packages fails with following error message - Version conflict detected for Microsoft.CodeAnalysis.CSharp
+In order to avoid this problem - please install this packages with following versions
+````
+"Microsoft.CodeAnalysis.Common": "1.3.2",
+"Microsoft.CodeAnalysis.CSharp": "1.3.2",
+"Microsoft.CodeAnalysis.CSharp.Workspaces": "1.3.2",
+"Microsoft.CodeAnalysis.Workspaces.Common": "1.3.2",
+````
