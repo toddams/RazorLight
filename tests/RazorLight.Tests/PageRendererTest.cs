@@ -62,5 +62,47 @@ namespace RazorLight.Tests
 
 			Assert.Equal(expected, output, StringComparer.Ordinal);
 		}
+
+		[Fact]
+		public void Ensure_Callbacks_Exeuted_In_Correct_Order()
+		{
+			var page = TemplatePageTest.CreatePage(v => { });
+			var callbackRecords = new List<string>();
+
+			var context = new PageContext();
+
+			context.PrerenderCallbacks.Add((t) =>
+			{
+				callbackRecords.Add("PAGE_SPECIFIC_CALLBACK");
+			});
+
+			page.PageContext = context;
+
+			var renderer = new PageRenderer(page, CreateLookupForPageInstance(page));
+			renderer.PreRenderCallbacks.Add(new Action<TemplatePage>((t) =>
+			{
+				callbackRecords.Add("GLOBAL_CALLBACK");
+			}));
+
+			using (var writer = new StringWriter())
+			{
+				page.PageContext.Writer = writer;
+				renderer.RenderAsync(context).Wait();
+			}
+
+			Assert.True(callbackRecords.Count == 2);
+			Assert.Equal(callbackRecords[0], "PAGE_SPECIFIC_CALLBACK");
+			Assert.Equal(callbackRecords[1], "GLOBAL_CALLBACK");
+		}
+
+		private IPageLookup CreateLookupForPageInstance(TemplatePage page)
+		{
+			var lookup = new Mock<IPageLookup>();
+			lookup.Setup(p => p.GetPage(It.IsAny<string>()))
+				.Returns(new PageLookupResult(
+					new PageLookupItem(It.IsAny<string>(), () => page), new List<PageLookupItem>()));
+
+			return lookup.Object;
+		}
 	}
 }

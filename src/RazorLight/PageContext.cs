@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 
@@ -31,6 +32,8 @@ namespace RazorLight
 		public dynamic ViewBag => viewBag;
 
 		public IList<TemplatePage> ViewStartPages { get; } = new List<TemplatePage>();
+
+		public IList<Action<TemplatePage>> PrerenderCallbacks { get; } = new List<Action<TemplatePage>>();
 
 		/// <summary>
 		/// Gets the info of the template model

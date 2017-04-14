@@ -1,5 +1,6 @@
 ﻿using RazorLight.Internal;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 
 namespace RazorLight
@@ -30,6 +31,17 @@ namespace RazorLight
 		string Parse<T>(string key, T model, ExpandoObject viewBag);
 
 		/// <summary>
+		/// Parses a template with a given <paramref name="key" /> and viewBag
+		/// </summary>
+		/// <param name="key">Key used to resolve a template</param>
+		/// <param name="model">Template model</param>
+		/// <param name="viewBag">Dynamic ViewBag (can be null)</param>
+		/// <param name="prerenderCallbacks">Page specific callback that will be fired before rendering</param>
+		/// <returns>Returns parsed string</returns>
+		/// <remarks>Result is stored in cache</remarks>
+		string Parse<T>(string key, T model, ExpandoObject viewBag, Action<TemplatePage> prerenderCallback);
+
+		/// <summary>
 		/// Parses a template with a given <paramref name="key" />
 		/// </summary>
 		/// <param name="key">Key used to resolve a template</param>
@@ -39,6 +51,18 @@ namespace RazorLight
 		/// <returns>Returns parsed string</returns>
 		/// <remarks>Result is stored in cache</remarks>
 		string Parse(string key, object model, Type modelType, ExpandoObject viewBag);
+
+		/// <summary>
+		/// Parses a template with a given <paramref name="key" />
+		/// </summary>
+		/// <param name="key">Key used to resolve a template</param>
+		/// <param name="model">Template model</param>
+		/// <param name="modelType">Type of the model</param>
+		/// <param name="viewBag">Dynamic ViewBag (can be null)</param>
+		/// <param name="prerenderCallbacks">Page specific callback that will be fired before rendering</param>
+		/// <returns>Returns parsed string</returns>
+		/// <remarks>Result is stored in cache</remarks>
+		string Parse(string key, object model, Type modelType, ExpandoObject viewBag, Action<TemplatePage> prerenderCallback);
 
 		/// <summary>
 		/// Creates an instance of the compiled type and casts it to TemplatePage

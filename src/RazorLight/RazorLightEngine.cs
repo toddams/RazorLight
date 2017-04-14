@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Dynamic;
+using System.Collections.Generic;
 using System.IO;
 using RazorLight.Rendering;
 using RazorLight.Templating;
+using System.Linq;
 
 namespace RazorLight
 {
@@ -31,7 +33,7 @@ namespace RazorLight
 		public IEngineConfiguration Configuration { get; }
 
 		public IEngineCore Core => core;
-		
+
 		/// <summary>
 		/// Parses a template with a given <paramref name="key" />
 		/// </summary>
@@ -58,6 +60,20 @@ namespace RazorLight
 		}
 
 		/// <summary>
+		/// Parses a template with a given <paramref name="key" /> and viewBag
+		/// </summary>
+		/// <param name="key">Key used to resolve a template</param>
+		/// <param name="model">Template model</param>
+		/// <param name="viewBag">Dynamic ViewBag (can be null)</param>
+		/// <param name="prerenderCallbacks">Page specific callback that will be fired before rendering</param>
+		/// <returns>Returns parsed string</returns>
+		/// <remarks>Result is stored in cache</remarks>
+		public string Parse<T>(string key, T model, ExpandoObject viewBag, Action<TemplatePage> prerenderCallback)
+		{
+			return Parse(key, model, typeof(T), viewBag, prerenderCallback);
+		}
+
+		/// <summary>
 		/// Parses a template with a given <paramref name="key" />
 		/// </summary>
 		/// <param name="key">Key used to resolve a template</param>
@@ -67,6 +83,21 @@ namespace RazorLight
 		/// <returns>Returns parsed string</returns>
 		/// <remarks>Result is stored in cache</remarks>
 		public string Parse(string key, object model, Type modelType, ExpandoObject viewBag)
+		{
+			return Parse(key, model, modelType, viewBag, null);
+		}
+
+		/// <summary>
+		/// Parses a template with a given <paramref name="key" />
+		/// </summary>
+		/// <param name="key">Key used to resolve a template</param>
+		/// <param name="model">Template model</param>
+		/// <param name="modelType">Type of the model</param>
+		/// <param name="viewBag">Dynamic ViewBag (can be null)</param>
+		/// <param name="prerenderCallbacks">Page specific callback that will be fired before rendering</param>
+		/// <returns>Returns parsed string</returns>
+		/// <remarks>Result is stored in cache</remarks>
+		public string Parse(string key, object model, Type modelType, ExpandoObject viewBag, Action<TemplatePage> prerenderCallback)
 		{
 			PageLookupResult result = pageLookup.GetPage(key);
 
@@ -79,6 +110,11 @@ namespace RazorLight
 			foreach (var viewStartPage in result.ViewStartEntries)
 			{
 				pageContext.ViewStartPages.Add(viewStartPage.PageFactory());
+			}
+
+			if (prerenderCallback != null)
+			{
+				pageContext.PrerenderCallbacks.Add(prerenderCallback);
 			}
 
 			TemplatePage page = result.ViewEntry.PageFactory();

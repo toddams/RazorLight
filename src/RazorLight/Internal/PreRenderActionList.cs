@@ -40,6 +40,11 @@ namespace RazorLight.Internal
 			}
 		}
 
+		public void Remove(Action<TemplatePage> item)
+		{
+			items.Remove(item);
+		}
+
 		public int Count
 		{
 			get

@@ -82,20 +82,11 @@ namespace RazorLight.Rendering
 
 			try
 			{
-				if(PreRenderCallbacks?.Count > 0)
-				{
-					foreach(var callback in PreRenderCallbacks)
-					{
-						try
-						{
-							callback(page);
-						}
-						catch (Exception)
-						{
-							//Ignore
-						}
-					}
-				}
+				//Apply page specific callbacks first
+				ExecutePageCallbacks(page, context.PrerenderCallbacks);
+
+				//Apply engine-global callbacks
+				ExecutePageCallbacks(page, PreRenderCallbacks.ToList());
 
 				if (invokeViewStarts)
 				{
@@ -238,6 +229,24 @@ namespace RazorLight.Rendering
 			TemplatePage layoutPage = layoutPageResult.ViewEntry.PageFactory();
 
 			return layoutPage;
+		}
+
+		private void ExecutePageCallbacks(TemplatePage page, ICollection<Action<TemplatePage>> callbacks)
+		{
+			if(callbacks?.Count > 0)
+			{
+				foreach (var callback in callbacks)
+				{
+					try
+					{
+						callback(page);
+					}
+					catch (Exception)
+					{
+						//Ignore
+					}
+				}
+			}
 		}
 
 		public void Dispose()
