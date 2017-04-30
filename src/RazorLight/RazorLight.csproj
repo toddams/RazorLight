@@ -10,7 +10,7 @@
 		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
 		<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
 		<GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-		<Version>1.0.1</Version>
+		<Version>1.1.0</Version>
 		<PackageProjectUrl>https://github.com/toddams/RazorLight</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/toddams/RazorLight</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
