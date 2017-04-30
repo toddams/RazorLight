@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using RazorLight.Caching;
 using RazorLight.Compilation;
 using RazorLight.Host;
@@ -48,9 +49,19 @@ namespace RazorLight
 		{
 			var host = new RazorLightHost(null);
 
+			//Set default model
 			if (modelTypeInfo != null)
 			{
 				host.DefaultModel = modelTypeInfo.TemplateTypeName;
+			}
+
+			//Include namespaces
+			if(Configuration.Namespaces != null)
+			{
+				foreach(string @namespace in Configuration.Namespaces)
+				{
+					host.NamespaceImports.Add(@namespace);
+				}
 			}
 
 			return Configuration.RazorTemplateCompiler.CompileTemplate(host, templateSource);
@@ -70,7 +81,7 @@ namespace RazorLight
 			}
 
 			string razorTemplate = GenerateRazorTemplate(templateSource, modelTypeInfo);
-			var context = new CompilationContext(razorTemplate, Configuration.Namespaces);
+			var context = new CompilationContext(razorTemplate);
 
 			CompilationResult compilationResult = Configuration.CompilerService.Compile(context);
 

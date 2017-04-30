@@ -7,9 +7,7 @@ namespace RazorLight.Compilation
 	{
 		public string Content { get; }
 
-		public ISet<string> IncludeNamespaces { get; }
-
-		public CompilationContext(string content, ISet<string> includeNamespaces)
+		public CompilationContext(string content)
 		{
 			if (string.IsNullOrEmpty(content))
 			{
@@ -17,7 +15,6 @@ namespace RazorLight.Compilation
 			}
 
 			this.Content = content;
-			this.IncludeNamespaces = includeNamespaces ?? new HashSet<string>();
 		}
 	}
 }
