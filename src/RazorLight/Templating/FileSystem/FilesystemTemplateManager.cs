@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.FileProviders;
 
 namespace RazorLight.Templating.FileSystem
@@ -37,7 +39,15 @@ namespace RazorLight.Templating.FileSystem
 				throw new ArgumentNullException(nameof(key));
 			}
 
-			IFileInfo fileInfo = fileProvider.GetFileInfo(key);
+			List<string> patterns = new List<string> {
+				key,
+				$"Shared/{key}"
+			};
+			if (key.StartsWith("/Views/")) patterns.Add(key.Substring("/Views/".Length));
+			var fileInfos = patterns.Select(p => fileProvider.GetFileInfo(p));
+			IFileInfo fileInfo = (from p in fileInfos
+								  where p.Exists
+								  select p).FirstOrDefault() ?? fileInfos.FirstOrDefault();
 			if (!fileInfo.Exists || fileInfo.IsDirectory)
 			{
 				throw new FileNotFoundException("Can't find a file with a specified key", key);

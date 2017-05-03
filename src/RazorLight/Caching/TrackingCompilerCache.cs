@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
@@ -84,7 +86,16 @@ namespace RazorLight.Caching
 					return cacheEntry;
 				}
 
-				fileInfo = _fileProvider.GetFileInfo(normalizedPath);
+				List<string> patterns = new List<string> {
+					normalizedPath,
+					$"Shared/{normalizedPath}"
+				};
+				if (normalizedPath.StartsWith("/Views/")) patterns.Add(normalizedPath.Substring("/Views/".Length));
+
+				var fileInfos = patterns.Select(p => _fileProvider.GetFileInfo(p));
+				fileInfo = (from p in fileInfos
+							where p.Exists
+							select p).FirstOrDefault() ?? fileInfos.FirstOrDefault();
 				if (!fileInfo.Exists)
 				{
 					IChangeToken expirationToken = _fileProvider.Watch(normalizedPath);

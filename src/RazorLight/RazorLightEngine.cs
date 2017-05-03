@@ -54,7 +54,7 @@ namespace RazorLight
 		/// <param name="viewBag">Dynamic ViewBag (can be null)</param>
 		/// <returns>Returns parsed string</returns>
 		/// <remarks>Result is stored in cache</remarks>
-		public string Parse<T>(string key, T model, ExpandoObject viewBag)
+		public string Parse<T>(string key, T model, dynamic viewBag)
 		{
 			return Parse(key, model, typeof(T), viewBag);
 		}
@@ -82,7 +82,7 @@ namespace RazorLight
 		/// <param name="viewBag">Dynamic ViewBag (can be null)</param>
 		/// <returns>Returns parsed string</returns>
 		/// <remarks>Result is stored in cache</remarks>
-		public string Parse(string key, object model, Type modelType, ExpandoObject viewBag)
+		public string Parse(string key, object model, Type modelType, dynamic viewBag)
 		{
 			return Parse(key, model, modelType, viewBag, null);
 		}
