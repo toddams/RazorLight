@@ -8,6 +8,8 @@ namespace RazorLight
 	{
 		IEngineConfiguration Configuration { get; }
 
+		ITemplateManager TemplateManager { get; }
+
 		/// <summary>
 		/// Generates razor template by parsing given <param name="templateSource" />
 		/// </summary>
