@@ -1,4 +1,5 @@
 # RazorLight
+## Version for .NET Core 2.0 will he released soon.
 
 | Build status | Nuget package |
 | --- | --- |
