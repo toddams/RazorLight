@@ -51,5 +51,7 @@ namespace RazorLight
         /// </summary>
         /// <returns>A task representing the result of executing the page.</returns>
         Task ExecuteAsync();
+
+        void EnsureRenderedBodyOrSections();
     }
 }

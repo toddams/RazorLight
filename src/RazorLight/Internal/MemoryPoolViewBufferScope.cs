@@ -32,6 +32,12 @@ namespace RazorLight.Internal
             _charPool = charPool;
         }
 
+        public MemoryPoolViewBufferScope()
+        {
+            _viewBufferPool = ArrayPool<ViewBufferValue>.Shared;
+            _charPool = ArrayPool<char>.Shared;
+        }
+
         /// <inheritdoc />
         public ViewBufferValue[] GetPage(int pageSize)
         {
