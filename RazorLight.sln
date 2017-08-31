@@ -3,9 +3,28 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{25F57564-58FD-4FD2-8CDA-98261E5BEEEC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CDB1D407-71F7-44D6-8B35-F0013D1717A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorLight", "src\RazorLight\RazorLight.csproj", "{CA780663-2714-43B0-89BC-BEB26BC5405A}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA780663-2714-43B0-89BC-BEB26BC5405A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA780663-2714-43B0-89BC-BEB26BC5405A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA780663-2714-43B0-89BC-BEB26BC5405A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA780663-2714-43B0-89BC-BEB26BC5405A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CA780663-2714-43B0-89BC-BEB26BC5405A} = {25F57564-58FD-4FD2-8CDA-98261E5BEEEC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {590C5541-E5A7-41ED-AFC7-D4A52E594191}

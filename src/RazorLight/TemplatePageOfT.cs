@@ -1,24 +1,16 @@
-﻿using System;
+﻿using RazorLight.Internal;
 
 namespace RazorLight
 {
-	/// <summary>
-	/// Razor page with a Model
-	/// </summary>
-	/// <typeparam name="TModel"></typeparam>
-	public abstract class TemplatePage<TModel> : TemplatePage
-	{
-		private object model;
-
-		public TModel Model
-		{
-			get { return (TModel)model; }
-			set { model = value; }
-		}
-
-		public override void SetModel(object data)
-		{
-			Model = (TModel)data;
-		}
-	}
+    /// <summary>
+    /// Represents the properties and methods that are needed in order to render a template that uses Razor syntax.
+    /// </summary>
+    /// <typeparam name="TModel">The type of the model.</typeparam>
+    public abstract class RazorPage<TModel> : TemplatePage
+    {
+        /// <summary>
+        /// Gets the Model property.
+        /// </summary>
+        public TModel Model { get; set; }
+    }
 }
