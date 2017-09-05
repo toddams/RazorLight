@@ -6,6 +6,8 @@ namespace RazorLight
 {
     public interface ITemplatePage
     {
+        void SetModel(object model);
+
         /// <summary>
         /// Gets or sets the view context of the rendering template.
         /// </summary>

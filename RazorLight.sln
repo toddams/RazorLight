@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{25F57564-58FD-4FD2-8CDA-98261E5BEEEC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CDB1D407-71F7-44D6-8B35-F0013D1717A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorLight", "src\RazorLight\RazorLight.csproj", "{CA780663-2714-43B0-89BC-BEB26BC5405A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorLight", "src\RazorLight\RazorLight.csproj", "{CA780663-2714-43B0-89BC-BEB26BC5405A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sandbox", "sandbox", "{D8281EA5-1C64-4C9F-9537-967D685C1918}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorLight.Sandbox", "RazorLight.Sandbox\RazorLight.Sandbox.csproj", "{DC81E072-5571-4E4A-A7EC-4122BF4A012E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,12 +23,17 @@ Global
 		{CA780663-2714-43B0-89BC-BEB26BC5405A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA780663-2714-43B0-89BC-BEB26BC5405A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA780663-2714-43B0-89BC-BEB26BC5405A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC81E072-5571-4E4A-A7EC-4122BF4A012E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC81E072-5571-4E4A-A7EC-4122BF4A012E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC81E072-5571-4E4A-A7EC-4122BF4A012E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC81E072-5571-4E4A-A7EC-4122BF4A012E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CA780663-2714-43B0-89BC-BEB26BC5405A} = {25F57564-58FD-4FD2-8CDA-98261E5BEEEC}
+		{DC81E072-5571-4E4A-A7EC-4122BF4A012E} = {D8281EA5-1C64-4C9F-9537-967D685C1918}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {590C5541-E5A7-41ED-AFC7-D4A52E594191}

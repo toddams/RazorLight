@@ -10,6 +10,7 @@ namespace RazorLight
         public PageContext()
         {
             _viewBag = new ExpandoObject();
+            Writer = new StringWriter();
         }
 
         public PageContext(ExpandoObject viewBag)

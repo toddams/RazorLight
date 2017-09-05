@@ -25,6 +25,8 @@ namespace RazorLight
         private TagHelperAttributeInfo _tagHelperAttributeInfo;
         //private IUrlHelper _urlHelper;
 
+        public abstract void SetModel(object model);
+
         /// <inheritdoc />
         public virtual PageContext PageContext { get; set; }
 
@@ -50,7 +52,7 @@ namespace RazorLight
         /// handles non-<see cref="IHtmlContent"/> C# expressions.
         /// </summary>
         [RazorInject]
-        public HtmlEncoder HtmlEncoder { get; set; } = = HtmlEncoder.Default;
+        public HtmlEncoder HtmlEncoder { get; set; } = HtmlEncoder.Default;
 
         /// <inheritdoc />
         public string Key { get; set; }
@@ -93,6 +95,7 @@ namespace RazorLight
             {
                 if (_bufferScope == null)
                 {
+                    //TODO: replace with services maybe
                     //var services = ViewContext.HttpContext.RequestServices;
                     //_bufferScope = services.GetRequiredService<IViewBufferScope>();
                     _bufferScope = new MemoryPoolViewBufferScope(ArrayPool<ViewBufferValue>.Shared, ArrayPool<char>.Shared);
