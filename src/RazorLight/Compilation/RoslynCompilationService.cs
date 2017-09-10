@@ -117,6 +117,7 @@ namespace RazorLight.Compilation
                         string formattedMessage = $"- ({lineSpan.StartLinePosition.Line}:{lineSpan.StartLinePosition.Character}) {errorMessage}";
 
                         errorMessages.Add(formattedMessage);
+                        builder.AppendLine(formattedMessage);
                     }
 
                     builder.AppendLine("\nSee CompilationErrors for detailed information");

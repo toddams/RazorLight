@@ -6,12 +6,17 @@ using System.Threading.Tasks;
 
 namespace RazorLight.Razor
 {
+    /// <summary>
+    /// Specifies RazorProject where templates are located in files
+    /// </summary>
     public class FileSystemRazorProject : RazorLightProject
     {
         public FileSystemRazorProject(string root)
         {
             Root = root;
         }
+
+        public virtual string FileExtension { get; set; } = ".cshtml";
 
         /// <summary>
         /// 
@@ -29,6 +34,9 @@ namespace RazorLight.Razor
             return Task.FromResult((RazorLightProjectItem)item);
         }
 
+        /// <summary>
+        /// Root folder
+        /// </summary>
         public string Root { get; }
 
         protected string NormalizeAndEnsureValidPath(string templateKey)
@@ -36,6 +44,11 @@ namespace RazorLight.Razor
             if (string.IsNullOrEmpty(templateKey))
             {
                 throw new ArgumentException(nameof(templateKey));
+            }
+
+            if(!templateKey.EndsWith(FileExtension))
+            {
+                templateKey = templateKey + FileExtension;
             }
 
             var absolutePath = templateKey;

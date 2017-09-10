@@ -5,20 +5,48 @@ using RazorLight.Caching;
 using RazorLight.Compilation;
 using RazorLight.Instrumentation;
 using RazorLight.Razor;
+using System;
 
 namespace RazorLight
 {
-    public class EngineFactory
+    public class EngineFactory : IEngineFactory
     {
-        public RazorLightEngine ForFileSystem(string root)
+        /// <summary>
+        /// Creates RazorLightEngine with a filesystem razor project
+        /// </summary>
+        /// <param name="root">Root folder where views are stored</param>
+        /// <returns>Instance of RazorLightEngine</returns>
+        public virtual RazorLightEngine ForFileSystem(string root)
         {
-            ICachingProvider cacheProvider = new DefaultCachingProvider();
-
             var project = new FileSystemRazorProject(root);
+
+            return Create(project);
+        }
+
+        /// <summary>
+        /// Creates RazorLightEngine with a embedded resource razor project
+        /// </summary>
+        /// <param name="rootType">Type of the root.</param>
+        /// <returns>Instance of RazorLightEngine</returns>
+        public virtual RazorLightEngine ForEmbeddedResources(Type rootType)
+        {
+            var project = new EmbeddedRazorProject(rootType);
+
+            return Create(project);
+        }
+
+        /// <summary>
+        ///Creates RazorLightEngine with a custom RazorLightProject
+        /// </summary>
+        /// <param name="project">The project</param>
+        /// <returns>Instance of RazorLightEngine</returns>
+        public virtual RazorLightEngine Create(RazorLightProject project)
+        {
             var sourceGenerator = new RazorSourceGenerator(RazorEngine, project);
             var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager());
-
             var templateFactoryProvider = new TemplateFactoryProvider(project, sourceGenerator, compiler);
+
+            ICachingProvider cacheProvider = new DefaultCachingProvider();
 
             return new RazorLightEngine(templateFactoryProvider, cacheProvider);
         }
@@ -42,7 +70,6 @@ namespace RazorLight
                     //});
 
                     builder.Features.Add(new ModelExpressionPass());
-                    //builder.Features.Add(new PagesPropertyInjectionPass());
                     //builder.Features.Add(new ViewComponentTagHelperPass());
                     builder.Features.Add(new RazorLightTemplateDocumentClassifierPass());
 

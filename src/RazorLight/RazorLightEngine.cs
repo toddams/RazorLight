@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RazorLight
 {
-    public class RazorLightEngine
+    public class RazorLightEngine : IRazorLightEngine
     {
         private ITemplateFactoryProvider templateFactoryProvider;
         private ICachingProvider cache;

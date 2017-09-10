@@ -20,9 +20,6 @@ namespace RazorLight
 
         public TextWriter Writer { get; set; }
 
-        /// <summary>
-        /// Gets the dynamic view bag.
-        /// </summary>
         public dynamic ViewBag => _viewBag;
 
         public string ExecutingPageKey { get; set; }

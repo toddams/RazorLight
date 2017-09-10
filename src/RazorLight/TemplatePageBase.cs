@@ -58,7 +58,8 @@ namespace RazorLight
         public IDictionary<string, RenderAsyncDelegate> PreviousSectionWriters { get; set; }
 
         /// <inheritdoc />
-        public IDictionary<string, RenderAsyncDelegate> SectionWriters { get; set; }
+        public IDictionary<string, RenderAsyncDelegate> SectionWriters { get; } =
+            new Dictionary<string, RenderAsyncDelegate>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets the <see cref="System.Text.Encodings.Web.HtmlEncoder"/> to use when this template />
