@@ -26,5 +26,7 @@ namespace RazorLight
         public dynamic ViewBag => _viewBag;
 
         public string ExecutingPageKey { get; set; }
+
+        public ModelTypeInfo ModelTypeInfo { get; set; }
     }
 }
