@@ -12,32 +12,46 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.PortableExecutable;
 using System.Text;
-using System.Threading.Tasks;
 using DependencyContextCompilationOptions = Microsoft.Extensions.DependencyModel.CompilationOptions;
 
 namespace RazorLight.Compilation
 {
-    public class RoslynCompiler
+    public class RoslynCompilationService : ICompilationService
     {
-        private bool isDevelopment = true;
-        private readonly DebugInformationFormat _pdbFormat;
+        private IMetadataReferenceManager metadataReferenceManager;
+
+        internal readonly bool isDevelopment;
         private List<MetadataReference> metadataReferences = new List<MetadataReference>();
 
-        private bool _optionsInitialized;
-        private CSharpParseOptions _parseOptions;
-        private CSharpCompilationOptions _compilationOptions;
-
-        public RoslynCompiler()
+        public RoslynCompilationService(IMetadataReferenceManager referenceManager)
         {
-            _pdbFormat = SymbolsUtility.SupportsFullPdbGeneration() ?
+            metadataReferenceManager = referenceManager;
+
+            isDevelopment = IsAssemblyDebugBuild(OperatingAssembly);
+
+            var pdbFormat = SymbolsUtility.SupportsFullPdbGeneration() ?
                 DebugInformationFormat.Pdb :
                 DebugInformationFormat.PortablePdb;
-
-            EmitOptions = new EmitOptions(debugInformationFormat: _pdbFormat);
+            EmitOptions = new EmitOptions(debugInformationFormat: pdbFormat);
         }
 
-        public EmitOptions EmitOptions { get; }
+        private Assembly operatingAssembly;
+        public virtual Assembly OperatingAssembly
+        {
+            get
+            {
+                if(operatingAssembly == null)
+                {
+                    operatingAssembly = Assembly.GetEntryAssembly();
+                }
 
+                return operatingAssembly;
+            }
+        }
+
+        public virtual EmitOptions EmitOptions { get; }
+
+        private CSharpCompilationOptions _compilationOptions;
         public virtual CSharpCompilationOptions CSharpCompilationOptions
         {
             get
@@ -47,6 +61,7 @@ namespace RazorLight.Compilation
             }
         }
 
+        private CSharpParseOptions _parseOptions;
         public virtual CSharpParseOptions ParseOptions
         {
             get
@@ -56,13 +71,17 @@ namespace RazorLight.Compilation
             }
         }
 
+        private bool _optionsInitialized;
         private void EnsureOptions()
         {
             if (!_optionsInitialized)
             {
                 var dependencyContextOptions = GetDependencyContextCompilationOptions();
-                _parseOptions = GetParseOptions(isDevelopment, dependencyContextOptions);
-                _compilationOptions = GetCompilationOptions(isDevelopment, dependencyContextOptions);
+                _parseOptions = GetParseOptions(dependencyContextOptions);
+                _compilationOptions = GetCompilationOptions(dependencyContextOptions);
+
+                //Load metadataReferences
+                metadataReferences.AddRange(metadataReferenceManager.Resolve(OperatingAssembly));
 
                 _optionsInitialized = true;
             }
@@ -116,26 +135,7 @@ namespace RazorLight.Compilation
 
         protected internal virtual DependencyContextCompilationOptions GetDependencyContextCompilationOptions()
         {
-            Assembly entryAssembly = Assembly.GetEntryAssembly();
-            var dependencyContext = DependencyContext.Load(entryAssembly); //TODO: add option to set entry assembly (or custom)
-
-            //TODO: move to MetadataReferenceManager
-            var libraryPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            var references = dependencyContext.CompileLibraries.SelectMany(library => library.ResolveReferencePaths());
-            foreach (var reference in references)
-            {
-                if (libraryPaths.Add(reference))
-                {
-                    using (var stream = File.OpenRead(reference))
-                    {
-                        var moduleMetadata = ModuleMetadata.CreateFromStream(stream, PEStreamOptions.PrefetchMetadata);
-                        var assemblyMetadata = AssemblyMetadata.Create(moduleMetadata);
-
-                        metadataReferences.Add(assemblyMetadata.GetReference(filePath: reference));
-                    }
-                }
-            }
+            var dependencyContext = DependencyContext.Load(OperatingAssembly);
 
             if (dependencyContext?.CompilationOptions != null)
             {
@@ -165,9 +165,7 @@ namespace RazorLight.Compilation
             return compilation;
         }
 
-        private static CSharpCompilationOptions GetCompilationOptions(
-            bool isDevelopment,
-            DependencyContextCompilationOptions dependencyContextOptions)
+        private CSharpCompilationOptions GetCompilationOptions(DependencyContextCompilationOptions dependencyContextOptions)
         {
             var csharpCompilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
@@ -212,9 +210,7 @@ namespace RazorLight.Compilation
             return csharpCompilationOptions;
         }
 
-        private static CSharpParseOptions GetParseOptions(
-            bool isDevelopment,
-            DependencyContextCompilationOptions dependencyContextOptions)
+        private CSharpParseOptions GetParseOptions(DependencyContextCompilationOptions dependencyContextOptions)
         {
             var configurationSymbol = isDevelopment ? "DEBUG" : "RELEASE";
             var defines = dependencyContextOptions.Defines.Concat(new[] { configurationSymbol });
@@ -234,6 +230,11 @@ namespace RazorLight.Compilation
             }
 
             return parseOptions;
+        }
+
+        private bool IsAssemblyDebugBuild(Assembly assembly)
+        {
+            return assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Select(da => da.IsJITTrackingEnabled).FirstOrDefault();
         }
     }
 }

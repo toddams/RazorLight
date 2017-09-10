@@ -12,12 +12,12 @@ namespace RazorLight
     public class TemplateFactoryProvider
     {
         private readonly RazorSourceGenerator sourceGenerator;
-        private readonly RoslynCompiler templateCompiler;
+        private readonly RoslynCompilationService templateCompiler;
         private readonly RazorLightProject project;
 
         public TemplateFactoryProvider(
             RazorSourceGenerator generator,
-            RoslynCompiler compiler,
+            RoslynCompilationService compiler,
             RazorLightProject razorProject)
         {
             sourceGenerator = generator;

@@ -49,7 +49,7 @@ namespace RazorLight
 
             var project = new FileSystemRazorProject("C:\\");
             var sourceGenerator = new RazorSourceGenerator(engine, project);
-            var compiler = new RoslynCompiler();
+            var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager());
 
             templateFactoryProvider = new TemplateFactoryProvider(sourceGenerator, compiler, project);
             cache = new DefaultCachingProvider();
