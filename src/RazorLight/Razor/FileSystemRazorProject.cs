@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RazorLight.Razor
 {
@@ -12,11 +13,20 @@ namespace RazorLight.Razor
             Root = root;
         }
 
-        public override RazorLightProjectItem GetItem(string templateKey)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="templateKey"></param>
+        /// <returns></returns>
+        /// <remarks>Can not use Task.FromResult as Task<T> is not covariant</remarks>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        public override Task<RazorLightProjectItem> GetItemAsync(string templateKey)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             string absolutePath = NormalizeAndEnsureValidPath(templateKey);
+            var item = new FileSystemRazorProjectItem(templateKey, new FileInfo(absolutePath));
 
-            return new FileSystemRazorProjectItem(templateKey, new FileInfo(absolutePath));
+            return Task.FromResult((RazorLightProjectItem)item);
         }
 
         public string Root { get; }
@@ -44,9 +54,9 @@ namespace RazorLight.Razor
             return absolutePath;
         }
 
-        public override IEnumerable<RazorLightProjectItem> GetImports(string templateKey)
+        public override Task<IEnumerable<RazorLightProjectItem>> GetImportsAsync(string templateKey)
         {
-            return Enumerable.Empty<RazorLightProjectItem>();
+            return Task.FromResult(Enumerable.Empty<RazorLightProjectItem>());
         }
     }
 }

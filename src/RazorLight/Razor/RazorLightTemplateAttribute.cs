@@ -5,10 +5,10 @@ namespace RazorLight.Razor
     [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
     public class RazorLightTemplateAttribute : Attribute
     {
-        public RazorLightTemplateAttribute(string key, Type viewType)
+        public RazorLightTemplateAttribute(string key, Type templateType)
         {
             Key = key;
-            ViewType = viewType;
+            TemplateType = templateType;
         }
 
         /// <summary>
@@ -17,8 +17,8 @@ namespace RazorLight.Razor
         public string Key { get; }
 
         /// <summary>
-        /// Gets the view type.
+        /// Gets the template type.
         /// </summary>
-        public Type ViewType { get; }
+        public Type TemplateType { get; }
     }
 }

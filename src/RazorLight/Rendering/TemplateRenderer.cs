@@ -1,268 +1,227 @@
-﻿//using RazorLight.Internal;
-//using System;
-//using System.Collections.Generic;
-//using System.Diagnostics;
-//using System.Linq;
-//using System.Text.Encodings.Web;
-//using System.Threading.Tasks;
+﻿using RazorLight.Internal;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
-//namespace RazorLight.Rendering
-//{
-//    public class TemplateRenderer
-//    {
-//        private readonly HtmlEncoder _htmlEncoder;
-//        private IViewBufferScope _bufferScope;
+namespace RazorLight.Rendering
+{
+    public class TemplateRenderer : IDisposable
+    {
+        private readonly HtmlEncoder _htmlEncoder;
+        private MemoryPoolViewBufferScope _bufferScope;
+        private RazorLightEngine engine;
 
-//        public TemplateRenderer(
-//            IReadOnlyList<ITemplatePage> viewStartPages,
-//            ITemplatePage razorPage,
-//            HtmlEncoder htmlEncoder)
-//        {
-//            if (viewStartPages == null)
-//            {
-//                throw new ArgumentNullException(nameof(viewStartPages));
-//            }
+        public TemplateRenderer(
+            ITemplatePage razorPage,
+            RazorLightEngine engine,
+            HtmlEncoder htmlEncoder)
+        {
+            RazorPage = razorPage ?? throw new ArgumentNullException(nameof(razorPage));
 
-//            if (razorPage == null)
-//            {
-//                throw new ArgumentNullException(nameof(razorPage));
-//            }
+            _htmlEncoder = htmlEncoder ?? throw new ArgumentNullException(nameof(htmlEncoder));
 
-//            if (htmlEncoder == null)
-//            {
-//                throw new ArgumentNullException(nameof(htmlEncoder));
-//            }
+            this.engine = engine;
+        }
 
-//            ViewStartPages = viewStartPages;
-//            RazorPage = razorPage;
-//            _htmlEncoder = htmlEncoder;
-//        }
+        /// <summary>
+        /// Gets <see cref="ITemplatePage"/> instance that the views executes on.
+        /// </summary>
+        public ITemplatePage RazorPage { get; }
 
-//        /// <inheritdoc />
-//        public string Key => RazorPage.Key;
+        ///// <summary>
+        ///// Gets the sequence of _ViewStart <see cref="ITemplatePage"/> instances that are executed by this view.
+        ///// </summary>
+        //public IReadOnlyList<ITemplatePage> ViewStartPages { get; }
 
-//        /// <summary>
-//        /// Gets <see cref="ITemplatePage"/> instance that the views executes on.
-//        /// </summary>
-//        public ITemplatePage RazorPage { get; }
+        /// <inheritdoc />
+        public virtual async Task RenderAsync()
+        {
+            var context = RazorPage.PageContext;
 
-//        /// <summary>
-//        /// Gets the sequence of _ViewStart <see cref="ITemplatePage"/> instances that are executed by this view.
-//        /// </summary>
-//        public IReadOnlyList<ITemplatePage> ViewStartPages { get; }
+            //TODO: was taken from IServiceCollection
+            _bufferScope = new MemoryPoolViewBufferScope();
+            var bodyWriter = await RenderPageAsync(RazorPage, context, invokeViewStarts: false).ConfigureAwait(false);
+            await RenderLayoutAsync(context, bodyWriter).ConfigureAwait(false);
+        }
 
-//        /// <inheritdoc />
-//        public virtual async Task RenderAsync(PageContext context)
-//        {
-//            if (context == null)
-//            {
-//                throw new ArgumentNullException(nameof(context));
-//            }
+        private async Task<ViewBufferTextWriter> RenderPageAsync(
+            ITemplatePage page,
+            PageContext context,
+            bool invokeViewStarts)
+        {
+            var writer = context.Writer as ViewBufferTextWriter;
+            if (writer == null)
+            {
+                Debug.Assert(_bufferScope != null);
 
-//            //TODO: was taken from IServiceCollection
-//            //_bufferScope = new MemoryPoolViewBufferScope();
-//            var bodyWriter = await RenderPageAsync(RazorPage, context, invokeViewStarts: true);
-//            await RenderLayoutAsync(context, bodyWriter);
-//        }
+                // If we get here, this is likely the top-level page (not a partial) - this means
+                // that context.Writer is wrapping the output stream. We need to buffer, so create a buffered writer.
+                var buffer = new ViewBuffer(_bufferScope, page.Key, ViewBuffer.ViewPageSize);
+                writer = new ViewBufferTextWriter(buffer, context.Writer.Encoding, _htmlEncoder, context.Writer);
+            }
+            else
+            {
+                // This means we're writing something like a partial, where the output needs to be buffered.
+                // Create a new buffer, but without the ability to flush.
+                var buffer = new ViewBuffer(_bufferScope, page.Key, ViewBuffer.ViewPageSize);
+                writer = new ViewBufferTextWriter(buffer, context.Writer.Encoding);
+            }
 
-//        private async Task<ViewBufferTextWriter> RenderPageAsync(
-//            ITemplatePage page,
-//            PageContext context,
-//            bool invokeViewStarts)
-//        {
-//            var writer = context.Writer as ViewBufferTextWriter;
-//            if (writer == null)
-//            {
-//                Debug.Assert(_bufferScope != null);
+            // The writer for the body is passed through the PageContext, allowing things like HtmlHelpers
+            // and ViewComponents to reference it.
+            var oldWriter = context.Writer;
+            var oldFilePath = context.ExecutingPageKey;
 
-//                // If we get here, this is likely the top-level page (not a partial) - this means
-//                // that context.Writer is wrapping the output stream. We need to buffer, so create a buffered writer.
-//                var buffer = new ViewBuffer(_bufferScope, page.Key, ViewBuffer.ViewPageSize);
-//                writer = new ViewBufferTextWriter(buffer, context.Writer.Encoding, _htmlEncoder, context.Writer);
-//            }
-//            else
-//            {
-//                // This means we're writing something like a partial, where the output needs to be buffered.
-//                // Create a new buffer, but without the ability to flush.
-//                var buffer = new ViewBuffer(_bufferScope, page.Key, ViewBuffer.ViewPageSize);
-//                writer = new ViewBufferTextWriter(buffer, context.Writer.Encoding);
-//            }
+            context.Writer = writer;
+            context.ExecutingPageKey = page.Key;
 
-//            // The writer for the body is passed through the PageContext, allowing things like HtmlHelpers
-//            // and ViewComponents to reference it.
-//            var oldWriter = context.Writer;
-//            var oldFilePath = context.ExecutingPageKey;
+            try
+            {
+                if (invokeViewStarts)
+                {
+                    // Execute view starts using the same context + writer as the page to render.
+                    await RenderViewStartsAsync(context).ConfigureAwait(false);
+                }
 
-//            context.Writer = writer;
-//            context.ExecutingPageKey = page.Key;
+                await RenderPageCoreAsync(page, context).ConfigureAwait(false);
+                return writer;
+            }
+            finally
+            {
+                context.Writer = oldWriter;
+                context.ExecutingPageKey = oldFilePath;
+            }
+        }
 
-//            try
-//            {
-//                if (invokeViewStarts)
-//                {
-//                    // Execute view starts using the same context + writer as the page to render.
-//                    await RenderViewStartsAsync(context);
-//                }
+        private async Task RenderPageCoreAsync(ITemplatePage page, PageContext context)
+        {
+            page.PageContext = context;
+            //_pageActivator.Activate(page, context);
 
-//                await RenderPageCoreAsync(page, context);
-//                return writer;
-//            }
-//            finally
-//            {
-//                context.Writer = oldWriter;
-//                context.ExecutingPageKey = oldFilePath;
-//            }
-//        }
+            await page.ExecuteAsync().ConfigureAwait(false);
+        }
 
-//        private async Task RenderPageCoreAsync(ITemplatePage page, PageContext context)
-//        {
-//            page.PageContext = context;
-//            //_pageActivator.Activate(page, context);
+        private Task RenderViewStartsAsync(PageContext context)
+        {
+            return Task.FromResult(0);
 
-//            await page.ExecuteAsync();
-//        }
+            //string layout = null;
+            //string oldPageKey = context.ExecutingPageKey;
+            //try
+            //{
+            //    for (var i = 0; i < ViewStartPages.Count; i++)
+            //    {
+            //        var viewStart = ViewStartPages[i];
+            //        context.ExecutingPageKey = viewStart.Key;
 
-//        private async Task RenderViewStartsAsync(PageContext context)
-//        {
-//            string layout = null;
-//            string oldPageKey = context.ExecutingPageKey;
-//            try
-//            {
-//                for (var i = 0; i < ViewStartPages.Count; i++)
-//                {
-//                    var viewStart = ViewStartPages[i];
-//                    context.ExecutingPageKey = viewStart.Key;
+            //        // If non-null, copy the layout value from the previous view start to the current. Otherwise leave
+            //        // Layout default alone.
+            //        if (layout != null)
+            //        {
+            //            viewStart.Layout = layout;
+            //        }
 
-//                    // If non-null, copy the layout value from the previous view start to the current. Otherwise leave
-//                    // Layout default alone.
-//                    if (layout != null)
-//                    {
-//                        viewStart.Layout = layout;
-//                    }
+            //        await RenderPageCoreAsync(viewStart, context);
 
-//                    await RenderPageCoreAsync(viewStart, context);
+            //        // Pass correct absolute path to next layout or the entry page if this view start set Layout to a
+            //        // relative path.
+            //        layout = _viewEngine.GetAbsolutePath(viewStart.Key, viewStart.Layout);
+            //    }
+            //}
+            //finally
+            //{
+            //    context.ExecutingPageKey = oldPageKey;
+            //}
 
-//                    // Pass correct absolute path to next layout or the entry page if this view start set Layout to a
-//                    // relative path.
-//                    layout = _viewEngine.GetAbsolutePath(viewStart.Key, viewStart.Layout);
-//                }
-//            }
-//            finally
-//            {
-//                context.ExecutingPageKey = oldPageKey;
-//            }
+            //// If non-null, copy the layout value from the view start page(s) to the entry page.
+            //if (layout != null)
+            //{
+            //    RazorPage.Layout = layout;
+            //}
+        }
 
-//            // If non-null, copy the layout value from the view start page(s) to the entry page.
-//            if (layout != null)
-//            {
-//                RazorPage.Layout = layout;
-//            }
-//        }
+        private async Task RenderLayoutAsync(
+            PageContext context,
+            ViewBufferTextWriter bodyWriter)
+        {
+            // A layout page can specify another layout page. We'll need to continue
+            // looking for layout pages until they're no longer specified.
+            var previousPage = RazorPage;
+            var renderedLayouts = new List<ITemplatePage>();
 
-//        private async Task RenderLayoutAsync(
-//            PageContext context,
-//            ViewBufferTextWriter bodyWriter)
-//        {
-//            // A layout page can specify another layout page. We'll need to continue
-//            // looking for layout pages until they're no longer specified.
-//            var previousPage = RazorPage;
-//            var renderedLayouts = new List<ITemplatePage>();
+            // This loop will execute Layout pages from the inside to the outside. With each
+            // iteration, bodyWriter is replaced with the aggregate of all the "body" content
+            // (including the layout page we just rendered).
+            while (!string.IsNullOrEmpty(previousPage.Layout))
+            {
+                if (!bodyWriter.IsBuffering)
+                {
+                    // Once a call to RazorPage.FlushAsync is made, we can no longer render Layout pages - content has
+                    // already been written to the client and the layout content would be appended rather than surround
+                    // the body content. Throwing this exception wouldn't return a 500 (since content has already been
+                    // written), but a diagnostic component should be able to capture it.
 
-//            // This loop will execute Layout pages from the inside to the outside. With each
-//            // iteration, bodyWriter is replaced with the aggregate of all the "body" content
-//            // (including the layout page we just rendered).
-//            while (!string.IsNullOrEmpty(previousPage.Layout))
-//            {
-//                if (!bodyWriter.IsBuffering)
-//                {
-//                    // Once a call to RazorPage.FlushAsync is made, we can no longer render Layout pages - content has
-//                    // already been written to the client and the layout content would be appended rather than surround
-//                    // the body content. Throwing this exception wouldn't return a 500 (since content has already been
-//                    // written), but a diagnostic component should be able to capture it.
+                    throw new InvalidOperationException("Layout can not be rendered");
+                }
 
-//                    throw new InvalidOperationException("Layout can not be rendered");
-//                }
+                ITemplatePage layoutPage = await engine.GetTemplateAsync(previousPage.Layout).ConfigureAwait(false);
 
-//                ITemplatePage layoutPage = GetLayoutPage(context, previousPage.Key, previousPage.Layout);
+                if (renderedLayouts.Count > 0 &&
+                    renderedLayouts.Any(l => string.Equals(l.Key, layoutPage.Key, StringComparison.Ordinal)))
+                {
+                    // If the layout has been previously rendered as part of this view, we're potentially in a layout
+                    // rendering cycle.
+                    throw new InvalidOperationException($"Layout {layoutPage.Key} has circular reference");
+                }
 
-//                if (renderedLayouts.Count > 0 &&
-//                    renderedLayouts.Any(l => string.Equals(l.Key, layoutPage.Key, StringComparison.Ordinal)))
-//                {
-//                    // If the layout has been previously rendered as part of this view, we're potentially in a layout
-//                    // rendering cycle.
-//                    throw new InvalidOperationException($"Layout {layoutPage.Key} has circular reference");
-//                }
+                // Notify the previous page that any writes that are performed on it are part of sections being written
+                // in the layout.
+                previousPage.IsLayoutBeingRendered = true;
+                layoutPage.PreviousSectionWriters = previousPage.SectionWriters;
+                layoutPage.BodyContent = bodyWriter.Buffer;
+                bodyWriter = await RenderPageAsync(layoutPage, context, invokeViewStarts: false).ConfigureAwait(false);
 
-//                // Notify the previous page that any writes that are performed on it are part of sections being written
-//                // in the layout.
-//                previousPage.IsLayoutBeingRendered = true;
-//                layoutPage.PreviousSectionWriters = previousPage.SectionWriters;
-//                layoutPage.BodyContent = bodyWriter.Buffer;
-//                bodyWriter = await RenderPageAsync(layoutPage, context, invokeViewStarts: false);
+                renderedLayouts.Add(layoutPage);
+                previousPage = layoutPage;
+            }
 
-//                renderedLayouts.Add(layoutPage);
-//                previousPage = layoutPage;
-//            }
+            // Now we've reached and rendered the outer-most layout page. Nothing left to execute.
 
-//            // Now we've reached and rendered the outer-most layout page. Nothing left to execute.
+            // Ensure all defined sections were rendered or RenderBody was invoked for page without defined sections.
+            foreach (var layoutPage in renderedLayouts)
+            {
+                layoutPage.EnsureRenderedBodyOrSections();
+            }
 
-//            // Ensure all defined sections were rendered or RenderBody was invoked for page without defined sections.
-//            foreach (var layoutPage in renderedLayouts)
-//            {
-//                layoutPage.EnsureRenderedBodyOrSections();
-//            }
+            if (bodyWriter.IsBuffering)
+            {
+                // If IsBuffering - then we've got a bunch of content in the view buffer. How to best deal with it
+                // really depends on whether or not we're writing directly to the output or if we're writing to
+                // another buffer.
+                var viewBufferTextWriter = context.Writer as ViewBufferTextWriter;
+                if (viewBufferTextWriter == null || !viewBufferTextWriter.IsBuffering)
+                {
+                    // This means we're writing to a 'real' writer, probably to the actual output stream.
+                    // We're using PagedBufferedTextWriter here to 'smooth' synchronous writes of IHtmlContent values.
+                    using (var writer = _bufferScope.CreateWriter(context.Writer))
+                    {
+                        await bodyWriter.Buffer.WriteToAsync(writer, _htmlEncoder).ConfigureAwait(false);
+                    }
+                }
+                else
+                {
+                    // This means we're writing to another buffer. Use MoveTo to combine them.
+                    bodyWriter.Buffer.MoveTo(viewBufferTextWriter.Buffer);
+                }
+            }
+        }
 
-//            if (bodyWriter.IsBuffering)
-//            {
-//                // If IsBuffering - then we've got a bunch of content in the view buffer. How to best deal with it
-//                // really depends on whether or not we're writing directly to the output or if we're writing to
-//                // another buffer.
-//                var viewBufferTextWriter = context.Writer as ViewBufferTextWriter;
-//                if (viewBufferTextWriter == null || !viewBufferTextWriter.IsBuffering)
-//                {
-//                    // This means we're writing to a 'real' writer, probably to the actual output stream.
-//                    // We're using PagedBufferedTextWriter here to 'smooth' synchronous writes of IHtmlContent values.
-//                    using (var writer = _bufferScope.CreateWriter(context.Writer))
-//                    {
-//                        await bodyWriter.Buffer.WriteToAsync(writer, _htmlEncoder);
-//                    }
-//                }
-//                else
-//                {
-//                    // This means we're writing to another buffer. Use MoveTo to combine them.
-//                    bodyWriter.Buffer.MoveTo(viewBufferTextWriter.Buffer);
-//                }
-//            }
-//        }
-
-//        private ITemplatePage GetLayoutPage(PageContext context, string ExecutingPageKey, string layoutPath)
-//        {
-//            var layoutPageResult = _viewEngine.GetPage(ExecutingPageKey, layoutPath);
-//            var originalLocations = layoutPageResult.SearchedLocations;
-//            if (layoutPageResult.Page == null)
-//            {
-//                layoutPageResult = _viewEngine.FindPage(context, layoutPath);
-//            }
-
-//            if (layoutPageResult.Page == null)
-//            {
-//                var locations = string.Empty;
-//                if (originalLocations.Any())
-//                {
-//                    locations = Environment.NewLine + string.Join(Environment.NewLine, originalLocations);
-//                }
-
-//                if (layoutPageResult.SearchedLocations.Any())
-//                {
-//                    locations +=
-//                        Environment.NewLine + string.Join(Environment.NewLine, layoutPageResult.SearchedLocations);
-//                }
-
-//                throw new InvalidOperationException("Layout can not be located");
-//            }
-
-//            var layoutPage = layoutPageResult.Page;
-//            return layoutPage;
-//        }
-//    }
-//}
+        public void Dispose()
+        {
+            _bufferScope?.Dispose();
+        }
+    }
+}

@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Razor.Language;
+using RazorLight.Razor;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace RazorLight.Razor
+namespace RazorLight
 {
     public class RazorSourceGenerator
     {
@@ -26,15 +28,15 @@ namespace RazorLight.Razor
         /// </summary>
         /// <param name="key">The template path.</param>
         /// <returns>The <see cref="RazorCSharpDocument"/>.</returns>
-        public RazorCSharpDocument GenerateCode(string key)
+        public async Task<RazorCSharpDocument> GenerateCodeAsync(string key)
         {
             if (string.IsNullOrEmpty(key))
             {
                 throw new ArgumentException();
             }
 
-            RazorLightProjectItem projectItem = Project.GetItem(key);
-            return GenerateCode(projectItem);
+            RazorLightProjectItem projectItem = await Project.GetItemAsync(key);
+            return await GenerateCodeAsync(projectItem);
         }
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace RazorLight.Razor
         /// </summary>
         /// <param name="projectItem">The <see cref="RazorLightProjectItem"/>.</param>
         /// <returns>The <see cref="RazorCSharpDocument"/>.</returns>
-        public RazorCSharpDocument GenerateCode(RazorLightProjectItem projectItem)
+        public async Task<RazorCSharpDocument> GenerateCodeAsync(RazorLightProjectItem projectItem)
         {
             if (projectItem == null)
             {
@@ -54,40 +56,10 @@ namespace RazorLight.Razor
                 throw new InvalidOperationException($"Project can not find template with key {projectItem.Key}");
             }
 
-            RazorCodeDocument codeDocument = CreateCodeDocument(projectItem);
-            return GenerateCode(codeDocument);
-        }
-
-        /// <summary>
-        /// Parses the template specified by <paramref name="codeDocument"/>.
-        /// </summary>
-        /// <param name="codeDocument">The <see cref="RazorLightProjectItem"/>.</param>
-        /// <returns>The <see cref="RazorCSharpDocument"/>.</returns>
-        public virtual RazorCSharpDocument GenerateCode(RazorCodeDocument codeDocument)
-        {
-            if (codeDocument == null)
-            {
-                throw new ArgumentNullException(nameof(codeDocument));
-            }
+            RazorCodeDocument codeDocument = await CreateCodeDocumentAsync(projectItem);
 
             Engine.Process(codeDocument);
             return codeDocument.GetCSharpDocument();
-        }
-
-        /// <summary>
-        /// Generates a <see cref="RazorCodeDocument"/> for the specified <paramref name="templateKey"/>.
-        /// </summary>
-        /// <param name="templateKey">The template path.</param>
-        /// <returns>The created <see cref="RazorCodeDocument"/>.</returns>
-        public virtual RazorCodeDocument CreateCodeDocument(string templateKey)
-        {
-            if (string.IsNullOrEmpty(templateKey))
-            {
-                throw new ArgumentException();
-            }
-
-            var projectItem = Project.GetItem(templateKey);
-            return CreateCodeDocument(projectItem);
         }
 
         /// <summary>
@@ -95,7 +67,7 @@ namespace RazorLight.Razor
         /// </summary>
         /// <param name="projectItem">The <see cref="RazorLightProjectItem"/>.</param>
         /// <returns>The created <see cref="RazorCodeDocument"/>.</returns>
-        public virtual RazorCodeDocument CreateCodeDocument(RazorLightProjectItem projectItem)
+        public virtual async Task<RazorCodeDocument> CreateCodeDocumentAsync(RazorLightProjectItem projectItem)
         {
             if (projectItem == null)
             {
@@ -104,11 +76,11 @@ namespace RazorLight.Razor
 
             if (!projectItem.Exists)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"Project can not find template with key {projectItem.Key}");
             }
 
             RazorSourceDocument source = RazorSourceDocument.ReadFrom(projectItem.Read(), projectItem.Key);
-            IEnumerable<RazorSourceDocument> imports = GetImports(projectItem);
+            IEnumerable<RazorSourceDocument> imports = await GetImportsAsync(projectItem);
 
             return RazorCodeDocument.Create(source, imports);
         }
@@ -118,7 +90,7 @@ namespace RazorLight.Razor
         /// </summary>
         /// <param name="projectItem">The <see cref="RazorLightProjectItem"/>.</param>
         /// <returns>The sequence of applicable <see cref="RazorSourceDocument"/>.</returns>
-        public virtual IEnumerable<RazorSourceDocument> GetImports(RazorLightProjectItem projectItem)
+        public virtual async Task<IEnumerable<RazorSourceDocument>> GetImportsAsync(RazorLightProjectItem projectItem)
         {
             if (projectItem == null)
             {
@@ -126,7 +98,7 @@ namespace RazorLight.Razor
             }
             var result = new List<RazorSourceDocument>();
 
-            IEnumerable<RazorLightProjectItem> importProjectItems = Project.GetImports(projectItem.Key);
+            IEnumerable<RazorLightProjectItem> importProjectItems = await Project.GetImportsAsync(projectItem.Key);
             foreach (var importItem in importProjectItems)
             {
                 if (importItem.Exists)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Razor.Language;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace RazorLight.Sandbox
 {
@@ -6,11 +7,23 @@ namespace RazorLight.Sandbox
     {
         static void Main(string[] args)
         {
+            MainAsync().GetAwaiter().GetResult();
+        }
+
+        private static async Task MainAsync()
+        {
             var engine = new RazorLightEngine();
 
-            engine.Parse("go.cshtml");
+            var model = new
+            {
+                Name1 = "qwe"
+            };
 
-            
+            string s = await engine.CompileRenderAsync("go.cshtml", model, model.GetType(), null);
+
+
+            Console.WriteLine(s);
+            Console.ReadKey();
         }
     }
 }
