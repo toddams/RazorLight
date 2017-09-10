@@ -12,7 +12,7 @@ namespace RazorLight.Sandbox
 
         private static async Task MainAsync()
         {
-            var engine = new RazorLightEngine();
+            var engine = new EngineFactory().ForFileSystem("C:\\");
 
             var model = new
             {

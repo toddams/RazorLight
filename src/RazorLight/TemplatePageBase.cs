@@ -39,6 +39,19 @@ namespace RazorLight
         /// <inheritdoc />
         public string Layout { get; set; }
 
+        public virtual dynamic ViewBag
+        {
+            get
+            {
+                if (PageContext == null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                return PageContext.ViewBag;
+            }
+        }
+
         private Stack<TagHelperScopeInfo> TagHelperScopes { get; } = new Stack<TagHelperScopeInfo>();
 
         /// <inheritdoc />

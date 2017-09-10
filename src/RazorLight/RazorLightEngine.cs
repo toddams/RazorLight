@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Razor.Extensions;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Extensions;
-using RazorLight.Caching;
-using RazorLight.Compilation;
-using RazorLight.Instrumentation;
-using RazorLight.Razor;
+﻿using RazorLight.Caching;
 using RazorLight.Rendering;
 using System;
 using System.Dynamic;
@@ -16,45 +10,37 @@ namespace RazorLight
 {
     public class RazorLightEngine
     {
-        private TemplateFactoryProvider templateFactoryProvider;
+        private ITemplateFactoryProvider templateFactoryProvider;
         private ICachingProvider cache;
 
-        public RazorLightEngine()
+        public RazorLightEngine(
+            ITemplateFactoryProvider factoryProvider,
+            ICachingProvider cachingProvider)
         {
-            var engine = RazorEngine.Create(builder =>
-            {
-                Instrumentation.InjectDirective.Register(builder);
-                Instrumentation.ModelDirective.Register(builder);
-                NamespaceDirective.Register(builder);
-                FunctionsDirective.Register(builder);
-                InheritsDirective.Register(builder);
-                SectionDirective.Register(builder);
-
-                //builder.AddTargetExtension(new TemplateTargetExtension()
-                //{
-                //    TemplateTypeName = "global::Microsoft.AspNetCore.Mvc.Razor.HelperResult",
-                //});
-
-                builder.Features.Add(new ModelExpressionPass());
-                //builder.Features.Add(new PagesPropertyInjectionPass());
-                //builder.Features.Add(new ViewComponentTagHelperPass());
-                builder.Features.Add(new RazorLightTemplateDocumentClassifierPass());
-
-                if (!builder.DesignTime)
-                {
-                    builder.Features.Add(new RazorLightAssemblyAttributeInjectionPass());
-                    builder.Features.Add(new InstrumentationPass());
-                }
-            });
-
-            var project = new FileSystemRazorProject("C:\\");
-            var sourceGenerator = new RazorSourceGenerator(engine, project);
-            var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager());
-
-            templateFactoryProvider = new TemplateFactoryProvider(sourceGenerator, compiler, project);
-            cache = new DefaultCachingProvider();
+            templateFactoryProvider = factoryProvider;
+            cache = cachingProvider;
         }
 
+        /// <summary>
+        /// Compiles and renders a template with a given <paramref name="key"/>
+        /// </summary>
+        /// <typeparam name="T">Type of the model</typeparam>
+        /// <param name="key">Unique key of the template</param>
+        /// <param name="model">Template model</param>
+        /// <returns>Rendered template as a string result</returns>
+        public async Task<string> CompileRenderAsync<T>(string key, T model)
+        {
+            return await CompileRenderAsync(key, model, typeof(T), viewBag: null);
+        }
+
+        /// <summary>
+        /// Compiles and renders a template with a given <paramref name="key"/>
+        /// </summary>
+        /// <param name="key">Unique key of the template</param>
+        /// <param name="model">Template model</param>
+        /// <param name="modelType">Type of the model</param>
+        /// <param name="viewBag">Dynamic ViewBag (can be null)</param>
+        /// <returns></returns>
         public async Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag)
         {
             ITemplatePage template = await GetTemplateAsync(key).ConfigureAwait(false);
@@ -67,9 +53,15 @@ namespace RazorLight
 
             template.PageContext = context;
 
-            return await RunTemplateAsync(template, model).ConfigureAwait(false);
+            return await RenderTemplateAsync(template, model).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Search and compile a template with a given key
+        /// </summary>
+        /// <param name="key">Unique key of the template</param>
+        /// <param name="compileIfNotCached">If true - it will try to get a template with a specified key and compile it</param>
+        /// <returns>An instance of a template</returns>
         public async Task<ITemplatePage> GetTemplateAsync(string key, bool compileIfNotCached = true)
         {
             var cacheLookupResult = cache.GetTemplate(key);
@@ -91,25 +83,41 @@ namespace RazorLight
                 return pageFactoryResult.TemplatePageFactory();
             }
 
-            throw new RazorLightException($"Can't find a view with a specified key ({key})");
+            throw new RazorLightException($"Can't find a template with a specified key ({key})");
         }
 
-        public async Task<string> RunTemplateAsync(ITemplatePage templatePage, object model)
+        /// <summary>
+        /// Renders a template with a given moel
+        /// </summary>
+        /// <param name="templatePage">Instance of a template</param>
+        /// <param name="model">Template model</param>
+        /// <returns>Rendered string</returns>
+        public async Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model)
+        {
+            using (var writer = new StringWriter())
+            {
+                await RenderTemplateAsync(templatePage, model, writer);
+
+                return writer.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Renders a template to the specified <paramref name="textWriter"/>
+        /// </summary>
+        /// <param name="templatePage">Instance of a template</param>
+        /// <param name="model">Template model</param>
+        /// <param name="textWriter">Output</param>
+        public async Task RenderTemplateAsync(ITemplatePage templatePage, object model, TextWriter textWriter)
         {
             object pageModel = templatePage.PageContext.ModelTypeInfo.CreateTemplateModel(model);
             templatePage.SetModel(pageModel);
             templatePage.Key = templatePage.PageContext.ExecutingPageKey;
+            templatePage.PageContext.Writer = textWriter;
 
-            using (var writer = new StringWriter())
+            using (var renderer = new TemplateRenderer(templatePage, this, HtmlEncoder.Default))
             {
-                templatePage.PageContext.Writer = writer;
-
-                using (var renderer = new TemplateRenderer(templatePage, this, HtmlEncoder.Default))
-                {
-                    await renderer.RenderAsync().ConfigureAwait(false);
-                }
-
-                return writer.ToString();
+                await renderer.RenderAsync().ConfigureAwait(false);
             }
         }
     }

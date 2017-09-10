@@ -9,16 +9,17 @@ using System.Threading.Tasks;
 
 namespace RazorLight
 {
-    public class TemplateFactoryProvider
+    public class TemplateFactoryProvider : ITemplateFactoryProvider
     {
         private readonly RazorSourceGenerator sourceGenerator;
         private readonly RoslynCompilationService templateCompiler;
         private readonly RazorLightProject project;
 
         public TemplateFactoryProvider(
+            RazorLightProject razorProject,
             RazorSourceGenerator generator,
-            RoslynCompilationService compiler,
-            RazorLightProject razorProject)
+            RoslynCompilationService compiler
+            )
         {
             sourceGenerator = generator;
             templateCompiler = compiler;
