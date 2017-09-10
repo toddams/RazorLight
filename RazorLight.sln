@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorLight", "src\RazorLigh
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sandbox", "sandbox", "{D8281EA5-1C64-4C9F-9537-967D685C1918}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorLight.Sandbox", "RazorLight.Sandbox\RazorLight.Sandbox.csproj", "{DC81E072-5571-4E4A-A7EC-4122BF4A012E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorLight.Sandbox", "sandbox\RazorLight.Sandbox\RazorLight.Sandbox.csproj", "{DC81E072-5571-4E4A-A7EC-4122BF4A012E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

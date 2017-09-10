@@ -2,6 +2,17 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>RazorLight</PackageId>
+    <Title>RazorLight</Title>
+    <Version>2.0.0-alpha1</Version>
+    <Description>Use Razor to build your templates from strings / files / EmbeddedResources outside of ASP.NET MVC for .NET Core</Description>
+    <Authors>toddams</Authors>
+    <PackageTags>RazorLight, razor, render, dotnet-core, dotnet, core, template-engine, email, emails</PackageTags>
+    <RepositoryUrl>https://github.com/toddams/RazorLight</RepositoryUrl>
+  </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="2.0.0" />
@@ -13,6 +24,5 @@
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Primitives" Version="2.0.0" />
     <PackageReference Include="System.Buffers" Version="4.4.0" />
-
   </ItemGroup>
 </Project>
