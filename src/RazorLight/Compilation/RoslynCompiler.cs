@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.PortableExecutable;
 using System.Text;
+using System.Threading.Tasks;
 using DependencyContextCompilationOptions = Microsoft.Extensions.DependencyModel.CompilationOptions;
 
 namespace RazorLight.Compilation
@@ -82,7 +83,26 @@ namespace RazorLight.Compilation
 
                 if (!result.Success)
                 {
-                    throw new Exception();
+                    List<Diagnostic> errorsDiagnostics = result.Diagnostics
+                            .Where(d => d.IsWarningAsError || d.Severity == DiagnosticSeverity.Error)
+                            .ToList();
+
+                    StringBuilder builder = new StringBuilder();
+                    builder.AppendLine("Failed to compile generated Razor template:");
+
+                    var errorMessages = new List<string>();
+                    foreach (Diagnostic diagnostic in errorsDiagnostics)
+                    {
+                        FileLinePositionSpan lineSpan = diagnostic.Location.SourceTree.GetMappedLineSpan(diagnostic.Location.SourceSpan);
+                        string errorMessage = diagnostic.GetMessage();
+                        string formattedMessage = $"- ({lineSpan.StartLinePosition.Line}:{lineSpan.StartLinePosition.Character}) {errorMessage}";
+
+                        errorMessages.Add(formattedMessage);
+                    }
+
+                    builder.AppendLine("\nSee CompilationErrors for detailed information");
+
+                    throw new TemplateCompilationException(builder.ToString(), errorMessages);
                 }
 
                 assemblyStream.Seek(0, SeekOrigin.Begin);
