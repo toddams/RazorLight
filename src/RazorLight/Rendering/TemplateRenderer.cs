@@ -12,18 +12,32 @@ namespace RazorLight.Rendering
     {
         private readonly HtmlEncoder _htmlEncoder;
         private MemoryPoolViewBufferScope _bufferScope;
-        private RazorLightEngine engine;
+        private RazorLightEngine _engine;
 
         public TemplateRenderer(
             ITemplatePage razorPage,
-            RazorLightEngine engine,
+            RazorLightEngine razorEngine,
             HtmlEncoder htmlEncoder)
         {
-            RazorPage = razorPage ?? throw new ArgumentNullException(nameof(razorPage));
+            if (razorPage == null)
+            {
+                throw new ArgumentNullException(nameof(razorPage));
+            }
 
-            _htmlEncoder = htmlEncoder ?? throw new ArgumentNullException(nameof(htmlEncoder));
+            if(razorEngine == null)
+            {
+                throw new ArgumentNullException(nameof(razorEngine));
+            }
 
-            this.engine = engine;
+            if(razorPage == null)
+            {
+                throw new ArgumentNullException(nameof(razorPage));
+            }
+
+            _engine = razorEngine;
+            _htmlEncoder = htmlEncoder;
+
+            RazorPage = razorPage;
         }
 
         /// <summary>
@@ -40,9 +54,8 @@ namespace RazorLight.Rendering
         public virtual async Task RenderAsync()
         {
             var context = RazorPage.PageContext;
-
-            //TODO: was taken from IServiceCollection
             _bufferScope = new MemoryPoolViewBufferScope();
+
             var bodyWriter = await RenderPageAsync(RazorPage, context, invokeViewStarts: false).ConfigureAwait(false);
             await RenderLayoutAsync(context, bodyWriter).ConfigureAwait(false);
         }
@@ -99,6 +112,12 @@ namespace RazorLight.Rendering
         private async Task RenderPageCoreAsync(ITemplatePage page, PageContext context)
         {
             page.PageContext = context;
+            page.IncludeFunc = async (key, model) =>
+            {
+                var pageContext = new PageContext() { Writer = context.Writer };
+                await _engine.CompileRenderAsync(key, model, model?.GetType(), context.ViewBag, pageContext);
+            };
+            
             //_pageActivator.Activate(page, context);
 
             await page.ExecuteAsync().ConfigureAwait(false);
@@ -167,7 +186,7 @@ namespace RazorLight.Rendering
                     throw new InvalidOperationException("Layout can not be rendered");
                 }
 
-                ITemplatePage layoutPage = await engine.GetTemplateAsync(previousPage.Layout).ConfigureAwait(false);
+                ITemplatePage layoutPage = await _engine.GetTemplateAsync(previousPage.Layout).ConfigureAwait(false);
 
                 if (renderedLayouts.Count > 0 &&
                     renderedLayouts.Any(l => string.Equals(l.Key, layoutPage.Key, StringComparison.Ordinal)))

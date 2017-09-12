@@ -30,7 +30,7 @@ namespace RazorLight
         /// <returns>Rendered template as a string result</returns>
         public async Task<string> CompileRenderAsync<T>(string key, T model)
         {
-            return await CompileRenderAsync(key, model, typeof(T), viewBag: null);
+            return await CompileRenderAsync(key, model, typeof(T), null, null);
         }
 
         /// <summary>
@@ -41,15 +41,19 @@ namespace RazorLight
         /// <param name="modelType">Type of the model</param>
         /// <param name="viewBag">Dynamic ViewBag (can be null)</param>
         /// <returns></returns>
-        public async Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag)
+        public async Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag, PageContext context)
         {
             ITemplatePage template = await GetTemplateAsync(key).ConfigureAwait(false);
 
-            var context = new PageContext(viewBag)
+            var pageContext = context ?? new PageContext(viewBag)
             {
                 ExecutingPageKey = key,
-                ModelTypeInfo = new ModelTypeInfo(modelType)
             };
+
+            if(model != null)
+            {
+                pageContext.ModelTypeInfo = new ModelTypeInfo(modelType);
+            }
 
             template.PageContext = context;
 
@@ -94,11 +98,32 @@ namespace RazorLight
         /// <returns>Rendered string</returns>
         public async Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model)
         {
-            using (var writer = new StringWriter())
+            TextWriter writer;
+            bool shouldDispose = true;
+
+            if(templatePage.PageContext.Writer != null)
+            {
+                writer = templatePage.PageContext.Writer;
+                shouldDispose = false;
+            }
+            else
+            {
+                writer = new StringWriter();
+            }
+
+            try
             {
                 await RenderTemplateAsync(templatePage, model, writer);
+                string result = writer.ToString();
 
-                return writer.ToString();
+                return result;
+            }
+            finally
+            {
+                if (shouldDispose)
+                {
+                    writer.Dispose();
+                }
             }
         }
 
@@ -110,8 +135,12 @@ namespace RazorLight
         /// <param name="textWriter">Output</param>
         public async Task RenderTemplateAsync(ITemplatePage templatePage, object model, TextWriter textWriter)
         {
-            object pageModel = templatePage.PageContext.ModelTypeInfo.CreateTemplateModel(model);
-            templatePage.SetModel(pageModel);
+            if(model != null)
+            {
+                object pageModel = templatePage.PageContext.ModelTypeInfo.CreateTemplateModel(model);
+                templatePage.SetModel(pageModel);
+            }
+          
             templatePage.Key = templatePage.PageContext.ExecutingPageKey;
             templatePage.PageContext.Writer = textWriter;
 
