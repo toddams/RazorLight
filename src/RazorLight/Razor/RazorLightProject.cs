@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RazorLight.Razor
@@ -18,5 +19,7 @@ namespace RazorLight.Razor
         /// <param name="templateKey"></param>
         /// <returns></returns>
         public abstract Task<IEnumerable<RazorLightProjectItem>> GetImportsAsync(string templateKey);
+
+        public abstract Task<string> GetItemParentLayoutKeyAsync(string templateKey);
     }
 }

@@ -65,12 +65,12 @@ namespace RazorLight
         public async Task<ITemplatePage> GetTemplateAsync(string key, bool compileIfNotCached = true)
         {
             var cacheLookupResult = cache.GetTemplate(key);
-            if(cacheLookupResult.Success)
+            if (cacheLookupResult.Success)
             {
                 return cacheLookupResult.Template.TemplatePageFactory();
             }
 
-            if(compileIfNotCached)
+            if (compileIfNotCached)
             {
                 var pageFactoryResult = await templateFactoryProvider.CreateFactoryAsync(key).ConfigureAwait(false);
                 if (!pageFactoryResult.Success)
@@ -80,7 +80,17 @@ namespace RazorLight
 
                 cache.Set(key, pageFactoryResult.TemplatePageFactory);
 
-                return pageFactoryResult.TemplatePageFactory();
+                var template = pageFactoryResult.TemplatePageFactory();
+                if (string.IsNullOrWhiteSpace(template.Layout))
+                {
+                    string outsideLayoutKey = await templateFactoryProvider.GetParentLayoutKeyAsync(key);
+                    if (!string.IsNullOrWhiteSpace(outsideLayoutKey))
+                    {
+                        template.Layout = outsideLayoutKey;
+                    }
+                }
+
+                return template;
             }
 
             throw new RazorLightException($"Can't find a template with a specified key ({key})");

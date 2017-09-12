@@ -20,5 +20,9 @@ namespace RazorLight.Razor
         /// </summary>
         /// <returns></returns>
         public abstract Stream Read();
+
+        public abstract string TemplateKey { get; }
+
+        public abstract bool TemplateExists { get; }
     }
 }

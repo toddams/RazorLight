@@ -36,5 +36,10 @@ namespace RazorLight.Razor
         {
             return Assembly.GetManifestResourceStream(fullTemplateKey);
         }
+
+        public override string TemplateKey => throw new NotImplementedException();
+
+        public override bool TemplateExists => throw new NotImplementedException();
+
     }
 }

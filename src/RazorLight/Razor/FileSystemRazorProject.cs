@@ -46,7 +46,7 @@ namespace RazorLight.Razor
                 throw new ArgumentException(nameof(templateKey));
             }
 
-            if(!templateKey.EndsWith(FileExtension))
+            if (!templateKey.EndsWith(FileExtension))
             {
                 templateKey = templateKey + FileExtension;
             }
@@ -70,6 +70,11 @@ namespace RazorLight.Razor
         public override Task<IEnumerable<RazorLightProjectItem>> GetImportsAsync(string templateKey)
         {
             return Task.FromResult(Enumerable.Empty<RazorLightProjectItem>());
+        }
+
+        public override Task<string> GetItemParentLayoutKeyAsync(string templateKey)
+        {
+            throw new NotImplementedException("Not support outside LayoutKey");
         }
     }
 }

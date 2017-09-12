@@ -16,6 +16,10 @@ namespace RazorLight.Razor
 
         public override bool Exists => File.Exists;
 
+        public override string TemplateKey => throw new System.NotImplementedException();
+
+        public override bool TemplateExists => throw new System.NotImplementedException();
+
         public override Stream Read() => File.OpenRead();
     }
 }
