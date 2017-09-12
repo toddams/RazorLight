@@ -201,7 +201,7 @@ namespace RazorLight.Rendering
                 previousPage.IsLayoutBeingRendered = true;
                 layoutPage.PreviousSectionWriters = previousPage.SectionWriters;
                 layoutPage.BodyContent = bodyWriter.Buffer;
-                bodyWriter = await RenderPageAsync(layoutPage, context, invokeViewStarts: false).ConfigureAwait(false);
+                bodyWriter = await RenderPageAsync(layoutPage, context, invokeViewStarts: false).ConfigureAwait(false); ;
 
                 renderedLayouts.Add(layoutPage);
                 previousPage = layoutPage;

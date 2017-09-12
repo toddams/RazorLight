@@ -50,7 +50,7 @@ namespace RazorLight
                 TemplateAttribute = generatedAssembly.GetCustomAttribute<RazorLightTemplateAttribute>(),
             };
 
-            if(templateDescriptor.TemplateAttribute != null)
+            if (templateDescriptor.TemplateAttribute != null)
             {
                 Type compiledType = templateDescriptor.TemplateAttribute.TemplateType;
 
@@ -68,6 +68,11 @@ namespace RazorLight
             {
                 return new TemplateFactoryResult(templateDescriptor, null);
             }
+        }
+
+        public async Task<string> GetParentLayoutKeyAsync(string templateKey)
+        {
+            return await Task.FromResult(await project.GetItemParentLayoutKeyAsync(templateKey));
         }
     }
 }

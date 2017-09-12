@@ -29,7 +29,7 @@ namespace RazorLight.Razor
 
         public override Task<RazorLightProjectItem> GetItemAsync(string templateKey)
         {
-            if(!templateKey.EndsWith(Extension))
+            if (!templateKey.EndsWith(Extension))
             {
                 templateKey = templateKey + Extension;
             }
@@ -42,6 +42,11 @@ namespace RazorLight.Razor
         public override Task<IEnumerable<RazorLightProjectItem>> GetImportsAsync(string templateKey)
         {
             return Task.FromResult(Enumerable.Empty<RazorLightProjectItem>());
+        }
+
+        public override Task<string> GetItemParentLayoutKeyAsync(string templateKey)
+        {
+            throw new NotImplementedException("Not support outside LayoutKey");
         }
     }
 }
