@@ -73,6 +73,8 @@ namespace RazorLight
         /// <inheritdoc />
         public string Key { get; set; }
 
+        public bool DisableEncoding { get; set; } = false;
+
         /// <summary>
         /// Gets the <see cref="TextWriter"/> that the template is writing output to.
         /// </summary>
@@ -408,7 +410,7 @@ namespace RazorLight
             {
                 // Perf: Encode right away instead of writing it character-by-character.
                 // character-by-character isn't efficient when using a writer backed by a ViewBuffer.
-                var encoded = encoder.Encode(value);
+                var encoded = DisableEncoding ? value : encoder.Encode(value);
                 writer.Write(encoded);
             }
         }
