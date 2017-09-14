@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using System;
 
@@ -15,7 +14,7 @@ namespace RazorLight.Caching
 
         protected IMemoryCache LookupCache { get; set; }
 
-        public TemplateCacheLookupResult GetTemplate(string key)
+        public TemplateCacheLookupResult RetrieveTemplate(string key)
         {
             if(LookupCache.TryGetValue(key, out TemplateCacheItem template))
             {
@@ -29,12 +28,12 @@ namespace RazorLight.Caching
             }
         }
 
-        public bool IsTemplateCompiled(string key)
+        public bool Contains(string key)
         {
             return LookupCache.TryGetValue(key, out _);
         }
 
-        public void SetTemplate(string key, Func<ITemplatePage> pageFactory)
+        public void CacheTemplate(string key, Func<ITemplatePage> pageFactory)
         {
             var cacheItem = new TemplateCacheItem(key, pageFactory);
             LookupCache.Set(key, cacheItem);

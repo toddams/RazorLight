@@ -4,11 +4,11 @@ namespace RazorLight.Caching
 {
     public interface ICachingProvider
     {
-        TemplateCacheLookupResult GetTemplate(string key);
+        TemplateCacheLookupResult RetrieveTemplate(string key);
 
-        void SetTemplate(string key, Func<ITemplatePage> pageFactory);
+        void CacheTemplate(string key, Func<ITemplatePage> pageFactory);
 
-        bool IsTemplateCompiled(string key);
+        bool Contains(string key);
 
         void Remove(string key);
     }
