@@ -20,7 +20,7 @@ namespace RazorLight
             cache = cachingProvider;
         }
 
-        public ICachingProvider Cache => cache;
+        public ICachingProvider TemplateCache => cache;
 
         /// <summary>
         /// Compiles and renders a template with a given <paramref name="key"/>
@@ -70,7 +70,7 @@ namespace RazorLight
         /// <returns>An instance of a template</returns>
         public async Task<ITemplatePage> GetTemplateAsync(string key, bool compileIfNotCached = true)
         {
-            var cacheLookupResult = cache.GetTemplate(key);
+            var cacheLookupResult = cache.RetrieveTemplate(key);
             if(cacheLookupResult.Success)
             {
                 return cacheLookupResult.Template.TemplatePageFactory();
@@ -84,7 +84,7 @@ namespace RazorLight
                     throw new Exception($"Template {key} is corrupted or invalid");
                 }
 
-                cache.SetTemplate(key, pageFactoryResult.TemplatePageFactory);
+                cache.CacheTemplate(key, pageFactoryResult.TemplatePageFactory);
 
                 return pageFactoryResult.TemplatePageFactory();
             }

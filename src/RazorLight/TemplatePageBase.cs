@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Runtime.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using RazorLight.TagHelpers;
 using System.Buffers;
+using RazorLight.Text;
 
 namespace RazorLight
 {
@@ -67,7 +68,6 @@ namespace RazorLight
         /// Gets the <see cref="System.Text.Encodings.Web.HtmlEncoder"/> to use when this template />
         /// handles non-<see cref="IHtmlContent"/> C# expressions.
         /// </summary>
-        [RazorInject]
         public HtmlEncoder HtmlEncoder { get; set; } = HtmlEncoder.Default;
 
         /// <inheritdoc />
@@ -160,6 +160,16 @@ namespace RazorLight
         public abstract void EndContext();
 
         public abstract void EnsureRenderedBodyOrSections();
+
+        /// <summary>
+		/// Returns the specified string as a raw string. This will ensure it is not encoded.
+		/// </summary>
+		/// <param name="rawString">The raw string to write.</param>
+		/// <returns>An instance of <see cref="IRawString"/>.</returns>
+		public IRawString Raw(string rawString)
+        {
+            return new RawString(rawString);
+        }
 
         #region Tag helpers
 
@@ -353,32 +363,37 @@ namespace RazorLight
 
             var writer = Output;
             var encoder = HtmlEncoder;
-            if (value is IHtmlContent htmlContent)
+
+            switch(value)
             {
-                var bufferedWriter = writer as ViewBufferTextWriter;
-                if (bufferedWriter == null || !bufferedWriter.IsBuffering)
-                {
-                    htmlContent.WriteTo(writer, encoder);
-                }
-                else
-                {
-                    if (value is IHtmlContentContainer htmlContentContainer)
+                case IRawString raw:
+                    raw.WriteTo(writer);
+                    break;
+                case IHtmlContent html:
+                    var bufferedWriter = writer as ViewBufferTextWriter;
+                    if (bufferedWriter == null || !bufferedWriter.IsBuffering)
                     {
-                        // This is likely another ViewBuffer.
-                        htmlContentContainer.MoveTo(bufferedWriter.Buffer);
+                        html.WriteTo(writer, encoder);
                     }
                     else
                     {
-                        // Perf: This is the common case for IHtmlContent, ViewBufferTextWriter is inefficient
-                        // for writing character by character.
-                        bufferedWriter.Buffer.AppendHtml(htmlContent);
+                        if (value is IHtmlContentContainer htmlContentContainer)
+                        {
+                            // This is likely another ViewBuffer.
+                            htmlContentContainer.MoveTo(bufferedWriter.Buffer);
+                        }
+                        else
+                        {
+                            // Perf: This is the common case for IHtmlContent, ViewBufferTextWriter is inefficient
+                            // for writing character by character.
+                            bufferedWriter.Buffer.AppendHtml(html);
+                        }
                     }
-                }
-
-                return;
+                    break;
+                default:
+                    Write(value.ToString());
+                    break;
             }
-
-            Write(value.ToString());
         }
 
         /// <summary>
