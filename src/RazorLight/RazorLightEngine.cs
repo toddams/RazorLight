@@ -1,5 +1,4 @@
 ﻿using RazorLight.Caching;
-using RazorLight.Rendering;
 using System;
 using System.Dynamic;
 using System.IO;
@@ -21,6 +20,8 @@ namespace RazorLight
             cache = cachingProvider;
         }
 
+        public ICachingProvider Cache => cache;
+
         /// <summary>
         /// Compiles and renders a template with a given <paramref name="key"/>
         /// </summary>
@@ -30,7 +31,20 @@ namespace RazorLight
         /// <returns>Rendered template as a string result</returns>
         public async Task<string> CompileRenderAsync<T>(string key, T model)
         {
-            return await CompileRenderAsync(key, model, typeof(T), null, null);
+            return await CompileRenderAsync(key, model, viewBag: null);
+        }
+
+        /// <summary>
+        /// Compiles and renders a template with a given <paramref name="key"/>
+        /// </summary>
+        /// <typeparam name="T">Type of the model</typeparam>
+        /// <param name="key">Unique key of the template</param>
+        /// <param name="model">Template model</param>
+        /// <param name="viewBag">Dynamic viewBag of the template</param>
+        /// <returns>Rendered template as a string result</returns>
+        public async Task<string> CompileRenderAsync<T>(string key, T model, ExpandoObject viewBag)
+        {
+            return await CompileRenderAsync(key, model, typeof(T), viewBag);
         }
 
         /// <summary>
@@ -41,23 +55,11 @@ namespace RazorLight
         /// <param name="modelType">Type of the model</param>
         /// <param name="viewBag">Dynamic ViewBag (can be null)</param>
         /// <returns></returns>
-        public async Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag, PageContext context)
+        public async Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag)
         {
             ITemplatePage template = await GetTemplateAsync(key).ConfigureAwait(false);
 
-            var pageContext = context ?? new PageContext(viewBag)
-            {
-                ExecutingPageKey = key,
-            };
-
-            if(model != null)
-            {
-                pageContext.ModelTypeInfo = new ModelTypeInfo(modelType);
-            }
-
-            template.PageContext = context;
-
-            return await RenderTemplateAsync(template, model).ConfigureAwait(false);
+            return await RenderTemplateAsync(template, model, modelType, viewBag).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -82,7 +84,7 @@ namespace RazorLight
                     throw new Exception($"Template {key} is corrupted or invalid");
                 }
 
-                cache.Set(key, pageFactoryResult.TemplatePageFactory);
+                cache.SetTemplate(key, pageFactoryResult.TemplatePageFactory);
 
                 return pageFactoryResult.TemplatePageFactory();
             }
@@ -91,39 +93,33 @@ namespace RazorLight
         }
 
         /// <summary>
-        /// Renders a template with a given moel
+        /// Renders a template with a given model
         /// </summary>
         /// <param name="templatePage">Instance of a template</param>
         /// <param name="model">Template model</param>
+        /// <param name="modelType">Type of the model</param>
         /// <returns>Rendered string</returns>
-        public async Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model)
+        public async Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType)
         {
-            TextWriter writer;
-            bool shouldDispose = true;
+            return await RenderTemplateAsync(templatePage, model, modelType, null);
+        }
 
-            if(templatePage.PageContext.Writer != null)
+        /// <summary>
+        /// Renders a template with a given model
+        /// </summary>
+        /// <param name="templatePage">Instance of a template</param>
+        /// <param name="model">Template model</param>
+        /// <param name="modelType">Type of the model</param>
+        /// <param name="viewBag">Dynamic viewBag of the template</param>
+        /// <returns>Rendered string</returns>
+        public async Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, ExpandoObject viewBag)
+        {
+            using (var writer = new StringWriter())
             {
-                writer = templatePage.PageContext.Writer;
-                shouldDispose = false;
-            }
-            else
-            {
-                writer = new StringWriter();
-            }
-
-            try
-            {
-                await RenderTemplateAsync(templatePage, model, writer);
+                await RenderTemplateAsync(templatePage, model, modelType, writer);
                 string result = writer.ToString();
 
                 return result;
-            }
-            finally
-            {
-                if (shouldDispose)
-                {
-                    writer.Dispose();
-                }
             }
         }
 
@@ -132,17 +128,30 @@ namespace RazorLight
         /// </summary>
         /// <param name="templatePage">Instance of a template</param>
         /// <param name="model">Template model</param>
+        /// <param name="modelType">Type of the model</param>
+        /// <param name="viewBag">Dynamic viewBag of the page</param>
         /// <param name="textWriter">Output</param>
-        public async Task RenderTemplateAsync(ITemplatePage templatePage, object model, TextWriter textWriter)
+        public async Task RenderTemplateAsync(
+            ITemplatePage templatePage, 
+            object model, Type modelType,
+            TextWriter textWriter,
+            ExpandoObject viewBag = null)
         {
-            if(model != null)
+            var pageContext = new PageContext(viewBag)
             {
-                object pageModel = templatePage.PageContext.ModelTypeInfo.CreateTemplateModel(model);
+                ExecutingPageKey = templatePage.Key,
+                Writer = textWriter
+            };
+
+            if (model != null)
+            {
+                pageContext.ModelTypeInfo = new ModelTypeInfo(modelType);
+
+                object pageModel = pageContext.ModelTypeInfo.CreateTemplateModel(model);
                 templatePage.SetModel(pageModel);
             }
-          
-            templatePage.Key = templatePage.PageContext.ExecutingPageKey;
-            templatePage.PageContext.Writer = textWriter;
+
+            templatePage.PageContext = pageContext;
 
             using (var renderer = new TemplateRenderer(templatePage, this, HtmlEncoder.Default))
             {

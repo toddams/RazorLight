@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace RazorLight.Rendering
+namespace RazorLight
 {
     public class TemplateRenderer : IDisposable
     {
@@ -114,8 +114,9 @@ namespace RazorLight.Rendering
             page.PageContext = context;
             page.IncludeFunc = async (key, model) =>
             {
-                var pageContext = new PageContext() { Writer = context.Writer };
-                await _engine.CompileRenderAsync(key, model, model?.GetType(), context.ViewBag, pageContext);
+                ITemplatePage template = await _engine.GetTemplateAsync(key, true);
+
+                await _engine.RenderTemplateAsync(template, model, model?.GetType(), context.Writer);
             };
             
             //_pageActivator.Activate(page, context);

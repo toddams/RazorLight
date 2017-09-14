@@ -34,10 +34,15 @@ namespace RazorLight.Caching
             return LookupCache.TryGetValue(key, out _);
         }
 
-        public void Set(string key, Func<ITemplatePage> pageFactory)
+        public void SetTemplate(string key, Func<ITemplatePage> pageFactory)
         {
             var cacheItem = new TemplateCacheItem(key, pageFactory);
             LookupCache.Set(key, cacheItem);
+        }
+
+        public void Remove(string key)
+        {
+            LookupCache.Remove(key);
         }
     }
 }

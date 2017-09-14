@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Razor.Language;
 using System.Collections.Generic;
 
-namespace RazorLight.Razor
+namespace RazorLight
 {
     public class TemplateGenerationException : RazorLightException
     {

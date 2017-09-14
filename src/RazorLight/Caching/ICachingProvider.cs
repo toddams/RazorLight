@@ -6,8 +6,10 @@ namespace RazorLight.Caching
     {
         TemplateCacheLookupResult GetTemplate(string key);
 
-        void Set(string key, Func<ITemplatePage> pageFactory);
+        void SetTemplate(string key, Func<ITemplatePage> pageFactory);
 
         bool IsTemplateCompiled(string key);
+
+        void Remove(string key);
     }
 }
