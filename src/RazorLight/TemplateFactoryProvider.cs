@@ -13,21 +13,23 @@ namespace RazorLight
     {
         private readonly RazorSourceGenerator sourceGenerator;
         private readonly RoslynCompilationService templateCompiler;
-        private readonly RazorLightProject project;
 
         public TemplateFactoryProvider(
-            RazorLightProject razorProject,
             RazorSourceGenerator generator,
             RoslynCompilationService compiler
             )
         {
             sourceGenerator = generator;
             templateCompiler = compiler;
-            project = razorProject;
         }
 
         public async Task<TemplateFactoryResult> CreateFactoryAsync(string templateKey)
         {
+            if(templateKey == null)
+            {
+                throw new ArgumentNullException(nameof(templateKey));
+            }
+
             RazorCSharpDocument csharpCodument = await sourceGenerator.GenerateCodeAsync(templateKey).ConfigureAwait(false);
 
             if (csharpCodument.Diagnostics.Count > 0)

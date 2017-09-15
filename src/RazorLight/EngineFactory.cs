@@ -44,14 +44,14 @@ namespace RazorLight
         {
             var sourceGenerator = new RazorSourceGenerator(RazorEngine, project);
             var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager());
-            var templateFactoryProvider = new TemplateFactoryProvider(project, sourceGenerator, compiler);
+            var templateFactoryProvider = new TemplateFactoryProvider(sourceGenerator, compiler);
 
             ICachingProvider cacheProvider = new DefaultCachingProvider();
 
             return new RazorLightEngine(templateFactoryProvider, cacheProvider);
         }
 
-        protected virtual RazorEngine RazorEngine
+        public virtual RazorEngine RazorEngine
         {
             get
             {
