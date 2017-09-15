@@ -4,7 +4,24 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Embedded\Empty.cshtml" />
+    <None Remove="Assets\Embedded\Included.cshtml" />
+    <None Remove="Assets\Embedded\Layout.cshtml" />
+    <None Remove="Assets\Embedded\LayoutWithSection.cshtml" />
+    <None Remove="Assets\Embedded\WrongRazorSyntax.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Embedded\Empty.cshtml" />
+    <EmbeddedResource Include="Assets\Embedded\Included.cshtml" />
+    <EmbeddedResource Include="Assets\Embedded\Layout.cshtml" />
+    <EmbeddedResource Include="Assets\Embedded\LayoutWithSection.cshtml" />
+    <EmbeddedResource Include="Assets\Embedded\WrongRazorSyntax.cshtml" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0-preview-20170628-02" />
