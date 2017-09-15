@@ -8,19 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\Embedded\Empty.cshtml" />
-    <None Remove="Assets\Embedded\Included.cshtml" />
-    <None Remove="Assets\Embedded\Layout.cshtml" />
-    <None Remove="Assets\Embedded\LayoutWithSection.cshtml" />
-    <None Remove="Assets\Embedded\WrongRazorSyntax.cshtml" />
+    <None Remove="Assets\Embedded\*.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets\Embedded\Empty.cshtml" />
-    <EmbeddedResource Include="Assets\Embedded\Included.cshtml" />
-    <EmbeddedResource Include="Assets\Embedded\Layout.cshtml" />
-    <EmbeddedResource Include="Assets\Embedded\LayoutWithSection.cshtml" />
-    <EmbeddedResource Include="Assets\Embedded\WrongRazorSyntax.cshtml" />
+    <EmbeddedResource Include="Assets\Embedded\*.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
