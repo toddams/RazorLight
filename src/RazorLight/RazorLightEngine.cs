@@ -29,9 +29,9 @@ namespace RazorLight
         /// <param name="key">Unique key of the template</param>
         /// <param name="model">Template model</param>
         /// <returns>Rendered template as a string result</returns>
-        public async Task<string> CompileRenderAsync<T>(string key, T model)
+        public Task<string> CompileRenderAsync<T>(string key, T model)
         {
-            return await CompileRenderAsync(key, model, viewBag: null);
+            return CompileRenderAsync(key, model, viewBag: null);
         }
 
         /// <summary>
@@ -42,9 +42,9 @@ namespace RazorLight
         /// <param name="model">Template model</param>
         /// <param name="viewBag">Dynamic viewBag of the template</param>
         /// <returns>Rendered template as a string result</returns>
-        public async Task<string> CompileRenderAsync<T>(string key, T model, ExpandoObject viewBag)
+        public Task<string> CompileRenderAsync<T>(string key, T model, ExpandoObject viewBag)
         {
-            return await CompileRenderAsync(key, model, typeof(T), viewBag);
+            return CompileRenderAsync(key, model, typeof(T), viewBag);
         }
 
         /// <summary>
@@ -62,34 +62,31 @@ namespace RazorLight
             return await RenderTemplateAsync(template, model, modelType, viewBag).ConfigureAwait(false);
         }
 
+
+
         /// <summary>
         /// Search and compile a template with a given key
         /// </summary>
         /// <param name="key">Unique key of the template</param>
         /// <param name="compileIfNotCached">If true - it will try to get a template with a specified key and compile it</param>
         /// <returns>An instance of a template</returns>
-        public async Task<ITemplatePage> CompileTemplateAsync(string key, bool compileIfNotCached = true)
+        public async Task<ITemplatePage> CompileTemplateAsync(string key)
         {
             var cacheLookupResult = cache.RetrieveTemplate(key);
-            if(cacheLookupResult.Success)
+            if (cacheLookupResult.Success)
             {
                 return cacheLookupResult.Template.TemplatePageFactory();
             }
 
-            if(compileIfNotCached)
+            var pageFactoryResult = await templateFactoryProvider.CreateFactoryAsync(key).ConfigureAwait(false);
+            if (!pageFactoryResult.Success)
             {
-                var pageFactoryResult = await templateFactoryProvider.CreateFactoryAsync(key).ConfigureAwait(false);
-                if (!pageFactoryResult.Success)
-                {
-                    throw new Exception($"Template {key} is corrupted or invalid");
-                }
-
-                cache.CacheTemplate(key, pageFactoryResult.TemplatePageFactory);
-
-                return pageFactoryResult.TemplatePageFactory();
+                throw new RazorLightException($"Template {key} is corrupted or invalid");
             }
 
-            throw new RazorLightException($"Can't find a template with a specified key ({key})");
+            cache.CacheTemplate(key, pageFactoryResult.TemplatePageFactory);
+
+            return pageFactoryResult.TemplatePageFactory();
         }
 
         /// <summary>
@@ -99,9 +96,9 @@ namespace RazorLight
         /// <param name="model">Template model</param>
         /// <param name="modelType">Type of the model</param>
         /// <returns>Rendered string</returns>
-        public async Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType)
+        public Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType)
         {
-            return await RenderTemplateAsync(templatePage, model, modelType, null);
+            return RenderTemplateAsync(templatePage, model, modelType, null);
         }
 
         /// <summary>
@@ -132,7 +129,7 @@ namespace RazorLight
         /// <param name="viewBag">Dynamic viewBag of the page</param>
         /// <param name="textWriter">Output</param>
         public async Task RenderTemplateAsync(
-            ITemplatePage templatePage, 
+            ITemplatePage templatePage,
             object model, Type modelType,
             TextWriter textWriter,
             ExpandoObject viewBag = null)
