@@ -12,7 +12,7 @@ namespace RazorLight.Razor
 
         public FileInfo File { get; }
 
-        public override string Key { get; set; }
+        public override string Key { get; }
 
         public override bool Exists => File.Exists;
 

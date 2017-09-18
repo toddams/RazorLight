@@ -7,7 +7,7 @@ namespace RazorLight.Razor
         /// <summary>
         /// Unique key of the template that was seached
         /// </summary>
-        public abstract string Key { get; set; }
+        public abstract string Key { get; }
 
         /// <summary>
         /// Gets if template exists

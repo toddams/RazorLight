@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Razor.Language;
 using RazorLight.Compilation;
-using RazorLight.Razor;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -30,27 +29,22 @@ namespace RazorLight
                 throw new ArgumentNullException(nameof(templateKey));
             }
 
-            RazorCSharpDocument csharpCodument = await sourceGenerator.GenerateCodeAsync(templateKey).ConfigureAwait(false);
+            GeneratedRazorTemplate generatedRazorTemplate = await sourceGenerator.GenerateCodeAsync(templateKey).ConfigureAwait(false);
 
-            if (csharpCodument.Diagnostics.Count > 0)
+            if (generatedRazorTemplate.CSharpDocument.Diagnostics.Count > 0)
             {
                 var builder = new StringBuilder();
                 builder.AppendLine("Failed to generate Razor template. See \"Diagnostics\" property for more details");
 
-                foreach (RazorDiagnostic d in csharpCodument.Diagnostics)
+                foreach (RazorDiagnostic d in generatedRazorTemplate.CSharpDocument.Diagnostics)
                 {
                     builder.AppendLine($"- {d.GetMessage()}");
                 }
 
-                throw new TemplateGenerationException(builder.ToString(), csharpCodument.Diagnostics);
+                throw new TemplateGenerationException(builder.ToString(), generatedRazorTemplate.CSharpDocument.Diagnostics);
             }
 
-            Assembly generatedAssembly = templateCompiler.CompileAndEmit(csharpCodument.GeneratedCode);
-            var templateDescriptor = new CompiledTemplateDescriptor()
-            {
-                TemplateKey = templateKey,
-                TemplateAttribute = generatedAssembly.GetCustomAttribute<RazorLightTemplateAttribute>(),
-            };
+            CompiledTemplateDescriptor templateDescriptor = templateCompiler.CompileAndEmit(generatedRazorTemplate);
 
             if(templateDescriptor.TemplateAttribute != null)
             {

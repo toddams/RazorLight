@@ -22,7 +22,7 @@ namespace RazorLight.Razor
 
         public Type RootType { get; set; }
 
-        public override string Key { get; set; }
+        public override string Key { get; }
 
         public override bool Exists
         {

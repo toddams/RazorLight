@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 
 namespace RazorLight.Compilation
@@ -10,6 +9,6 @@ namespace RazorLight.Compilation
         EmitOptions EmitOptions { get; }
         CSharpParseOptions ParseOptions { get; }
 
-        Assembly CompileAndEmit(string generatedCode);
+        CompiledTemplateDescriptor CompileAndEmit(GeneratedRazorTemplate razorTemplate);
     }
 }

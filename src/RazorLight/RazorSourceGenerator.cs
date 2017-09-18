@@ -38,7 +38,7 @@ namespace RazorLight
         /// </summary>
         /// <param name="key">The template path.</param>
         /// <returns>The <see cref="RazorCSharpDocument"/>.</returns>
-        public async Task<RazorCSharpDocument> GenerateCodeAsync(string key)
+        public async Task<GeneratedRazorTemplate> GenerateCodeAsync(string key)
         {
             if (string.IsNullOrEmpty(key))
             {
@@ -54,7 +54,7 @@ namespace RazorLight
         /// </summary>
         /// <param name="projectItem">The <see cref="RazorLightProjectItem"/>.</param>
         /// <returns>The <see cref="RazorCSharpDocument"/>.</returns>
-        public async Task<RazorCSharpDocument> GenerateCodeAsync(RazorLightProjectItem projectItem)
+        public async Task<GeneratedRazorTemplate> GenerateCodeAsync(RazorLightProjectItem projectItem)
         {
             if (projectItem == null)
             {
@@ -69,7 +69,9 @@ namespace RazorLight
             RazorCodeDocument codeDocument = await CreateCodeDocumentAsync(projectItem);
 
             Engine.Process(codeDocument);
-            return codeDocument.GetCSharpDocument();
+            RazorCSharpDocument csharpDocument = codeDocument.GetCSharpDocument();
+
+            return new GeneratedRazorTemplate(projectItem.Key, csharpDocument);
         }
 
         /// <summary>
