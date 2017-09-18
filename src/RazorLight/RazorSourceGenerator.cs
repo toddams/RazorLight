@@ -12,6 +12,16 @@ namespace RazorLight
     {
         public RazorSourceGenerator(RazorEngine engine, RazorLightProject project)
         {
+            if(engine == null)
+            {
+                throw new ArgumentNullException(nameof(engine));
+            }
+
+            if(project == null)
+            {
+                throw new ArgumentNullException(nameof(project));
+            }
+
             Engine = engine;
             Project = project;
             DefaultImports = GetDefaultImports();
@@ -103,7 +113,6 @@ namespace RazorLight
             {
                 if (importItem.Exists)
                 {
-                    // We want items in descending order. FindHierarchicalItems returns items in ascending order.
                     result.Insert(0, RazorSourceDocument.ReadFrom(importItem.Read(), null));
                 }
             }
@@ -116,29 +125,38 @@ namespace RazorLight
             return result;
         }
 
-        // Internal for testing.
-        internal static RazorSourceDocument GetDefaultImports()
+        protected RazorSourceDocument GetDefaultImports()
         {
             using (var stream = new MemoryStream())
             using (var writer = new StreamWriter(stream, Encoding.UTF8))
             {
-                writer.WriteLine("@using System");
-                writer.WriteLine("@using System.Collections.Generic");
-                writer.WriteLine("@using System.Linq");
-                writer.WriteLine("@using System.Threading.Tasks");
-                //writer.WriteLine("@inject global::Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<TModel> Html");
-                //writer.WriteLine("@inject global::Microsoft.AspNetCore.Mvc.Rendering.IJsonHelper Json");
-                //writer.WriteLine("@inject global::Microsoft.AspNetCore.Mvc.IViewComponentHelper Component");
-                //writer.WriteLine("@inject global::Microsoft.AspNetCore.Mvc.IUrlHelper Url");
-                //writer.WriteLine("@inject global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider");
-                //writer.WriteLine("@addTagHelper Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper, Microsoft.AspNetCore.Mvc.Razor");
-                //writer.WriteLine("@addTagHelper Microsoft.AspNetCore.Mvc.Razor.TagHelpers.HeadTagHelper, Microsoft.AspNetCore.Mvc.Razor");
-                //writer.WriteLine("@addTagHelper Microsoft.AspNetCore.Mvc.Razor.TagHelpers.BodyTagHelper, Microsoft.AspNetCore.Mvc.Razor");
+                foreach(string line in GetDefaultImportLines())
+                {
+                    writer.WriteLine(line);
+                }
+                
                 writer.Flush();
 
                 stream.Position = 0;
                 return RazorSourceDocument.ReadFrom(stream, fileName: null, encoding: Encoding.UTF8);
             }
+        }
+
+        public virtual IEnumerable<string> GetDefaultImportLines()
+        {
+            yield return "@using System";
+            yield return "@using System.Collections.Generic";
+            yield return "@using System.Linq";
+            yield return "@using System.Threading.Tasks";
+
+            //"@inject global::Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<TModel> Html");
+            //"@inject global::Microsoft.AspNetCore.Mvc.Rendering.IJsonHelper Json");
+            //"@inject global::Microsoft.AspNetCore.Mvc.IViewComponentHelper Component");
+            //"@inject global::Microsoft.AspNetCore.Mvc.IUrlHelper Url");
+            //"@inject global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider");
+            //"@addTagHelper Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper, Microsoft.AspNetCore.Mvc.Razor");
+            //"@addTagHelper Microsoft.AspNetCore.Mvc.Razor.TagHelpers.HeadTagHelper, Microsoft.AspNetCore.Mvc.Razor");
+            //"@addTagHelper Microsoft.AspNetCore.Mvc.Razor.TagHelpers.BodyTagHelper, Microsoft.AspNetCore.Mvc.Razor");
         }
     }
 }

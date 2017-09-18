@@ -4,13 +4,11 @@ using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.DependencyModel;
 using RazorLight.Internal;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.PortableExecutable;
 using System.Text;
 using DependencyContextCompilationOptions = Microsoft.Extensions.DependencyModel.CompilationOptions;
 
@@ -22,6 +20,10 @@ namespace RazorLight.Compilation
 
         internal readonly bool isDevelopment;
         private List<MetadataReference> metadataReferences = new List<MetadataReference>();
+
+        public RoslynCompilationService() : this(new DefaultMetadataReferenceManager())
+        {
+        }
 
         public RoslynCompilationService(IMetadataReferenceManager referenceManager)
         {

@@ -57,7 +57,7 @@ namespace RazorLight
         /// <returns></returns>
         public async Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag)
         {
-            ITemplatePage template = await GetTemplateAsync(key).ConfigureAwait(false);
+            ITemplatePage template = await CompileTemplateAsync(key).ConfigureAwait(false);
 
             return await RenderTemplateAsync(template, model, modelType, viewBag).ConfigureAwait(false);
         }
@@ -68,7 +68,7 @@ namespace RazorLight
         /// <param name="key">Unique key of the template</param>
         /// <param name="compileIfNotCached">If true - it will try to get a template with a specified key and compile it</param>
         /// <returns>An instance of a template</returns>
-        public async Task<ITemplatePage> GetTemplateAsync(string key, bool compileIfNotCached = true)
+        public async Task<ITemplatePage> CompileTemplateAsync(string key, bool compileIfNotCached = true)
         {
             var cacheLookupResult = cache.RetrieveTemplate(key);
             if(cacheLookupResult.Success)
