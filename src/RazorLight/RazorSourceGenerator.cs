@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Razor.Language;
+using RazorLight.Compilation;
 using RazorLight.Razor;
 using System;
 using System.Collections.Generic;
@@ -37,8 +38,8 @@ namespace RazorLight
         /// Parses the template specified by the project item <paramref name="key"/>.
         /// </summary>
         /// <param name="key">The template path.</param>
-        /// <returns>The <see cref="RazorCSharpDocument"/>.</returns>
-        public async Task<RazorCSharpDocument> GenerateCodeAsync(string key)
+        /// <returns>The <see cref="GeneratedRazorTemplate"/>.</returns>
+        public async Task<GeneratedRazorTemplate> GenerateCodeAsync(string key)
         {
             if (string.IsNullOrEmpty(key))
             {
@@ -53,8 +54,8 @@ namespace RazorLight
         /// Parses the template specified by <paramref name="projectItem"/>.
         /// </summary>
         /// <param name="projectItem">The <see cref="RazorLightProjectItem"/>.</param>
-        /// <returns>The <see cref="RazorCSharpDocument"/>.</returns>
-        public async Task<RazorCSharpDocument> GenerateCodeAsync(RazorLightProjectItem projectItem)
+        /// <returns>The <see cref="GeneratedRazorTemplate"/>.</returns>
+        public async Task<GeneratedRazorTemplate> GenerateCodeAsync(RazorLightProjectItem projectItem)
         {
             if (projectItem == null)
             {
@@ -67,9 +68,11 @@ namespace RazorLight
             }
 
             RazorCodeDocument codeDocument = await CreateCodeDocumentAsync(projectItem);
-
             Engine.Process(codeDocument);
-            return codeDocument.GetCSharpDocument();
+
+            var document = codeDocument.GetCSharpDocument();
+
+            return new GeneratedRazorTemplate(projectItem.Key, document);
         }
 
         /// <summary>

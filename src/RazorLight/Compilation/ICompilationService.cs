@@ -10,6 +10,6 @@ namespace RazorLight.Compilation
         EmitOptions EmitOptions { get; }
         CSharpParseOptions ParseOptions { get; }
 
-        Assembly CompileAndEmit(string generatedCode);
+        CompiledTemplateDescriptor CompileAndEmit(GeneratedRazorTemplate razorTemplate);
     }
 }

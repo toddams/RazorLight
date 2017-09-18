@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.DependencyModel;
 using RazorLight.Internal;
+using RazorLight.Razor;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -89,10 +90,10 @@ namespace RazorLight.Compilation
             }
         }
 
-        public Assembly CompileAndEmit(string generatedCode)
+        public CompiledTemplateDescriptor CompileAndEmit(GeneratedRazorTemplate razorTemplate)
         {
             string assemblyName = Path.GetRandomFileName();
-            var compilation = CreateCompilation(generatedCode, assemblyName);
+            var compilation = CreateCompilation(razorTemplate.GeneratedCode, assemblyName);
 
             using (var assemblyStream = new MemoryStream())
             using (var pdbStream = new MemoryStream())
@@ -131,8 +132,13 @@ namespace RazorLight.Compilation
                 pdbStream.Seek(0, SeekOrigin.Begin);
 
                 var assembly = Assembly.Load(assemblyStream.ToArray(), pdbStream.ToArray());
+                var templateDescriptor = new CompiledTemplateDescriptor()
+                {
+                    TemplateKey = razorTemplate.TemplateKey,
+                    TemplateAttribute = assembly.GetCustomAttribute<RazorLightTemplateAttribute>(),
+                };
 
-                return assembly;
+                return templateDescriptor;
             }
         }
 
