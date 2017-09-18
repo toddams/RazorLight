@@ -114,7 +114,7 @@ namespace RazorLight
             page.PageContext = context;
             page.IncludeFunc = async (key, model) =>
             {
-                ITemplatePage template = await _engine.GetTemplateAsync(key, true);
+                ITemplatePage template = await _engine.CompileTemplateAsync(key, true);
 
                 await _engine.RenderTemplateAsync(template, model, model?.GetType(), context.Writer);
             };
@@ -187,7 +187,7 @@ namespace RazorLight
                     throw new InvalidOperationException("Layout can not be rendered");
                 }
 
-                ITemplatePage layoutPage = await _engine.GetTemplateAsync(previousPage.Layout).ConfigureAwait(false);
+                ITemplatePage layoutPage = await _engine.CompileTemplateAsync(previousPage.Layout).ConfigureAwait(false);
 
                 if (renderedLayouts.Count > 0 &&
                     renderedLayouts.Any(l => string.Equals(l.Key, layoutPage.Key, StringComparison.Ordinal)))
