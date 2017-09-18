@@ -4,6 +4,8 @@
 | --- | --- |
 | [![Build Status](https://travis-ci.org/toddams/RazorLight.svg?branch=master)](https://travis-ci.org/toddams/RazorLight) | [![NuGet Pre Release](https://img.shields.io/nuget/vpre/RazorLight.svg?maxAge=2592000?style=flat-square)](https://www.nuget.org/packages/RazorLight/) |
 
+## Status
+RazorLight 2.0-alpha is released with support of NetStandard 2.0 (hence, .NET Core 2.0). Project documentation is out of date at the moment and will be updated soon
 
 ## Introduction
 Install the nuget package
