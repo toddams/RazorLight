@@ -70,7 +70,19 @@ namespace RazorLight
             RazorCodeDocument codeDocument = await CreateCodeDocumentAsync(projectItem);
             Engine.Process(codeDocument);
 
-            var document = codeDocument.GetCSharpDocument();
+            RazorCSharpDocument document = codeDocument.GetCSharpDocument();
+            if (document.Diagnostics.Count > 0)
+            {
+                var builder = new StringBuilder();
+                builder.AppendLine("Failed to generate Razor template. See \"Diagnostics\" property for more details");
+
+                foreach (RazorDiagnostic d in document.Diagnostics)
+                {
+                    builder.AppendLine($"- {d.GetMessage()}");
+                }
+
+                throw new TemplateGenerationException(builder.ToString(), document.Diagnostics);
+            }
 
             return new GeneratedRazorTemplate(projectItem.Key, document);
         }
