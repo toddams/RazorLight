@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
     <PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
@@ -11,12 +10,16 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+
   <ItemGroup>
     <None Remove="Assets\Embedded\*.cshtml" />
+    <EmbeddedResource Include="Assets\Embedded\*.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets\Embedded\*.cshtml" />
+    <None Update="Assets\Files\*.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -29,5 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\src\RazorLight\RazorLight.csproj" />
   </ItemGroup>
+
+
 
 </Project>

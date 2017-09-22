@@ -13,10 +13,15 @@ namespace RazorLight.Razor
     {
         public FileSystemRazorProject(string root)
         {
+            if(!Directory.Exists(root))
+            {
+                throw new DirectoryNotFoundException($"Root directory {root} not found");
+            }
+
             Root = root;
         }
 
-        public virtual string FileExtension { get; set; } = ".cshtml";
+        public virtual string Extension { get; set; } = ".cshtml";
 
         /// <summary>
         /// 
@@ -28,6 +33,11 @@ namespace RazorLight.Razor
         public override Task<RazorLightProjectItem> GetItemAsync(string templateKey)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
+            if (!templateKey.EndsWith(Extension))
+            {
+                templateKey = templateKey + Extension;
+            }
+
             string absolutePath = NormalizeKey(templateKey);
             var item = new FileSystemRazorProjectItem(templateKey, new FileInfo(absolutePath));
 
@@ -39,16 +49,11 @@ namespace RazorLight.Razor
         /// </summary>
         public string Root { get; }
 
-        public override string NormalizeKey(string templateKey)
+        protected string NormalizeKey(string templateKey)
         {
             if (string.IsNullOrEmpty(templateKey))
             {
-                throw new ArgumentException(nameof(templateKey));
-            }
-
-            if(!templateKey.EndsWith(FileExtension))
-            {
-                templateKey = templateKey + FileExtension;
+                throw new ArgumentNullException(nameof(templateKey));
             }
 
             var absolutePath = templateKey;
