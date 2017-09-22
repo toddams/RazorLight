@@ -13,26 +13,18 @@ namespace RazorLight
         private ICachingProvider cache;
 
         public RazorLightEngine(
+            RazorLightOptions options,
             ITemplateFactoryProvider factoryProvider,
             ICachingProvider cachingProvider)
         {
+            Options = options;
             templateFactoryProvider = factoryProvider;
             cache = cachingProvider;
         }
 
         public ICachingProvider TemplateCache => cache;
 
-        /// <summary>
-        /// Compiles and renders a template with a given <paramref name="key"/>
-        /// </summary>
-        /// <typeparam name="T">Type of the model</typeparam>
-        /// <param name="key">Unique key of the template</param>
-        /// <param name="model">Template model</param>
-        /// <returns>Rendered template as a string result</returns>
-        public Task<string> CompileRenderAsync<T>(string key, T model)
-        {
-            return CompileRenderAsync(key, model, viewBag: null);
-        }
+        public RazorLightOptions Options { get; }
 
         /// <summary>
         /// Compiles and renders a template with a given <paramref name="key"/>
@@ -42,7 +34,7 @@ namespace RazorLight
         /// <param name="model">Template model</param>
         /// <param name="viewBag">Dynamic viewBag of the template</param>
         /// <returns>Rendered template as a string result</returns>
-        public Task<string> CompileRenderAsync<T>(string key, T model, ExpandoObject viewBag)
+        public Task<string> CompileRenderAsync<T>(string key, T model, ExpandoObject viewBag = null)
         {
             return CompileRenderAsync(key, model, typeof(T), viewBag);
         }
@@ -61,8 +53,6 @@ namespace RazorLight
 
             return await RenderTemplateAsync(template, model, modelType, viewBag).ConfigureAwait(false);
         }
-
-
 
         /// <summary>
         /// Search and compile a template with a given key
@@ -90,21 +80,9 @@ namespace RazorLight
         /// <param name="templatePage">Instance of a template</param>
         /// <param name="model">Template model</param>
         /// <param name="modelType">Type of the model</param>
-        /// <returns>Rendered string</returns>
-        public Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType)
-        {
-            return RenderTemplateAsync(templatePage, model, modelType, null);
-        }
-
-        /// <summary>
-        /// Renders a template with a given model
-        /// </summary>
-        /// <param name="templatePage">Instance of a template</param>
-        /// <param name="model">Template model</param>
-        /// <param name="modelType">Type of the model</param>
         /// <param name="viewBag">Dynamic viewBag of the template</param>
         /// <returns>Rendered string</returns>
-        public async Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, ExpandoObject viewBag)
+        public async Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, ExpandoObject viewBag = null)
         {
             using (var writer = new StringWriter())
             {

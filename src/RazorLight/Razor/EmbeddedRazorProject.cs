@@ -29,10 +29,8 @@ namespace RazorLight.Razor
 
         public override Task<RazorLightProjectItem> GetItemAsync(string templateKey)
         {
-            if(!templateKey.EndsWith(Extension))
-            {
-                templateKey = templateKey + Extension;
-            }
+            templateKey = NormalizeKey(templateKey);
+           
 
             var item = new EmbeddedRazorProjectItem(RootType, templateKey);
 
@@ -42,6 +40,16 @@ namespace RazorLight.Razor
         public override Task<IEnumerable<RazorLightProjectItem>> GetImportsAsync(string templateKey)
         {
             return Task.FromResult(Enumerable.Empty<RazorLightProjectItem>());
+        }
+
+        public override string NormalizeKey(string templateKey)
+        {
+            if (!templateKey.EndsWith(Extension))
+            {
+                templateKey = templateKey + Extension;
+            }
+
+            return templateKey;
         }
     }
 }

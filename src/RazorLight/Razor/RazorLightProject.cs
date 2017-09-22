@@ -18,5 +18,13 @@ namespace RazorLight.Razor
         /// <param name="templateKey"></param>
         /// <returns></returns>
         public abstract Task<IEnumerable<RazorLightProjectItem>> GetImportsAsync(string templateKey);
+
+
+        /// <summary>
+        /// Normalizes the key.
+        /// </summary>
+        /// <param name="templateKey">The template key.</param>
+        /// <returns></returns>
+        public abstract string NormalizeKey(string templateKey);
     }
 }

@@ -24,6 +24,6 @@ namespace RazorLight
         /// </summary>
         /// <param name="project">The project</param>
         /// <returns>Instance of RazorLightEngine</returns>
-        RazorLightEngine Create(RazorLightProject project);
+        RazorLightEngine Create(RazorLightProject project, RazorLightOptions options);
     }
 }

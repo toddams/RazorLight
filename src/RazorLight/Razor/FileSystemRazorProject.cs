@@ -28,7 +28,7 @@ namespace RazorLight.Razor
         public override Task<RazorLightProjectItem> GetItemAsync(string templateKey)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
-            string absolutePath = NormalizeAndEnsureValidPath(templateKey);
+            string absolutePath = NormalizeKey(templateKey);
             var item = new FileSystemRazorProjectItem(templateKey, new FileInfo(absolutePath));
 
             return Task.FromResult((RazorLightProjectItem)item);
@@ -39,7 +39,7 @@ namespace RazorLight.Razor
         /// </summary>
         public string Root { get; }
 
-        protected string NormalizeAndEnsureValidPath(string templateKey)
+        public override string NormalizeKey(string templateKey)
         {
             if (string.IsNullOrEmpty(templateKey))
             {
