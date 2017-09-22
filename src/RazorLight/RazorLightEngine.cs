@@ -79,11 +79,6 @@ namespace RazorLight
             }
 
             var pageFactoryResult = await templateFactoryProvider.CreateFactoryAsync(key).ConfigureAwait(false);
-            if (!pageFactoryResult.Success)
-            {
-                throw new RazorLightException($"Template {key} is corrupted or invalid");
-            }
-
             cache.CacheTemplate(key, pageFactoryResult.TemplatePageFactory);
 
             return pageFactoryResult.TemplatePageFactory();

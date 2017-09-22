@@ -49,7 +49,7 @@ namespace RazorLight
             }
             else
             {
-                return new TemplateFactoryResult(templateDescriptor, null);
+                throw new RazorLightException($"Template {key} is corrupted or invalid");
             }
         }
     }

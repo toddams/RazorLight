@@ -22,7 +22,5 @@ namespace RazorLight
         public CompiledTemplateDescriptor TemplateDescriptor { get; }
 
         public Func<ITemplatePage> TemplatePageFactory { get; }
-
-        public bool Success => TemplatePageFactory != null;
     }
 }
