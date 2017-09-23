@@ -18,6 +18,8 @@ namespace Samples.EntityFrameworkProject
 
         public override async Task<RazorLightProjectItem> GetItemAsync(string templateKey)
         {
+            // We expect id to be an integer, as in this sample we have ints as keys in database.
+            // But you can use GUID, as an example and parse it here
             int templateId = int.Parse(templateKey);
 
             TemplateEntity template = await dbContext.Templates.FindAsync(templateId);
