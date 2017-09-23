@@ -22,10 +22,6 @@ namespace RazorLight.Compilation
         internal readonly bool isDevelopment;
         private List<MetadataReference> metadataReferences = new List<MetadataReference>();
 
-        public RoslynCompilationService() : this(new DefaultMetadataReferenceManager())
-        {
-        }
-
         public RoslynCompilationService(IMetadataReferenceManager referenceManager)
         {
             metadataReferenceManager = referenceManager;

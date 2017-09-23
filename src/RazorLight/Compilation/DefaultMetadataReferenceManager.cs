@@ -12,9 +12,21 @@ namespace RazorLight.Compilation
 {
     public class DefaultMetadataReferenceManager : IMetadataReferenceManager
     {
+        private HashSet<MetadataReference> additionalMetadataReferences;
+
+        public DefaultMetadataReferenceManager(HashSet<MetadataReference> metadataReferences)
+        {
+            if(metadataReferences == null)
+            {
+                throw new ArgumentNullException(nameof(metadataReferences));
+            }
+
+            additionalMetadataReferences = metadataReferences;
+        }
+
         public IReadOnlyList<MetadataReference> Resolve(Assembly assembly)
         {
-            var dependencyContext = DependencyContext.Load(assembly); //TODO: add option to set entry assembly (or custom)
+            var dependencyContext = DependencyContext.Load(assembly);
 
             var libraryPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var references = dependencyContext.CompileLibraries.SelectMany(library => library.ResolveReferencePaths());
@@ -34,6 +46,8 @@ namespace RazorLight.Compilation
                     }
                 }
             }
+
+            metadataRerefences.AddRange(additionalMetadataReferences);
 
             return metadataRerefences;
         }
