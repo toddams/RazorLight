@@ -16,6 +16,11 @@ namespace RazorLight.Caching
 
         public TemplateCacheLookupResult RetrieveTemplate(string key)
         {
+            if(string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
             if(LookupCache.TryGetValue(key, out TemplateCacheItem template))
             {
                 var result = new TemplateCacheLookupResult(template);
@@ -35,6 +40,16 @@ namespace RazorLight.Caching
 
         public void CacheTemplate(string key, Func<ITemplatePage> pageFactory)
         {
+            if(string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            if(pageFactory == null)
+            {
+                throw new ArgumentNullException(nameof(pageFactory));
+            }
+
             var cacheItem = new TemplateCacheItem(key, pageFactory);
             LookupCache.Set(key, cacheItem);
         }
