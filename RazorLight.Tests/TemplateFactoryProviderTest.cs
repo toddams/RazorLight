@@ -1,4 +1,5 @@
-﻿using RazorLight.Razor;
+﻿using RazorLight.Compilation;
+using RazorLight.Razor;
 using Xunit;
 
 namespace RazorLight.Tests
@@ -10,9 +11,10 @@ namespace RazorLight.Tests
         private TemplateFactoryProvider GetProvider()
         {
             var sourceGenerator = new RazorSourceGenerator(new EngineFactory().RazorEngine, project);
-            var compiler = new Compilation.RoslynCompilationService();
+            var metadataReferences = new DefaultMetadataReferenceManager();
+            var compiler = new RoslynCompilationService(metadataReferences);
 
-            var provider = new TemplateFactoryProvider(sourceGenerator, compiler, RazorLightOptions.Default);
+            var provider = new TemplateFactoryProvider(sourceGenerator, compiler, new RazorLightOptions());
 
             return provider;
         }

@@ -14,6 +14,10 @@ namespace RazorLight.Compilation
     {
         private HashSet<MetadataReference> additionalMetadataReferences;
 
+        public DefaultMetadataReferenceManager()
+        {
+        }
+
         public DefaultMetadataReferenceManager(HashSet<MetadataReference> metadataReferences)
         {
             if(metadataReferences == null)
@@ -47,7 +51,10 @@ namespace RazorLight.Compilation
                 }
             }
 
-            metadataRerefences.AddRange(additionalMetadataReferences);
+            if(additionalMetadataReferences != null)
+            {
+                metadataRerefences.AddRange(additionalMetadataReferences);
+            }
 
             return metadataRerefences;
         }
