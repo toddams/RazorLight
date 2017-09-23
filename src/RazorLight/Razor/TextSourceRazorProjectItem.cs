@@ -19,6 +19,8 @@ namespace RazorLight.Razor
 
         public override bool Exists => true;
 
+        public string Content => _content;
+
         public override Stream Read()
         {
             return new MemoryStream(Encoding.UTF8.GetBytes(_content));

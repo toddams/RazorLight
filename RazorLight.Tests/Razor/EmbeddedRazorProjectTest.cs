@@ -1,6 +1,7 @@
 ﻿using RazorLight.Razor;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RazorLight.Tests.Razor
@@ -35,7 +36,7 @@ namespace RazorLight.Tests.Razor
         }
 
         [Fact]
-        public async System.Threading.Tasks.Task Ensure_TemplateKey_IsNormalizedAsync()
+        public async Task Ensure_TemplateKey_IsNormalizedAsync()
         {
             var project = new EmbeddedRazorProject(typeof(Root));
 
