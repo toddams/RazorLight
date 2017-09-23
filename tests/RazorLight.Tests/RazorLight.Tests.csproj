@@ -30,9 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\RazorLight\RazorLight.csproj" />
+    <ProjectReference Include="..\..\src\RazorLight\RazorLight.csproj" />
   </ItemGroup>
-
 
 
 </Project>
