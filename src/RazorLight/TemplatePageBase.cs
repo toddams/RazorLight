@@ -201,7 +201,7 @@ namespace RazorLight
         /// </remarks>
         public void StartTagHelperWritingScope(HtmlEncoder encoder)
         {
-            var buffer = new ViewBuffer(BufferScope, Key, ViewBuffer.TagHelperPageSize); //TODO: add template key
+            var buffer = new ViewBuffer(BufferScope, Key, ViewBuffer.TagHelperPageSize);
             TagHelperScopes.Push(new TagHelperScopeInfo(buffer, HtmlEncoder, PageContext.Writer));
 
             // If passed an HtmlEncoder, override the property.

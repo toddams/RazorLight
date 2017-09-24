@@ -35,6 +35,12 @@ namespace RazorLight.Compilation
             var libraryPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var references = dependencyContext.CompileLibraries.SelectMany(library => library.ResolveReferencePaths());
 
+            if(!references.Any())
+            {
+                throw new RazorLightException("Can't load metadata reference from the entry assembly. " +
+                    "Make sure PreserveCompilationContext is set to true in *.csproj file");
+            }
+
             var metadataRerefences = new List<MetadataReference>();
 
             foreach (var reference in references)
