@@ -86,7 +86,7 @@ namespace RazorLight
         {
             using (var writer = new StringWriter())
             {
-                await RenderTemplateAsync(templatePage, model, modelType, writer);
+                await RenderTemplateAsync(templatePage, model, modelType, writer, viewBag);
                 string result = writer.ToString();
 
                 return result;
