@@ -19,7 +19,6 @@ namespace RazorLight.Precompile
             MaxDegreeOfParallelism = 4
         };
 
-        private IRazorLightEngine engine;
         private TemplateFactoryProvider factoryProvider;
         private RoslynCompilationService compiler;
 
@@ -42,11 +41,11 @@ namespace RazorLight.Precompile
                 return 1;
             }
 
-            engine = new EngineFactory().ForFileSystem(Options.ContentRootOption.Value());
+            var engine = new EngineFactory().ForFileSystem(Options.ContentRootOption.Value());
             factoryProvider = (TemplateFactoryProvider)engine.TemplateFactoryProvider;
             compiler = factoryProvider.Compiler;
 
-            var results = GenerateCode();
+            ViewCompilationInfo[] results = GenerateCode();
             bool success = true;
 
             foreach (var result in results)
@@ -138,8 +137,7 @@ namespace RazorLight.Precompile
                 SourceText sourceText = SourceText.From(result.CSharpDocument.GeneratedCode, Encoding.UTF8);
 
                 TemplateFileInfo fileInfo = result.TemplateFileInfo;
-                SyntaxTree syntaxTree = compiler.CreateSyntaxTree(sourceText)
-                    .WithFilePath(fileInfo.FullPath ?? fileInfo.ViewEnginePath);
+                SyntaxTree syntaxTree = compiler.CreateSyntaxTree(sourceText).WithFilePath(fileInfo.FullPath ?? fileInfo.ViewEnginePath);
                 syntaxTrees[i] = syntaxTree;
             });
 
@@ -178,9 +176,8 @@ namespace RazorLight.Precompile
         {
             string contentRoot = Options.ContentRootOption.Value();
             int trimLength = contentRoot.EndsWith("/") ? contentRoot.Length - 1 : contentRoot.Length;
+
             var files = new List<TemplateFileInfo>();
-
-
             foreach(string file in Directory.EnumerateFiles(contentRoot, "*", SearchOption.AllDirectories))
             {
                 if(file.EndsWith(Extension))

@@ -4,8 +4,13 @@ namespace RazorLight.Precompile
 {
     class Program
     {
-        static void Main(string[] args)
+        private readonly static Type ProgramType = typeof(Program);
+
+        static int Main(string[] args)
         {
+            var app = new PrecompilationApplication(ProgramType);
+            new PrecompileRunCommand().Configure(app);
+            return app.Execute(args);
         }
     }
 }
