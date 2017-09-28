@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorLight.Sandbox", "sandb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorLight.Tests", "tests\RazorLight.Tests\RazorLight.Tests.csproj", "{63EE1F3F-C71E-48DA-8135-9E602D6B7206}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorLight.Precompile", "src\RazorLight.Precompile\RazorLight.Precompile.csproj", "{35A6571F-0130-49BC-A488-E63AE590BC25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorLight.Precompile", "src\RazorLight.Precompile\RazorLight.Precompile.csproj", "{35A6571F-0130-49BC-A488-E63AE590BC25}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{2FC690D5-8242-43AA-8961-03107BFE1637}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
