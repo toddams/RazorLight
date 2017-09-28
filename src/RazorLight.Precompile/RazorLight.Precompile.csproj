@@ -9,4 +9,8 @@
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RazorLight\RazorLight.csproj" />
+  </ItemGroup>
+
 </Project>
