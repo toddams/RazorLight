@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RazorLight.Caching;
+using System;
 using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
@@ -12,5 +13,8 @@ namespace RazorLight
         Task<ITemplatePage> CompileTemplateAsync(string key, bool compileIfNotCached = true);
         Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType);
         Task RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, TextWriter textWriter, ExpandoObject viewBag = null);
+
+        ICachingProvider TemplateCache { get; }
+        ITemplateFactoryProvider TemplateFactoryProvider { get; }
     }
 }

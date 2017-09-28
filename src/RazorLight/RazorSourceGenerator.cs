@@ -45,7 +45,7 @@ namespace RazorLight
                 throw new ArgumentException();
             }
 
-            RazorLightProjectItem projectItem = await Project.GetItemAsync(key);
+            RazorLightProjectItem projectItem = await Project.GetItemAsync(key).ConfigureAwait(false);
             return await GenerateCodeAsync(projectItem);
         }
 

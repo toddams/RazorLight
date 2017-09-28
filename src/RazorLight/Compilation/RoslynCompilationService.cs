@@ -38,12 +38,14 @@ namespace RazorLight.Compilation
             EmitOptions = new EmitOptions(debugInformationFormat: pdbFormat);
         }
 
+        #region Options
+
         private Assembly operatingAssembly;
         public virtual Assembly OperatingAssembly
         {
             get
             {
-                if(operatingAssembly == null)
+                if (operatingAssembly == null)
                 {
                     operatingAssembly = Assembly.GetEntryAssembly();
                 }
@@ -89,6 +91,8 @@ namespace RazorLight.Compilation
                 _optionsInitialized = true;
             }
         }
+
+        #endregion
 
         public CompiledTemplateDescriptor CompileAndEmit(GeneratedRazorTemplate razorTemplate)
         {
@@ -158,14 +162,9 @@ namespace RazorLight.Compilation
         private CSharpCompilation CreateCompilation(string compilationContent, string assemblyName)
         {
             SourceText sourceText = SourceText.From(compilationContent, Encoding.UTF8);
-            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceText,options: ParseOptions)
-                                    .WithFilePath(assemblyName);
+            SyntaxTree syntaxTree = CreateSyntaxTree(sourceText).WithFilePath(assemblyName);
 
-            var compilation = CSharpCompilation.Create(
-                                    assemblyName,
-                                    options: CSharpCompilationOptions,
-                                    references: metadataReferences)
-                                .AddSyntaxTrees(syntaxTree);
+            CSharpCompilation compilation = CreateCompilation(assemblyName).AddSyntaxTrees(syntaxTree);
 
             compilation = ExpressionRewriter.Rewrite(compilation);
 
@@ -173,6 +172,19 @@ namespace RazorLight.Compilation
             //_compilationCallback(compilationContext);
             //compilation = compilationContext.Compilation;
             return compilation;
+        }
+
+        public CSharpCompilation CreateCompilation(string assemblyName)
+        {
+            return CSharpCompilation.Create(
+                assemblyName,
+                options: CSharpCompilationOptions,
+                references: metadataReferences);
+        }
+
+        public SyntaxTree CreateSyntaxTree(SourceText sourceText)
+        {
+            return CSharpSyntaxTree.ParseText(sourceText, options: ParseOptions);
         }
 
         private CSharpCompilationOptions GetCompilationOptions(DependencyContextCompilationOptions dependencyContextOptions)

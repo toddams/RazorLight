@@ -21,6 +21,7 @@ namespace RazorLight
         }
 
         public ICachingProvider TemplateCache => cache;
+        public ITemplateFactoryProvider TemplateFactoryProvider => templateFactoryProvider;
 
         /// <summary>
         /// Compiles and renders a template with a given <paramref name="key"/>

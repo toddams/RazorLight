@@ -22,6 +22,9 @@ namespace RazorLight
             templateCompiler = compiler;
         }
 
+        public RazorSourceGenerator SourceGenerator => sourceGenerator;
+        public RoslynCompilationService Compiler => templateCompiler;
+
         public async Task<TemplateFactoryResult> CreateFactoryAsync(string templateKey)
         {
             if(templateKey == null)
