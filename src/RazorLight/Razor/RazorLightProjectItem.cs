@@ -1,9 +1,12 @@
-﻿using System.IO;
+﻿using Microsoft.Extensions.Primitives;
+using System.IO;
 
 namespace RazorLight.Razor
 {
     public abstract class RazorLightProjectItem
     {
+        public IChangeToken ExpirationToken { get; set; }
+
         /// <summary>
         /// Unique key of the template that was seached
         /// </summary>

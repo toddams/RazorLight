@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using System;
 
 namespace RazorLight.Caching
@@ -38,7 +39,7 @@ namespace RazorLight.Caching
             return LookupCache.TryGetValue(key, out _);
         }
 
-        public void CacheTemplate(string key, Func<ITemplatePage> pageFactory)
+        public void CacheTemplate(string key, Func<ITemplatePage> pageFactory, IChangeToken expirationToken = null)
         {
             if(string.IsNullOrEmpty(key))
             {
@@ -50,8 +51,14 @@ namespace RazorLight.Caching
                 throw new ArgumentNullException(nameof(pageFactory));
             }
 
+            var cacheEntryOptions = new MemoryCacheEntryOptions();
+            if(expirationToken != null)
+            {
+                cacheEntryOptions.ExpirationTokens.Add(expirationToken);
+            }
+
             var cacheItem = new TemplateCacheItem(key, pageFactory);
-            LookupCache.Set(key, cacheItem);
+            LookupCache.Set(key, cacheItem, cacheEntryOptions);
         }
 
         public void Remove(string key)

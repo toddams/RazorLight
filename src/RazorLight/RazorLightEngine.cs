@@ -69,7 +69,10 @@ namespace RazorLight
             }
 
             var pageFactoryResult = await templateFactoryProvider.CreateFactoryAsync(key).ConfigureAwait(false);
-            cache.CacheTemplate(key, pageFactoryResult.TemplatePageFactory);
+            cache.CacheTemplate(
+                key, 
+                pageFactoryResult.TemplatePageFactory, 
+                pageFactoryResult.TemplateDescriptor.ExpirationToken);
 
             return pageFactoryResult.TemplatePageFactory();
         }

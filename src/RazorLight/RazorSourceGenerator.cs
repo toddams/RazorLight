@@ -84,7 +84,7 @@ namespace RazorLight
                 throw new TemplateGenerationException(builder.ToString(), document.Diagnostics);
             }
 
-            return new GeneratedRazorTemplate(projectItem.Key, document);
+            return new GeneratedRazorTemplate(projectItem, document);
         }
 
         /// <summary>

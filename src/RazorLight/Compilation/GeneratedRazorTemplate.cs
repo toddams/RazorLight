@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Razor.Language;
+using RazorLight.Razor;
 using System;
 
 namespace RazorLight.Compilation
 {
     public class GeneratedRazorTemplate
     {
-        public GeneratedRazorTemplate(string templateKey, RazorCSharpDocument cSharpDocument)
+        public GeneratedRazorTemplate(RazorLightProjectItem projectItem, RazorCSharpDocument cSharpDocument)
         {
-            if(string.IsNullOrEmpty(templateKey))
+            if(projectItem == null)
             {
-                throw new ArgumentNullException(nameof(templateKey));
+                throw new ArgumentNullException(nameof(projectItem));
             }
 
             if (cSharpDocument == null)
@@ -17,11 +18,13 @@ namespace RazorLight.Compilation
                 throw new ArgumentNullException(nameof(cSharpDocument));
             }
 
-            TemplateKey = templateKey;
+            ProjectItem = projectItem;
             CSharpDocument = cSharpDocument;
         }
 
-        public string TemplateKey { get; set; }
+        public RazorLightProjectItem ProjectItem { get; set; }
+
+        public string TemplateKey => ProjectItem.Key;
 
         public RazorCSharpDocument CSharpDocument { get; set; }
 

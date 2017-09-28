@@ -1,6 +1,7 @@
 ﻿using RazorLight.Compilation;
 using RazorLight.Razor;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -60,6 +61,8 @@ namespace RazorLight
         protected TemplateFactoryResult CreateFactory(GeneratedRazorTemplate razorTemplate)
         {
             CompiledTemplateDescriptor templateDescriptor = templateCompiler.CompileAndEmit(razorTemplate);
+            templateDescriptor.ExpirationToken = razorTemplate.ProjectItem.ExpirationToken;
+
             string templateKey = templateDescriptor.TemplateKey;
 
             if (templateDescriptor.TemplateAttribute != null)
