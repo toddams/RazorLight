@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace RazorLight.Razor
 {
@@ -6,8 +7,8 @@ namespace RazorLight.Razor
     {
         public FileSystemRazorProjectItem(string templateKey, FileInfo fileInfo)
         {
-            Key = templateKey;
-            File = fileInfo;
+            Key = templateKey ?? throw new ArgumentNullException(nameof(templateKey));
+            File = fileInfo ?? throw new ArgumentNullException(nameof(fileInfo));
         }
 
         public FileInfo File { get; }

@@ -1,27 +1,38 @@
-﻿using RazorLight.Razor;
+﻿using RazorLight.Compilation;
+using RazorLight.Razor;
 using Xunit;
 
 namespace RazorLight.Tests
 {
     public class TemplateFactoryProviderTest
     {
+        private static EmbeddedRazorProject project = new EmbeddedRazorProject(typeof(TemplateFactoryProviderTest));
+
         private TemplateFactoryProvider GetProvider()
         {
-            var project = new EmbeddedRazorProject(typeof(TemplateFactoryProviderTest));
             var sourceGenerator = new RazorSourceGenerator(new EngineFactory().RazorEngine, project);
-            var compiler = new Compilation.RoslynCompilationService();
+            var metadataReferences = new DefaultMetadataReferenceManager();
+            var compiler = new RoslynCompilationService(metadataReferences);
 
-            var provider = new TemplateFactoryProvider(sourceGenerator, compiler);
+            var provider = new TemplateFactoryProvider(sourceGenerator, compiler, new RazorLightOptions());
 
             return provider;
         }
 
         [Fact]
-        public void Throws_On_NullTemplateKey()
+        public void Throws_On_NullTemplateKey_ForTemplateKey()
         {
             var provider = GetProvider();
 
-            Assert.ThrowsAsync<System.ArgumentNullException>(async () => await provider.CreateFactoryAsync(null));
+            Assert.ThrowsAsync<System.ArgumentNullException>(async () => await provider.CreateFactoryAsync(templateKey: null));
+        }
+
+        [Fact]
+        public void Throws_On_NullTemplateKey_ForProjectItem()
+        {
+            var provider = GetProvider();
+
+            Assert.ThrowsAsync<System.ArgumentNullException>(async () => await provider.CreateFactoryAsync(projectItem: null));
         }
 
         [Fact]
@@ -53,12 +64,10 @@ namespace RazorLight.Tests
             TemplateFactoryResult result = provider.CreateFactoryAsync(templateKey).GetAwaiter().GetResult();
             var templatePage = result.TemplatePageFactory();
 
-            Assert.True(result.Success);
             Assert.NotNull(result.TemplateDescriptor);
             Assert.NotNull(result.TemplatePageFactory);
             Assert.NotNull(templatePage);
 
-            Assert.Equal(templatePage.Key, templateKey);
             Assert.IsAssignableFrom<TemplatePage>(templatePage);
         }
     }

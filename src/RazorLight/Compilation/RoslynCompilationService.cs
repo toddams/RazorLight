@@ -22,10 +22,6 @@ namespace RazorLight.Compilation
         internal readonly bool isDevelopment;
         private List<MetadataReference> metadataReferences = new List<MetadataReference>();
 
-        public RoslynCompilationService() : this(new DefaultMetadataReferenceManager())
-        {
-        }
-
         public RoslynCompilationService(IMetadataReferenceManager referenceManager)
         {
             metadataReferenceManager = referenceManager;
@@ -136,7 +132,6 @@ namespace RazorLight.Compilation
                 pdbStream.Seek(0, SeekOrigin.Begin);
 
                 var assembly = Assembly.Load(assemblyStream.ToArray(), pdbStream.ToArray());
-
                 var templateDescriptor = new CompiledTemplateDescriptor()
                 {
                     TemplateKey = razorTemplate.TemplateKey,

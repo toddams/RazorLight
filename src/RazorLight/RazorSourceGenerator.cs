@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Razor.Language;
+using RazorLight.Compilation;
 using RazorLight.Razor;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace RazorLight
         /// Parses the template specified by the project item <paramref name="key"/>.
         /// </summary>
         /// <param name="key">The template path.</param>
-        /// <returns>The <see cref="RazorCSharpDocument"/>.</returns>
+        /// <returns>The <see cref="GeneratedRazorTemplate"/>.</returns>
         public async Task<GeneratedRazorTemplate> GenerateCodeAsync(string key)
         {
             if (string.IsNullOrEmpty(key))
@@ -53,7 +54,7 @@ namespace RazorLight
         /// Parses the template specified by <paramref name="projectItem"/>.
         /// </summary>
         /// <param name="projectItem">The <see cref="RazorLightProjectItem"/>.</param>
-        /// <returns>The <see cref="RazorCSharpDocument"/>.</returns>
+        /// <returns>The <see cref="GeneratedRazorTemplate"/>.</returns>
         public async Task<GeneratedRazorTemplate> GenerateCodeAsync(RazorLightProjectItem projectItem)
         {
             if (projectItem == null)
@@ -67,11 +68,23 @@ namespace RazorLight
             }
 
             RazorCodeDocument codeDocument = await CreateCodeDocumentAsync(projectItem);
-
             Engine.Process(codeDocument);
-            RazorCSharpDocument csharpDocument = codeDocument.GetCSharpDocument();
 
-            return new GeneratedRazorTemplate(projectItem.Key, csharpDocument);
+            RazorCSharpDocument document = codeDocument.GetCSharpDocument();
+            if (document.Diagnostics.Count > 0)
+            {
+                var builder = new StringBuilder();
+                builder.AppendLine("Failed to generate Razor template. See \"Diagnostics\" property for more details");
+
+                foreach (RazorDiagnostic d in document.Diagnostics)
+                {
+                    builder.AppendLine($"- {d.GetMessage()}");
+                }
+
+                throw new TemplateGenerationException(builder.ToString(), document.Diagnostics);
+            }
+
+            return new GeneratedRazorTemplate(projectItem, document);
         }
 
         /// <summary>

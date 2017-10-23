@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Primitives;
 using RazorLight.Razor;
-using System.Collections.Generic;
 
 namespace RazorLight.Compilation
 {
@@ -10,7 +9,7 @@ namespace RazorLight.Compilation
 
         public RazorLightTemplateAttribute TemplateAttribute { get; set; }
 
-        public IList<IChangeToken> ExpirationTokens { get; set; }
+        public IChangeToken ExpirationToken { get; set; }
 
         public bool IsPrecompiled { get; set; }
     }

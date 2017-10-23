@@ -29,7 +29,12 @@ namespace RazorLight.Razor
 
         public override Task<RazorLightProjectItem> GetItemAsync(string templateKey)
         {
-            if(!templateKey.EndsWith(Extension))
+            if(string.IsNullOrEmpty(templateKey))
+            {
+                throw new ArgumentNullException(nameof(templateKey));
+            }
+
+            if (!templateKey.EndsWith(Extension))
             {
                 templateKey = templateKey + Extension;
             }

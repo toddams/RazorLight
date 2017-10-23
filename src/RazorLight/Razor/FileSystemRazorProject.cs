@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.FileProviders;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,25 +12,40 @@ namespace RazorLight.Razor
     /// </summary>
     public class FileSystemRazorProject : RazorLightProject
     {
+        private readonly IFileProvider fileProvider;
+
         public FileSystemRazorProject(string root)
         {
+            if(!Directory.Exists(root))
+            {
+                throw new DirectoryNotFoundException($"Root directory {root} not found");
+            }
+
             Root = root;
+            fileProvider = new PhysicalFileProvider(Root);
         }
 
-        public virtual string FileExtension { get; set; } = ".cshtml";
+        public virtual string Extension { get; set; } = ".cshtml";
 
         /// <summary>
-        /// 
+        /// Looks up for the template source with a given <paramref name="templateKey" />
         /// </summary>
-        /// <param name="templateKey"></param>
+        /// <param name="templateKey">Unique template key</param>
         /// <returns></returns>
-        /// <remarks>Can not use Task.FromResult as Task<T> is not covariant</remarks>
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public override Task<RazorLightProjectItem> GetItemAsync(string templateKey)
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
-            string absolutePath = NormalizeAndEnsureValidPath(templateKey);
+            if (!templateKey.EndsWith(Extension))
+            {
+                templateKey = templateKey + Extension;
+            }
+
+            string absolutePath = NormalizeKey(templateKey);
             var item = new FileSystemRazorProjectItem(templateKey, new FileInfo(absolutePath));
+
+            if(item.Exists)
+            {
+                item.ExpirationToken = fileProvider.Watch(templateKey);
+            }
 
             return Task.FromResult((RazorLightProjectItem)item);
         }
@@ -39,16 +55,11 @@ namespace RazorLight.Razor
         /// </summary>
         public string Root { get; }
 
-        protected string NormalizeAndEnsureValidPath(string templateKey)
+        protected string NormalizeKey(string templateKey)
         {
             if (string.IsNullOrEmpty(templateKey))
             {
-                throw new ArgumentException(nameof(templateKey));
-            }
-
-            if(!templateKey.EndsWith(FileExtension))
-            {
-                templateKey = templateKey + FileExtension;
+                throw new ArgumentNullException(nameof(templateKey));
             }
 
             var absolutePath = templateKey;

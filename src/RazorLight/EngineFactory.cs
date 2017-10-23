@@ -40,15 +40,19 @@ namespace RazorLight
         /// </summary>
         /// <param name="project">The project</param>
         /// <returns>Instance of RazorLightEngine</returns>
-        public virtual RazorLightEngine Create(RazorLightProject project)
+        public virtual RazorLightEngine Create(RazorLightProject project, RazorLightOptions options = null)
         {
+            var razorOptions = options ?? new RazorLightOptions();
+
             var sourceGenerator = new RazorSourceGenerator(RazorEngine, project);
-            var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager());
-            var templateFactoryProvider = new TemplateFactoryProvider(sourceGenerator, compiler);
+
+            var metadataReferenceManager = new DefaultMetadataReferenceManager(razorOptions.AdditionalMetadataReferences);
+            var compiler = new RoslynCompilationService(metadataReferenceManager);
+            var templateFactoryProvider = new TemplateFactoryProvider(sourceGenerator, compiler, razorOptions);
 
             ICachingProvider cacheProvider = new DefaultCachingProvider();
 
-            return new RazorLightEngine(templateFactoryProvider, cacheProvider);
+            return new RazorLightEngine(razorOptions, templateFactoryProvider, cacheProvider);
         }
 
         public virtual RazorEngine RazorEngine

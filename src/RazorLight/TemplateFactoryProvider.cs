@@ -1,25 +1,26 @@
-﻿using Microsoft.AspNetCore.Razor.Language;
-using RazorLight.Compilation;
+﻿using RazorLight.Compilation;
+using RazorLight.Razor;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RazorLight
 {
     public class TemplateFactoryProvider : ITemplateFactoryProvider
     {
+        private RazorLightOptions options;
         private readonly RazorSourceGenerator sourceGenerator;
         private readonly RoslynCompilationService templateCompiler;
 
         public TemplateFactoryProvider(
             RazorSourceGenerator generator,
-            RoslynCompilationService compiler
-            )
+            RoslynCompilationService compiler,
+            RazorLightOptions razorOptions)
         {
-            sourceGenerator = generator;
-            templateCompiler = compiler;
+            sourceGenerator = generator ?? throw new ArgumentNullException(nameof(generator));
+            templateCompiler = compiler ?? throw new ArgumentNullException(nameof(compiler));
+            options = razorOptions ?? throw new ArgumentNullException(nameof(razorOptions));
         }
 
         public RazorSourceGenerator SourceGenerator => sourceGenerator;
@@ -27,29 +28,46 @@ namespace RazorLight
 
         public async Task<TemplateFactoryResult> CreateFactoryAsync(string templateKey)
         {
-            if(templateKey == null)
+            if (templateKey == null)
             {
                 throw new ArgumentNullException(nameof(templateKey));
             }
 
-            GeneratedRazorTemplate generatedRazorTemplate = await sourceGenerator.GenerateCodeAsync(templateKey).ConfigureAwait(false);
+            GeneratedRazorTemplate razorTemplate = null;
 
-            if (generatedRazorTemplate.CSharpDocument.Diagnostics.Count > 0)
+            if (options.DynamicTemplates.TryGetValue(templateKey, out string templateContent))
             {
-                var builder = new StringBuilder();
-                builder.AppendLine("Failed to generate Razor template. See \"Diagnostics\" property for more details");
-
-                foreach (RazorDiagnostic d in generatedRazorTemplate.CSharpDocument.Diagnostics)
-                {
-                    builder.AppendLine($"- {d.GetMessage()}");
-                }
-
-                throw new TemplateGenerationException(builder.ToString(), generatedRazorTemplate.CSharpDocument.Diagnostics);
+                var projectItem = new TextSourceRazorProjectItem(templateKey, templateContent);
+                razorTemplate = await sourceGenerator.GenerateCodeAsync(projectItem).ConfigureAwait(false);
+            }
+            else
+            {
+                razorTemplate = await sourceGenerator.GenerateCodeAsync(templateKey).ConfigureAwait(false);
             }
 
-            CompiledTemplateDescriptor templateDescriptor = templateCompiler.CompileAndEmit(generatedRazorTemplate);
+            return CreateFactory(razorTemplate);
+        }
 
-            if(templateDescriptor.TemplateAttribute != null)
+        public async Task<TemplateFactoryResult> CreateFactoryAsync(RazorLightProjectItem projectItem)
+        {
+            if(projectItem == null)
+            {
+                throw new ArgumentNullException(nameof(projectItem));
+            }
+
+            GeneratedRazorTemplate razorTemplate = await sourceGenerator.GenerateCodeAsync(projectItem).ConfigureAwait(false);
+
+            return CreateFactory(razorTemplate);
+        }
+
+        protected TemplateFactoryResult CreateFactory(GeneratedRazorTemplate razorTemplate)
+        {
+            CompiledTemplateDescriptor templateDescriptor = templateCompiler.CompileAndEmit(razorTemplate);
+            templateDescriptor.ExpirationToken = razorTemplate.ProjectItem.ExpirationToken;
+
+            string templateKey = templateDescriptor.TemplateKey;
+
+            if (templateDescriptor.TemplateAttribute != null)
             {
                 Type compiledType = templateDescriptor.TemplateAttribute.TemplateType;
 
@@ -65,7 +83,7 @@ namespace RazorLight
             }
             else
             {
-                return new TemplateFactoryResult(templateDescriptor, null);
+                throw new RazorLightException($"Template {templateKey} is corrupted or invalid");
             }
         }
     }

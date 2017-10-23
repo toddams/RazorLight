@@ -114,7 +114,7 @@ namespace RazorLight
             page.PageContext = context;
             page.IncludeFunc = async (key, model) =>
             {
-                ITemplatePage template = await _engine.CompileTemplateAsync(key, true);
+                ITemplatePage template = await _engine.CompileTemplateAsync(key);
 
                 await _engine.RenderTemplateAsync(template, model, model?.GetType(), context.Writer);
             };

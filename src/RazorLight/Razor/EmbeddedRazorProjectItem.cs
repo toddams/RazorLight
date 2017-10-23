@@ -11,6 +11,16 @@ namespace RazorLight.Razor
 
         public EmbeddedRazorProjectItem(Type rootType, string key)
         {
+            if(rootType == null)
+            {
+                throw new ArgumentNullException(nameof(rootType));
+            }
+
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
             Key = key;
             RootType = rootType;
             Assembly = RootType.GetTypeInfo().Assembly;

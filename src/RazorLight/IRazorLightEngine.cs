@@ -8,13 +8,14 @@ namespace RazorLight
 {
     public interface IRazorLightEngine
     {
-        Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag);
-        Task<string> CompileRenderAsync<T>(string key, T model);
-        Task<ITemplatePage> CompileTemplateAsync(string key, bool compileIfNotCached = true);
-        Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType);
-        Task RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, TextWriter textWriter, ExpandoObject viewBag = null);
-
+        RazorLightOptions Options { get; }
         ICachingProvider TemplateCache { get; }
         ITemplateFactoryProvider TemplateFactoryProvider { get; }
+
+        Task<string> CompileRenderAsync<T>(string key, T model, ExpandoObject viewBag = null);
+        Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag);
+        Task<ITemplatePage> CompileTemplateAsync(string key);
+        Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, ExpandoObject viewBag = null);
+        Task RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, TextWriter textWriter, ExpandoObject viewBag = null);
     }
 }
