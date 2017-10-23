@@ -33,7 +33,7 @@ using RazorLight;
 string template = "Hello, @Model.Name. Welcome to RazorLight repository";
 var model = new { Name = "John Doe" };
 
-IRazorLihtEngine engine = new EngineFactory().Create();
+IRazorLightEngine engine = new EngineFactory().Create();
 
 string result = await engine.CompileRenderAsync("templateKey", template, model);
 ````
