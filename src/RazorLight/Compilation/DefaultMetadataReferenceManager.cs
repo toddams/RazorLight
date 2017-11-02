@@ -12,10 +12,12 @@ namespace RazorLight.Compilation
 {
     public class DefaultMetadataReferenceManager : IMetadataReferenceManager
     {
-        private HashSet<MetadataReference> additionalMetadataReferences;
+        private readonly HashSet<MetadataReference> additionalMetadataReferences;
+        public HashSet<MetadataReference> AdditionalMetadataReferences => additionalMetadataReferences;
 
         public DefaultMetadataReferenceManager()
         {
+            additionalMetadataReferences = new HashSet<MetadataReference>();
         }
 
         public DefaultMetadataReferenceManager(HashSet<MetadataReference> metadataReferences)
@@ -32,10 +34,15 @@ namespace RazorLight.Compilation
         {
             var dependencyContext = DependencyContext.Load(assembly);
 
+            return Resolve(dependencyContext);
+        }
+
+        internal IReadOnlyList<MetadataReference> Resolve(DependencyContext dependencyContext)
+        {
             var libraryPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var references = dependencyContext.CompileLibraries.SelectMany(library => library.ResolveReferencePaths());
 
-            if(!references.Any())
+            if (!references.Any())
             {
                 throw new RazorLightException("Can't load metadata reference from the entry assembly. " +
                     "Make sure PreserveCompilationContext is set to true in *.csproj file");
@@ -57,9 +64,9 @@ namespace RazorLight.Compilation
                 }
             }
 
-            if(additionalMetadataReferences != null)
+            if (AdditionalMetadataReferences.Any())
             {
-                metadataRerefences.AddRange(additionalMetadataReferences);
+                metadataRerefences.AddRange(AdditionalMetadataReferences);
             }
 
             return metadataRerefences;
