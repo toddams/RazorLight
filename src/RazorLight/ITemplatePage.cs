@@ -20,10 +20,15 @@ namespace RazorLight
         /// </summary>
         IHtmlContent BodyContent { get; set; }
 
-        /// <summary>
-        /// Gets or sets the unique key of the current template
-        /// </summary>
-        string Key { get; set; }
+		/// <summary>
+		/// Gets or sets a value indicating whether encoding is disabled for the entire template
+		/// </summary>
+		bool DisableEncoding { get; set; }
+
+		/// <summary>
+		/// Gets or sets the unique key of the current template
+		/// </summary>
+		string Key { get; set; }
 
         /// <summary>
         /// Gets or sets a flag that determines if the layout of this page is being rendered.
