@@ -56,5 +56,5 @@ namespace RazorLight.Tests.Compilation
             Assert.Equal(ex.Message, "Can't load metadata reference from the entry assembly. " +
                     "Make sure PreserveCompilationContext is set to true in *.csproj file");
         }
-    }
+	}
 }
