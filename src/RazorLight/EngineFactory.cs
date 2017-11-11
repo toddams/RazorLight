@@ -23,24 +23,50 @@ namespace RazorLight
             return Create(project);
         }
 
-        /// <summary>
-        /// Creates RazorLightEngine with a embedded resource razor project
-        /// </summary>
-        /// <param name="rootType">Type of the root.</param>
-        /// <returns>Instance of RazorLightEngine</returns>
-        public virtual RazorLightEngine ForEmbeddedResources(Type rootType)
+		/// <summary>
+		/// Creates RazorLightEngine with a filesystem razor project
+		/// </summary>
+		/// <param name="root">Root folder where views are stored</param>
+		/// <param name="options">Engine options</param>
+		/// <returns>Instance of RazorLightEngine</returns>
+		public virtual RazorLightEngine ForFileSystem(string root, RazorLightOptions options)
+		{
+			var project = new FileSystemRazorProject(root);
+
+			return Create(project, options);
+		}
+
+		/// <summary>
+		/// Creates RazorLightEngine with a embedded resource razor project
+		/// </summary>
+		/// <param name="rootType">Type of the root.</param>
+		/// <returns>Instance of RazorLightEngine</returns>
+		public virtual RazorLightEngine ForEmbeddedResources(Type rootType)
         {
             var project = new EmbeddedRazorProject(rootType);
 
             return Create(project);
         }
 
-        /// <summary>
-        ///Creates RazorLightEngine with a custom RazorLightProject
-        /// </summary>
-        /// <param name="project">The project</param>
-        /// <returns>Instance of RazorLightEngine</returns>
-        public virtual RazorLightEngine Create(RazorLightProject project, RazorLightOptions options = null)
+		/// <summary>
+		/// Creates RazorLightEngine with a embedded resource razor project
+		/// </summary>
+		/// <param name="rootType">Type of the root.</param>
+		/// <param name="options">Engine options</param>
+		/// <returns>Instance of RazorLightEngine</returns>
+		public virtual RazorLightEngine ForEmbeddedResources(Type rootType, RazorLightOptions options)
+		{
+			var project = new EmbeddedRazorProject(rootType);
+
+			return Create(project, options);
+		}
+
+		/// <summary>
+		///Creates RazorLightEngine with a custom RazorLightProject
+		/// </summary>
+		/// <param name="project">The project</param>
+		/// <returns>Instance of RazorLightEngine</returns>
+		public virtual RazorLightEngine Create(RazorLightProject project, RazorLightOptions options = null)
         {
             var razorOptions = options ?? new RazorLightOptions();
 

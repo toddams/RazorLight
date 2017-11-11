@@ -8,41 +8,41 @@ using System.Text;
 
 namespace RazorLight.Internal
 {
-    internal class PropertyHelper
+    internal class FastPropertySetter
     {
         // Delegate type for a by-ref property getter
         private delegate TValue ByRefFunc<TDeclaringType, TValue>(ref TDeclaringType arg);
 
         private static readonly MethodInfo CallPropertyGetterOpenGenericMethod =
-            typeof(PropertyHelper).GetTypeInfo().GetDeclaredMethod(nameof(CallPropertyGetter));
+            typeof(FastPropertySetter).GetTypeInfo().GetDeclaredMethod(nameof(CallPropertyGetter));
 
         private static readonly MethodInfo CallPropertyGetterByReferenceOpenGenericMethod =
-            typeof(PropertyHelper).GetTypeInfo().GetDeclaredMethod(nameof(CallPropertyGetterByReference));
+            typeof(FastPropertySetter).GetTypeInfo().GetDeclaredMethod(nameof(CallPropertyGetterByReference));
 
         private static readonly MethodInfo CallNullSafePropertyGetterOpenGenericMethod =
-            typeof(PropertyHelper).GetTypeInfo().GetDeclaredMethod(nameof(CallNullSafePropertyGetter));
+            typeof(FastPropertySetter).GetTypeInfo().GetDeclaredMethod(nameof(CallNullSafePropertyGetter));
 
         private static readonly MethodInfo CallNullSafePropertyGetterByReferenceOpenGenericMethod =
-            typeof(PropertyHelper).GetTypeInfo().GetDeclaredMethod(nameof(CallNullSafePropertyGetterByReference));
+            typeof(FastPropertySetter).GetTypeInfo().GetDeclaredMethod(nameof(CallNullSafePropertyGetterByReference));
 
         private static readonly MethodInfo CallPropertySetterOpenGenericMethod =
-            typeof(PropertyHelper).GetTypeInfo().GetDeclaredMethod(nameof(CallPropertySetter));
+            typeof(FastPropertySetter).GetTypeInfo().GetDeclaredMethod(nameof(CallPropertySetter));
 
         // Using an array rather than IEnumerable, as target will be called on the hot path numerous times.
-        private static readonly ConcurrentDictionary<Type, PropertyHelper[]> PropertiesCache =
-            new ConcurrentDictionary<Type, PropertyHelper[]>();
+        private static readonly ConcurrentDictionary<Type, FastPropertySetter[]> PropertiesCache =
+            new ConcurrentDictionary<Type, FastPropertySetter[]>();
 
-        private static readonly ConcurrentDictionary<Type, PropertyHelper[]> VisiblePropertiesCache =
-            new ConcurrentDictionary<Type, PropertyHelper[]>();
+        private static readonly ConcurrentDictionary<Type, FastPropertySetter[]> VisiblePropertiesCache =
+            new ConcurrentDictionary<Type, FastPropertySetter[]>();
 
         private Action<object, object> _valueSetter;
         private Func<object, object> _valueGetter;
 
         /// <summary>
-        /// Initializes a fast <see cref="PropertyHelper"/>.
+        /// Initializes a fast <see cref="FastPropertySetter"/>.
         /// This constructor does not cache the helper. For caching, use <see cref="GetProperties(Type)"/>.
         /// </summary>
-        public PropertyHelper(PropertyInfo property)
+        public FastPropertySetter(PropertyInfo property)
         {
             if (property == null)
             {
@@ -122,7 +122,7 @@ namespace RazorLight.Internal
         /// <param name="typeInfo">The type info to extract property accessors for.</param>
         /// <returns>A cached array of all public properties of the specified type.
         /// </returns>
-        public static PropertyHelper[] GetProperties(TypeInfo typeInfo)
+        public static FastPropertySetter[] GetProperties(TypeInfo typeInfo)
         {
             return GetProperties(typeInfo.AsType());
         }
@@ -134,7 +134,7 @@ namespace RazorLight.Internal
         /// <param name="type">The type to extract property accessors for.</param>
         /// <returns>A cached array of all public properties of the specified type.
         /// </returns>
-        public static PropertyHelper[] GetProperties(Type type)
+        public static FastPropertySetter[] GetProperties(Type type)
         {
             return GetProperties(type, CreateInstance, PropertiesCache);
         }
@@ -153,7 +153,7 @@ namespace RazorLight.Internal
         /// <returns>
         /// A cached array of all public properties of the specified type.
         /// </returns>
-        public static PropertyHelper[] GetVisibleProperties(TypeInfo typeInfo)
+        public static FastPropertySetter[] GetVisibleProperties(TypeInfo typeInfo)
         {
             return GetVisibleProperties(typeInfo.AsType(), CreateInstance, PropertiesCache, VisiblePropertiesCache);
         }
@@ -172,7 +172,7 @@ namespace RazorLight.Internal
         /// <returns>
         /// A cached array of all public properties of the specified type.
         /// </returns>
-        public static PropertyHelper[] GetVisibleProperties(Type type)
+        public static FastPropertySetter[] GetVisibleProperties(Type type)
         {
             return GetVisibleProperties(type, CreateInstance, PropertiesCache, VisiblePropertiesCache);
         }
@@ -348,9 +348,9 @@ namespace RazorLight.Internal
             return dictionary;
         }
 
-        private static PropertyHelper CreateInstance(PropertyInfo property)
+        private static FastPropertySetter CreateInstance(PropertyInfo property)
         {
-            return new PropertyHelper(property);
+            return new FastPropertySetter(property);
         }
 
         // Called via reflection
@@ -405,13 +405,13 @@ namespace RazorLight.Internal
             setter((TDeclaringType)target, (TValue)value);
         }
 
-        protected static PropertyHelper[] GetVisibleProperties(
+        protected static FastPropertySetter[] GetVisibleProperties(
             Type type,
-            Func<PropertyInfo, PropertyHelper> createPropertyHelper,
-            ConcurrentDictionary<Type, PropertyHelper[]> allPropertiesCache,
-            ConcurrentDictionary<Type, PropertyHelper[]> visiblePropertiesCache)
+            Func<PropertyInfo, FastPropertySetter> createPropertyHelper,
+            ConcurrentDictionary<Type, FastPropertySetter[]> allPropertiesCache,
+            ConcurrentDictionary<Type, FastPropertySetter[]> visiblePropertiesCache)
         {
-            PropertyHelper[] result;
+            FastPropertySetter[] result;
             if (visiblePropertiesCache.TryGetValue(type, out result))
             {
                 return result;
@@ -437,7 +437,7 @@ namespace RazorLight.Internal
             }
 
             // There's some inherited properties here, so we need to check for hiding via 'new'.
-            var filteredProperties = new List<PropertyHelper>(allProperties.Length);
+            var filteredProperties = new List<FastPropertySetter>(allProperties.Length);
             foreach (var propertyHelper in allProperties)
             {
                 var declaringType = propertyHelper.Property.DeclaringType;
@@ -479,16 +479,16 @@ namespace RazorLight.Internal
             return result;
         }
 
-        protected static PropertyHelper[] GetProperties(
+        protected static FastPropertySetter[] GetProperties(
             Type type,
-            Func<PropertyInfo, PropertyHelper> createPropertyHelper,
-            ConcurrentDictionary<Type, PropertyHelper[]> cache)
+            Func<PropertyInfo, FastPropertySetter> createPropertyHelper,
+            ConcurrentDictionary<Type, FastPropertySetter[]> cache)
         {
             // Unwrap nullable types. This means Nullable<T>.Value and Nullable<T>.HasValue will not be
             // part of the sequence of properties returned by this method.
             type = Nullable.GetUnderlyingType(type) ?? type;
 
-            PropertyHelper[] helpers;
+            FastPropertySetter[] helpers;
             if (!cache.TryGetValue(type, out helpers))
             {
                 // We avoid loading indexed properties using the Where statement.

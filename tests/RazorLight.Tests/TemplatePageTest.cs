@@ -554,7 +554,7 @@ namespace RazorLight.Tests
 
         #region helpers
 
-        private static TestableRazorPage CreatePage(
+        public static TestableRazorPage CreatePage(
             Action<TestableRazorPage> executeAction,
             PageContext context = null)
         {
@@ -565,7 +565,7 @@ namespace RazorLight.Tests
             }, context);
         }
 
-        private static TestableRazorPage CreatePage(
+		public static TestableRazorPage CreatePage(
             Func<TestableRazorPage, Task> executeAction,
             PageContext context = null)
         {
@@ -584,7 +584,7 @@ namespace RazorLight.Tests
             return view.Object;
         }
 
-        private static PageContext CreateViewContext(
+		public static PageContext CreateViewContext(
             TextWriter writer = null,
             IViewBufferScope bufferScope = null,
             string viewPath = null)

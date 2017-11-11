@@ -12,11 +12,11 @@ namespace RazorLight
     {
         private readonly HtmlEncoder _htmlEncoder;
         private MemoryPoolViewBufferScope _bufferScope;
-        private RazorLightEngine _engine;
+        private IRazorLightEngine _engine;
 
         public TemplateRenderer(
             ITemplatePage razorPage,
-            RazorLightEngine razorEngine,
+            IRazorLightEngine razorEngine,
             HtmlEncoder htmlEncoder)
         {
             if (razorPage == null)
@@ -93,7 +93,10 @@ namespace RazorLight
 
             try
             {
-                if (invokeViewStarts)
+				//Apply engine-global callbacks
+				ExecutePageCallbacks(page, _engine.Options.PreRenderCallbacks.ToList());
+
+				if (invokeViewStarts)
                 {
                     // Execute view starts using the same context + writer as the page to render.
                     await RenderViewStartsAsync(context).ConfigureAwait(false);
@@ -239,7 +242,25 @@ namespace RazorLight
             }
         }
 
-        public void Dispose()
+		private void ExecutePageCallbacks(ITemplatePage page, IList<Action<ITemplatePage>> callbacks)
+		{
+			if (callbacks?.Count > 0)
+			{
+				foreach (var callback in callbacks)
+				{
+					try
+					{
+						callback(page);
+					}
+					catch (Exception)
+					{
+						//Ignore
+					}
+				}
+			}
+		}
+
+		public void Dispose()
         {
             _bufferScope?.Dispose();
         }
