@@ -2,6 +2,7 @@
 using RazorLight.Razor;
 using Xunit;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace RazorLight.Tests
 {
@@ -36,5 +37,21 @@ namespace RazorLight.Tests
             Assert.Contains(defaultImports, i => i == "@using System.Collections.Generic");
             Assert.Contains(defaultImports, i => i == "@using System.Linq");
         }
+
+		//TODO: add tests for imports, etc
+		[Fact]
+		public void Ensure_Namespaces_Imports_Are_Assigned()
+		{
+			var namespaces = new HashSet<string>
+			{
+				"System.Diagnostics",
+				"System.CodeDom"
+			};
+
+			var generator = new RazorSourceGenerator(RazorEngine.Create(), new EmbeddedRazorProject(typeof(Root)), namespaces);
+
+			Assert.NotNull(generator.Namespaces);
+			Assert.Equal(generator.Namespaces, namespaces);
+		}
     }
 }

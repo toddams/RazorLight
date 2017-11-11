@@ -9,13 +9,13 @@ namespace RazorLight
 	{
 		public RazorLightOptions()
 		{
-			Namespaces = new List<string>();
+			Namespaces = new HashSet<string>();
 			DynamicTemplates = new ConcurrentDictionary<string, string>();
 			AdditionalMetadataReferences = new HashSet<MetadataReference>();
 			PreRenderCallbacks = new List<Action<ITemplatePage>>();
 		}
 
-		public ICollection<string> Namespaces { get; set; }
+		public ISet<string> Namespaces { get; set; }
 
 		public IDictionary<string, string> DynamicTemplates { get; set; }
 

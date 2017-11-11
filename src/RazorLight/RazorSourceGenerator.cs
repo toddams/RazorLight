@@ -6,12 +6,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace RazorLight
 {
     public class RazorSourceGenerator
     {
-        public RazorSourceGenerator(RazorEngine engine, RazorLightProject project)
+        public RazorSourceGenerator(RazorEngine engine, RazorLightProject project, ISet<string> namespaces = null)
         {
             if(engine == null)
             {
@@ -23,6 +24,8 @@ namespace RazorLight
                 throw new ArgumentNullException(nameof(project));
             }
 
+			Namespaces = namespaces ?? new HashSet<string>();
+
             Engine = engine;
             Project = project;
             DefaultImports = GetDefaultImports();
@@ -32,7 +35,9 @@ namespace RazorLight
 
         public RazorLightProject Project { get; set; }
 
-        public RazorSourceDocument DefaultImports { get; set; }
+		public ISet<string> Namespaces { get; set; }
+
+		public RazorSourceDocument DefaultImports { get; set; }
 
         /// <summary>
         /// Parses the template specified by the project item <paramref name="key"/>.
@@ -132,6 +137,15 @@ namespace RazorLight
                 }
             }
 
+			if(Namespaces != null)
+			{
+				RazorSourceDocument namespacesImports = GetNamespacesImports();
+				if(namespacesImports != null)
+				{
+					result.Insert(0, namespacesImports);
+				}
+			}
+
             if (DefaultImports != null)
             {
                 result.Insert(0, DefaultImports);
@@ -140,7 +154,7 @@ namespace RazorLight
             return result;
         }
 
-        protected RazorSourceDocument GetDefaultImports()
+        internal protected RazorSourceDocument GetDefaultImports()
         {
             using (var stream = new MemoryStream())
             using (var writer = new StreamWriter(stream, Encoding.UTF8))
@@ -156,6 +170,23 @@ namespace RazorLight
                 return RazorSourceDocument.ReadFrom(stream, fileName: null, encoding: Encoding.UTF8);
             }
         }
+
+		internal protected RazorSourceDocument GetNamespacesImports()
+		{
+			using (var stream = new MemoryStream())
+			using (var writer = new StreamWriter(stream, Encoding.UTF8))
+			{
+				foreach(string @namespace in Namespaces)
+				{
+					writer.WriteLine($"using {@namespace}");
+				}
+
+				writer.Flush();
+
+				stream.Position = 0;
+				return RazorSourceDocument.ReadFrom(stream, fileName: null, encoding: Encoding.UTF8);
+			}
+		}
 
         public virtual IEnumerable<string> GetDefaultImportLines()
         {

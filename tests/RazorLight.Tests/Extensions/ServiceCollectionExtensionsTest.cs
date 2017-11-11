@@ -7,7 +7,7 @@ using System;
 using RazorLight.Razor;
 using System.IO;
 
-namespace RazorLight.Tests.DependencyInjection
+namespace RazorLight.Tests.Extensions
 {
 	public class ServiceCollectionExtensionsTest
     {

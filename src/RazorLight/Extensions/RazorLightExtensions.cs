@@ -24,9 +24,18 @@ namespace RazorLight
             Type modelType,
             ExpandoObject viewBag = null)
         {
+			if(string.IsNullOrEmpty(key))
+			{
+				throw new ArgumentNullException(nameof(key));
+			}
+
+			if(string.IsNullOrEmpty(content))
+			{
+				throw new ArgumentNullException(nameof(content));
+			}
+
             engine.Options.DynamicTemplates[key] = content;
             return engine.CompileRenderAsync(key, model, modelType, viewBag);
         }
-
     }
 }

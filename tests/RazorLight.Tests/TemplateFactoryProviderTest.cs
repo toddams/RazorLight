@@ -35,6 +35,7 @@ namespace RazorLight.Tests
             Assert.ThrowsAsync<System.ArgumentNullException>(async () => await provider.CreateFactoryAsync(projectItem: null));
         }
 
+		//TODO: Move this to compiler tests
         [Fact]
         public void Returns_Diagnostics_OnErrors()
         {
