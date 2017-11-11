@@ -178,7 +178,7 @@ namespace RazorLight
 			{
 				foreach(string @namespace in Namespaces)
 				{
-					writer.WriteLine($"using {@namespace}");
+					writer.WriteLine($"@using {@namespace}");
 				}
 
 				writer.Flush();
