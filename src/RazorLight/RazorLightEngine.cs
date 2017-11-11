@@ -55,13 +55,59 @@ namespace RazorLight
             return await RenderTemplateAsync(template, model, modelType, viewBag).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Search and compile a template with a given key
-        /// </summary>
-        /// <param name="key">Unique key of the template</param>
-        /// <param name="compileIfNotCached">If true - it will try to get a template with a specified key and compile it</param>
-        /// <returns>An instance of a template</returns>
-        public async Task<ITemplatePage> CompileTemplateAsync(string key)
+		/// <summary>
+		/// Compiles and renders a template. Template content is taken directly from <paramref name="content"/> parameter
+		/// </summary>
+		/// <typeparam name="T">Type of the model</typeparam>
+		/// <param name="key">Unique key of the template</param>
+		/// <param name="content">Content of the template</param>
+		/// <param name="model">Template model</param>
+		/// <param name="viewBag">Dynamic ViewBag</param>
+		public Task<string> CompileRenderAsync<T>(
+			string key,
+			string content,
+			T model,
+			ExpandoObject viewBag = null)
+		{
+			return CompileRenderAsync(key, content, model, typeof(T), viewBag);
+		}
+
+		/// <summary>
+		/// Compiles and renders a template. Template content is taken directly from <paramref name="content"/> parameter
+		/// </summary>
+		/// <param name="key">Unique key of the template</param>
+		/// <param name="content">Content of the template</param>
+		/// <param name="model">Template model</param>
+		/// <param name="modelType">Type of the model</param>
+		/// <param name="viewBag">Dynamic ViewBag</param>
+		public Task<string> CompileRenderAsync(
+			string key,
+			string content,
+			object model,
+			Type modelType,
+			ExpandoObject viewBag = null)
+		{
+			if (string.IsNullOrEmpty(key))
+			{
+				throw new ArgumentNullException(nameof(key));
+			}
+
+			if (string.IsNullOrEmpty(content))
+			{
+				throw new ArgumentNullException(nameof(content));
+			}
+
+			Options.DynamicTemplates[key] = content;
+			return CompileRenderAsync(key, model, modelType, viewBag);
+		}
+
+		/// <summary>
+		/// Search and compile a template with a given key
+		/// </summary>
+		/// <param name="key">Unique key of the template</param>
+		/// <param name="compileIfNotCached">If true - it will try to get a template with a specified key and compile it</param>
+		/// <returns>An instance of a template</returns>
+		public async Task<ITemplatePage> CompileTemplateAsync(string key)
         {
             var cacheLookupResult = cache.RetrieveTemplate(key);
             if (cacheLookupResult.Success)

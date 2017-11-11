@@ -13,8 +13,12 @@ namespace RazorLight
         ITemplateFactoryProvider TemplateFactoryProvider { get; }
 
         Task<string> CompileRenderAsync<T>(string key, T model, ExpandoObject viewBag = null);
-        Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag);
-        Task<ITemplatePage> CompileTemplateAsync(string key);
+		Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag);
+
+		Task<string> CompileRenderAsync<T>(string key, string content, T model, ExpandoObject viewBag = null);
+		Task<string> CompileRenderAsync(string key, string content, object model, Type modelType, ExpandoObject viewBag = null);
+
+		Task<ITemplatePage> CompileTemplateAsync(string key);
         Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, ExpandoObject viewBag = null);
         Task RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, TextWriter textWriter, ExpandoObject viewBag = null);
     }
