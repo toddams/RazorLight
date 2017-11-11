@@ -70,7 +70,7 @@ namespace RazorLight
         {
             var razorOptions = options ?? new RazorLightOptions();
 
-            var sourceGenerator = new RazorSourceGenerator(RazorEngine, project, options.Namespaces);
+            var sourceGenerator = new RazorSourceGenerator(RazorEngine, project, razorOptions.Namespaces);
 
             var metadataReferenceManager = new DefaultMetadataReferenceManager(razorOptions.AdditionalMetadataReferences);
             var compiler = new RoslynCompilationService(metadataReferenceManager);

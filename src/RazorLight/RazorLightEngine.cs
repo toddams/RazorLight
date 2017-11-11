@@ -48,7 +48,7 @@ namespace RazorLight
         /// <param name="modelType">Type of the model</param>
         /// <param name="viewBag">Dynamic ViewBag (can be null)</param>
         /// <returns></returns>
-        public async Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag)
+        public async Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag = null)
         {
             ITemplatePage template = await CompileTemplateAsync(key).ConfigureAwait(false);
 
