@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
+using RazorLight.Generation;
 
 namespace RazorLight.Compilation
 {
@@ -9,6 +10,6 @@ namespace RazorLight.Compilation
         EmitOptions EmitOptions { get; }
         CSharpParseOptions ParseOptions { get; }
 
-        CompiledTemplateDescriptor CompileAndEmit(GeneratedRazorTemplate razorTemplate);
+        CompiledTemplateDescriptor CompileAndEmit(IGeneratedRazorTemplate razorTemplate);
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
+using RazorLight.Compilation;
 
 namespace RazorLight
 {

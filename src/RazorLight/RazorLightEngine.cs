@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using RazorLight.Compilation;
 
 namespace RazorLight
 {

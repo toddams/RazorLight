@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Razor.Language;
-using RazorLight.Compilation;
 using RazorLight.Razor;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using System.Linq;
 
-namespace RazorLight
+namespace RazorLight.Generation
 {
     public class RazorSourceGenerator
     {

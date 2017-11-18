@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc.Razor.Extensions;
+﻿using System;
+using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using RazorLight.Caching;
 using RazorLight.Compilation;
+using RazorLight.Generation;
 using RazorLight.Instrumentation;
 using RazorLight.Razor;
-using System;
 
 namespace RazorLight
 {
-    public class EngineFactory : IEngineFactory
+	public class EngineFactory : IEngineFactory
     {
         /// <summary>
         /// Creates RazorLightEngine with a filesystem razor project

@@ -2,9 +2,9 @@
 using RazorLight.Razor;
 using System;
 
-namespace RazorLight.Compilation
+namespace RazorLight.Generation
 {
-    public class GeneratedRazorTemplate
+    public class GeneratedRazorTemplate : IGeneratedRazorTemplate
     {
         public GeneratedRazorTemplate(RazorLightProjectItem projectItem, RazorCSharpDocument cSharpDocument)
         {

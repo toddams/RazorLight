@@ -1,21 +1,22 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.DependencyModel;
-using RazorLight.Internal;
-using RazorLight.Razor;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+using Microsoft.CodeAnalysis.Text;
+using Microsoft.Extensions.DependencyModel;
+using RazorLight.Generation;
+using RazorLight.Internal;
+using RazorLight.Razor;
 using DependencyContextCompilationOptions = Microsoft.Extensions.DependencyModel.CompilationOptions;
 
 namespace RazorLight.Compilation
 {
-    public class RoslynCompilationService : ICompilationService
+	public class RoslynCompilationService : ICompilationService
     {
         private IMetadataReferenceManager metadataReferenceManager;
 
@@ -34,9 +35,9 @@ namespace RazorLight.Compilation
             EmitOptions = new EmitOptions(debugInformationFormat: pdbFormat);
         }
 
-        #region Options
+		#region Options
 
-        private Assembly operatingAssembly;
+		private Assembly operatingAssembly;
         public virtual Assembly OperatingAssembly
         {
             get
@@ -90,7 +91,7 @@ namespace RazorLight.Compilation
 
         #endregion
 
-        public CompiledTemplateDescriptor CompileAndEmit(GeneratedRazorTemplate razorTemplate)
+        public CompiledTemplateDescriptor CompileAndEmit(IGeneratedRazorTemplate razorTemplate)
         {
             string assemblyName = Path.GetRandomFileName();
             var compilation = CreateCompilation(razorTemplate.GeneratedCode, assemblyName);

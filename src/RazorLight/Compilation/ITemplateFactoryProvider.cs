@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using RazorLight.Compilation;
+using RazorLight.Generation;
 using RazorLight.Razor;
 
-namespace RazorLight
+namespace RazorLight.Compilation
 {
     public interface ITemplateFactoryProvider
     {

@@ -4,8 +4,9 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using RazorLight.Generation;
 
-namespace RazorLight
+namespace RazorLight.Compilation
 {
     public class TemplateFactoryProvider : ITemplateFactoryProvider
     {
@@ -33,7 +34,7 @@ namespace RazorLight
                 throw new ArgumentNullException(nameof(templateKey));
             }
 
-            GeneratedRazorTemplate razorTemplate = null;
+            IGeneratedRazorTemplate razorTemplate = null;
 
             if (options.DynamicTemplates.TryGetValue(templateKey, out string templateContent))
             {
@@ -55,12 +56,12 @@ namespace RazorLight
                 throw new ArgumentNullException(nameof(projectItem));
             }
 
-            GeneratedRazorTemplate razorTemplate = await sourceGenerator.GenerateCodeAsync(projectItem).ConfigureAwait(false);
+            IGeneratedRazorTemplate razorTemplate = await sourceGenerator.GenerateCodeAsync(projectItem).ConfigureAwait(false);
 
             return CreateFactory(razorTemplate);
         }
 
-        protected TemplateFactoryResult CreateFactory(GeneratedRazorTemplate razorTemplate)
+        protected TemplateFactoryResult CreateFactory(IGeneratedRazorTemplate razorTemplate)
         {
             CompiledTemplateDescriptor templateDescriptor = templateCompiler.CompileAndEmit(razorTemplate);
             templateDescriptor.ExpirationToken = razorTemplate.ProjectItem.ExpirationToken;

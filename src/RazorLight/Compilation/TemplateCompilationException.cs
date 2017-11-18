@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RazorLight
+namespace RazorLight.Compilation
 {
     public class TemplateCompilationException : RazorLightException
     {
