@@ -62,12 +62,22 @@ namespace RazorLight
 			return Create(project, options);
 		}
 
+		public RazorLightEngine Create()
+		{
+			return Create(null);
+		}
+
+		public RazorLightEngine Create(RazorLightOptions options)
+		{
+			return Create(new EmptyRazorProject(), options);
+		}
+
 		/// <summary>
 		///Creates RazorLightEngine with a custom RazorLightProject
 		/// </summary>
 		/// <param name="project">The project</param>
 		/// <returns>Instance of RazorLightEngine</returns>
-		public virtual RazorLightEngine Create(RazorLightProject project, RazorLightOptions options = null)
+		public virtual RazorLightEngine Create(RazorLightProject project, RazorLightOptions options)
         {
             var razorOptions = options ?? new RazorLightOptions();
 
@@ -82,7 +92,7 @@ namespace RazorLight
             return new RazorLightEngine(razorOptions, templateFactoryProvider, cacheProvider);
         }
 
-        public virtual RazorEngine RazorEngine
+		public virtual RazorEngine RazorEngine
         {
             get
             {

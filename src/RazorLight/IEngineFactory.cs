@@ -35,6 +35,9 @@ namespace RazorLight
 		/// <returns>Instance of RazorLightEngine</returns>
 		RazorLightEngine ForEmbeddedResources(Type rootType, RazorLightOptions options);
 
+		RazorLightEngine Create();
+
+		RazorLightEngine Create(RazorLightOptions options);
 
 		/// <summary>
 		///Creates RazorLightEngine with a custom RazorLightProject
