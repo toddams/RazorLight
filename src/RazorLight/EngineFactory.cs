@@ -77,7 +77,7 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="project">The project</param>
 		/// <returns>Instance of RazorLightEngine</returns>
-		public virtual RazorLightEngine Create(RazorLightProject project, RazorLightOptions options)
+		public virtual RazorLightEngine Create(RazorLightProject project, RazorLightOptions options = null)
         {
             var razorOptions = options ?? new RazorLightOptions();
 

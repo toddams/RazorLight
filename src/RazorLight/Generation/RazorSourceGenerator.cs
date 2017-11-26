@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace RazorLight.Generation
 {
@@ -124,7 +125,13 @@ namespace RazorLight.Generation
             {
                 throw new ArgumentNullException(nameof(projectItem));
             }
-            var result = new List<RazorSourceDocument>();
+
+			if (projectItem is TextSourceRazorProjectItem)
+			{
+				return Enumerable.Empty<RazorSourceDocument>();
+			}
+
+			var result = new List<RazorSourceDocument>();
 
             IEnumerable<RazorLightProjectItem> importProjectItems = await Project.GetImportsAsync(projectItem.Key);
             foreach (var importItem in importProjectItems)

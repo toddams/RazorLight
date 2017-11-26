@@ -4,6 +4,7 @@ using Xunit;
 using System.Linq;
 using System.Collections.Generic;
 using RazorLight.Generation;
+using System.Threading.Tasks;
 
 namespace RazorLight.Tests
 {
@@ -53,6 +54,21 @@ namespace RazorLight.Tests
 
 			Assert.NotNull(generator.Namespaces);
 			Assert.Equal(generator.Namespaces, namespaces);
+		}
+
+		[Fact]
+		public async Task Return_Empty_Imports_ForTextSource_ProjectItem()
+		{
+			//Assign
+			var generator = new RazorSourceGenerator(RazorEngine.Create(), new EmbeddedRazorProject(typeof(Root)));
+
+			//Act
+			var projectItem = new TextSourceRazorProjectItem("key", "some content");
+			IEnumerable<RazorSourceDocument> result = await generator.GetImportsAsync(projectItem);
+
+			//Assert
+			Assert.NotNull(result);
+			Assert.Empty(result);
 		}
     }
 }
