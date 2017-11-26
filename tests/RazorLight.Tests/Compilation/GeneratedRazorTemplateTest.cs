@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Razor.Language;
 using Moq;
 using RazorLight.Compilation;
+using RazorLight.Generation;
 using RazorLight.Razor;
 using Xunit;
 

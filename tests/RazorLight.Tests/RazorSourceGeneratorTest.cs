@@ -3,6 +3,7 @@ using RazorLight.Razor;
 using Xunit;
 using System.Linq;
 using System.Collections.Generic;
+using RazorLight.Generation;
 
 namespace RazorLight.Tests
 {

@@ -41,8 +41,8 @@ namespace RazorLight.Generation
         /// Parses the template specified by the project item <paramref name="key"/>.
         /// </summary>
         /// <param name="key">The template path.</param>
-        /// <returns>The <see cref="GeneratedRazorTemplate"/>.</returns>
-        public async Task<GeneratedRazorTemplate> GenerateCodeAsync(string key)
+        /// <returns>The <see cref="IGeneratedRazorTemplate"/>.</returns>
+        public async Task<IGeneratedRazorTemplate> GenerateCodeAsync(string key)
         {
             if (string.IsNullOrEmpty(key))
             {
@@ -53,12 +53,12 @@ namespace RazorLight.Generation
             return await GenerateCodeAsync(projectItem);
         }
 
-        /// <summary>
-        /// Parses the template specified by <paramref name="projectItem"/>.
-        /// </summary>
-        /// <param name="projectItem">The <see cref="RazorLightProjectItem"/>.</param>
-        /// <returns>The <see cref="GeneratedRazorTemplate"/>.</returns>
-        public async Task<GeneratedRazorTemplate> GenerateCodeAsync(RazorLightProjectItem projectItem)
+		/// <summary>
+		/// Parses the template specified by <paramref name="projectItem"/>.
+		/// </summary>
+		/// <param name="projectItem">The <see cref="RazorLightProjectItem"/>.</param>
+		/// <returns>The <see cref="IGeneratedRazorTemplate"/>.</returns>
+		public async Task<IGeneratedRazorTemplate> GenerateCodeAsync(RazorLightProjectItem projectItem)
         {
             if (projectItem == null)
             {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -93,6 +94,11 @@ namespace RazorLight.Compilation
 
         public CompiledTemplateDescriptor CompileAndEmit(IGeneratedRazorTemplate razorTemplate)
         {
+			if(razorTemplate == null)
+			{
+				throw new ArgumentNullException(nameof(razorTemplate));
+			}
+
             string assemblyName = Path.GetRandomFileName();
             var compilation = CreateCompilation(razorTemplate.GeneratedCode, assemblyName);
 

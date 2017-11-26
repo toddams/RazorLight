@@ -156,18 +156,19 @@ namespace RazorLight.Precompile
         {
             var files = GetFiles();
             var results = new ViewCompilationInfo[files.Count];
-            Parallel.For(0, results.Length, ParalellOptions, i =>
-            {
-                TemplateFileInfo fileInfo = files[i];
-                ViewCompilationInfo compilationInfo;
-                using (var fileStream = fileInfo.CreateReadStream())
-                {
-                    var razorTemplate = factoryProvider.SourceGenerator.GenerateCodeAsync(fileInfo.ViewEnginePath).Result;
-                    compilationInfo = new ViewCompilationInfo(fileInfo, razorTemplate.CSharpDocument);
-                }
+			//TODO: finish
+            //Parallel.For(0, results.Length, ParalellOptions, i =>
+            //{
+            //    TemplateFileInfo fileInfo = files[i];
+            //    ViewCompilationInfo compilationInfo;
+            //    using (var fileStream = fileInfo.CreateReadStream())
+            //    {
+            //        var razorTemplate = factoryProvider.SourceGenerator.GenerateCodeAsync(fileInfo.ViewEnginePath).Result;
+            //        compilationInfo = new ViewCompilationInfo(fileInfo, razorTemplate.CSharpDocument);
+            //    }
 
-                results[i] = compilationInfo;
-            });
+            //    results[i] = compilationInfo;
+            //});
 
             return results;
         }

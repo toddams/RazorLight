@@ -158,6 +158,11 @@ namespace RazorLight
             TextWriter textWriter,
             ExpandoObject viewBag = null)
         {
+			if(textWriter == null)
+			{
+				throw new ArgumentNullException(nameof(textWriter));
+			}
+
             var pageContext = new PageContext(viewBag)
             {
                 ExecutingPageKey = templatePage.Key,
