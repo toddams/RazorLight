@@ -104,10 +104,13 @@ namespace RazorLight
                 throw new InvalidOperationException($"Project can not find template with key {projectItem.Key}");
             }
 
-            RazorSourceDocument source = RazorSourceDocument.ReadFrom(projectItem.Read(), projectItem.Key);
-            IEnumerable<RazorSourceDocument> imports = await GetImportsAsync(projectItem);
+            using (var stream = projectItem.Read())
+            {
+                RazorSourceDocument source = RazorSourceDocument.ReadFrom(stream, projectItem.Key);
+                IEnumerable<RazorSourceDocument> imports = await GetImportsAsync(projectItem);
 
-            return RazorCodeDocument.Create(source, imports);
+                return RazorCodeDocument.Create(source, imports);
+            }
         }
 
         /// <summary>
@@ -128,7 +131,10 @@ namespace RazorLight
             {
                 if (importItem.Exists)
                 {
-                    result.Insert(0, RazorSourceDocument.ReadFrom(importItem.Read(), null));
+                    using (var stream = importItem.Read())
+                    {
+                        result.Insert(0, RazorSourceDocument.ReadFrom(stream, null));
+                    }
                 }
             }
 
