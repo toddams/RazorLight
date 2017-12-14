@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using RazorLight.Generation;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace RazorLight.Compilation
@@ -10,6 +11,7 @@ namespace RazorLight.Compilation
         CSharpCompilationOptions CSharpCompilationOptions { get; }
         EmitOptions EmitOptions { get; }
         CSharpParseOptions ParseOptions { get; }
+        Assembly OperatingAssembly { get; }
 
         Task<CompiledTemplateDescriptor> CompileAsync(IGeneratedRazorTemplate razorTemplate);
     }

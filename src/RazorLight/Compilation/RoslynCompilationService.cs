@@ -24,14 +24,26 @@ namespace RazorLight.Compilation
     {
         private readonly IMetadataReferenceManager metadataReferenceManager;
         private readonly bool isDevelopment;
+        private readonly Assembly operatingAssembly;
         private List<MetadataReference> metadataReferences = new List<MetadataReference>();
         private IMemoryCache _cache;
 
         private static readonly object _locker = new object();
 
-        public RoslynCompilationService(IMetadataReferenceManager referenceManager)
+        public RoslynCompilationService(IMetadataReferenceManager referenceManager, Assembly operatingAssembly)
         {
+            if(referenceManager == null)
+            {
+                throw new ArgumentNullException(nameof(referenceManager));
+            }
+
+            if(operatingAssembly == null)
+            {
+                throw new ArgumentNullException(nameof(operatingAssembly));
+            }
+
             metadataReferenceManager = referenceManager;
+            this.operatingAssembly = operatingAssembly;
 
             isDevelopment = IsAssemblyDebugBuild(OperatingAssembly);
 
@@ -45,18 +57,12 @@ namespace RazorLight.Compilation
             _cache = new MemoryCache(cacheOptions);
         }
 
-		#region Options
+        #region Options
 
-		private Assembly operatingAssembly;
         public virtual Assembly OperatingAssembly
         {
             get
             {
-                if (operatingAssembly == null)
-                {
-                    operatingAssembly = Assembly.GetEntryAssembly();
-                }
-
                 return operatingAssembly;
             }
         }
