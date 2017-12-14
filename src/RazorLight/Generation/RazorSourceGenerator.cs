@@ -11,16 +11,11 @@ namespace RazorLight.Generation
 {
     public class RazorSourceGenerator
     {
-        public RazorSourceGenerator(RazorEngine engine, RazorLightProject project, ISet<string> namespaces = null)
+        public RazorSourceGenerator(RazorEngine engine, RazorLightProject project = null, ISet<string> namespaces = null)
         {
             if(engine == null)
             {
                 throw new ArgumentNullException(nameof(engine));
-            }
-
-            if(project == null)
-            {
-                throw new ArgumentNullException(nameof(project));
             }
 
 			Namespaces = namespaces ?? new HashSet<string>();
@@ -50,7 +45,15 @@ namespace RazorLight.Generation
                 throw new ArgumentException();
             }
 
-            RazorLightProjectItem projectItem = await Project.GetItemAsync(key).ConfigureAwait(false);
+			if(Project == null)
+			{
+				string _message = "Can not resolve a content for the template \"{0}\" as there is no project set." +
+					"You can only render a template by passing it's content directly via string using coresponding function overload";
+
+				throw new InvalidOperationException(_message);
+			}
+
+			RazorLightProjectItem projectItem = await Project.GetItemAsync(key).ConfigureAwait(false);
             return await GenerateCodeAsync(projectItem);
         }
 

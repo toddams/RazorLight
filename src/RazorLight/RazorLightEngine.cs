@@ -18,6 +18,16 @@ namespace RazorLight
             ITemplateFactoryProvider factoryProvider,
             ICachingProvider cachingProvider)
         {
+            if(options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            if(factoryProvider == null)
+            {
+                throw new ArgumentNullException(nameof(factoryProvider));
+            }
+
             Options = options;
             templateFactoryProvider = factoryProvider;
             cache = cachingProvider;
@@ -110,17 +120,25 @@ namespace RazorLight
 		/// <returns>An instance of a template</returns>
 		public async Task<ITemplatePage> CompileTemplateAsync(string key)
         {
-            var cacheLookupResult = cache.RetrieveTemplate(key);
-            if (cacheLookupResult.Success)
+            if(cache != null)
             {
-                return cacheLookupResult.Template.TemplatePageFactory();
+                var cacheLookupResult = cache.RetrieveTemplate(key);
+                if (cacheLookupResult.Success)
+                {
+                    return cacheLookupResult.Template.TemplatePageFactory();
+                }
             }
 
+
             var pageFactoryResult = await templateFactoryProvider.CreateFactoryAsync(key).ConfigureAwait(false);
-            cache.CacheTemplate(
-                key, 
-                pageFactoryResult.TemplatePageFactory, 
+
+            if(cache != null)
+            {
+                cache.CacheTemplate(
+                key,
+                pageFactoryResult.TemplatePageFactory,
                 pageFactoryResult.TemplateDescriptor.ExpirationToken);
+            }
 
             return pageFactoryResult.TemplatePageFactory();
         }

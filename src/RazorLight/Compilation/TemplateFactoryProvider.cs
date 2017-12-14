@@ -1,5 +1,4 @@
-﻿using RazorLight.Compilation;
-using RazorLight.Razor;
+﻿using RazorLight.Razor;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -46,7 +45,7 @@ namespace RazorLight.Compilation
                 razorTemplate = await sourceGenerator.GenerateCodeAsync(templateKey).ConfigureAwait(false);
             }
 
-            return CreateFactory(razorTemplate);
+            return await CompileAsync(razorTemplate);
         }
 
         public async Task<TemplateFactoryResult> CreateFactoryAsync(RazorLightProjectItem projectItem)
@@ -58,12 +57,12 @@ namespace RazorLight.Compilation
 
             IGeneratedRazorTemplate razorTemplate = await sourceGenerator.GenerateCodeAsync(projectItem).ConfigureAwait(false);
 
-            return CreateFactory(razorTemplate);
+            return await CompileAsync(razorTemplate);
         }
 
-        protected TemplateFactoryResult CreateFactory(IGeneratedRazorTemplate razorTemplate)
+        protected async Task<TemplateFactoryResult> CompileAsync(IGeneratedRazorTemplate razorTemplate)
         {
-            CompiledTemplateDescriptor templateDescriptor = templateCompiler.CompileAndEmit(razorTemplate);
+            CompiledTemplateDescriptor templateDescriptor = await templateCompiler.CompileAsync(razorTemplate);
             templateDescriptor.ExpirationToken = razorTemplate.ProjectItem.ExpirationToken;
 
             string templateKey = templateDescriptor.TemplateKey;

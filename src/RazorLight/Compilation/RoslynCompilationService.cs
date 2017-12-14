@@ -5,11 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyModel;
+using Microsoft.Extensions.Options;
 using RazorLight.Generation;
 using RazorLight.Internal;
 using RazorLight.Razor;
@@ -19,10 +22,12 @@ namespace RazorLight.Compilation
 {
 	public class RoslynCompilationService : ICompilationService
     {
-        private IMetadataReferenceManager metadataReferenceManager;
-
-        internal readonly bool isDevelopment;
+        private readonly IMetadataReferenceManager metadataReferenceManager;
+        private readonly bool isDevelopment;
         private List<MetadataReference> metadataReferences = new List<MetadataReference>();
+        private IMemoryCache _cache;
+
+        private static readonly object _locker = new object();
 
         public RoslynCompilationService(IMetadataReferenceManager referenceManager)
         {
@@ -34,6 +39,10 @@ namespace RazorLight.Compilation
                 DebugInformationFormat.Pdb :
                 DebugInformationFormat.PortablePdb;
             EmitOptions = new EmitOptions(debugInformationFormat: pdbFormat);
+
+
+            var cacheOptions = Options.Create(new MemoryCacheOptions());
+            _cache = new MemoryCache(cacheOptions);
         }
 
 		#region Options
@@ -92,7 +101,56 @@ namespace RazorLight.Compilation
 
         #endregion
 
-        public CompiledTemplateDescriptor CompileAndEmit(IGeneratedRazorTemplate razorTemplate)
+        public Task<CompiledTemplateDescriptor> CompileAsync(IGeneratedRazorTemplate razorTemplate)
+        {
+            if (razorTemplate == null)
+            {
+                throw new ArgumentNullException(nameof(razorTemplate));
+            }
+
+            MemoryCacheEntryOptions cacheEntryOptions;
+            TaskCompletionSource<CompiledTemplateDescriptor> compilationTaskSource = null;
+            Task<CompiledTemplateDescriptor> cacheEntry;
+
+            string templateKey = razorTemplate.TemplateKey;
+
+            lock (_locker)
+            {
+                if (_cache.TryGetValue(templateKey, out cacheEntry))
+                {
+                    return cacheEntry;
+                }
+
+                cacheEntryOptions = new MemoryCacheEntryOptions();
+                if(razorTemplate.ProjectItem.ExpirationToken != null)
+                {
+                    cacheEntryOptions.ExpirationTokens.Add(razorTemplate.ProjectItem.ExpirationToken);
+                }
+
+                compilationTaskSource = new TaskCompletionSource<CompiledTemplateDescriptor>();
+
+                cacheEntry = _cache.Set(templateKey, compilationTaskSource.Task, cacheEntryOptions);
+            }
+
+            if (compilationTaskSource != null)
+            {
+                Debug.Assert(cacheEntryOptions != null);
+
+                try
+                {
+                    var descriptor = CompileAndEmit(razorTemplate);
+                    compilationTaskSource.SetResult(descriptor);
+                }
+                catch (Exception ex)
+                {
+                    compilationTaskSource.SetException(ex);
+                }
+            }
+
+            return cacheEntry;
+        }
+
+        protected CompiledTemplateDescriptor CompileAndEmit(IGeneratedRazorTemplate razorTemplate)
         {
 			if(razorTemplate == null)
 			{

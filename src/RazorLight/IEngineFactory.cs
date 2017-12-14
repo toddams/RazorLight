@@ -3,6 +3,7 @@ using System;
 
 namespace RazorLight
 {
+    [Obsolete("Use RazorLightEngineBuilder instead")]
     public interface IEngineFactory
     {
         /// <summary>
@@ -35,9 +36,7 @@ namespace RazorLight
 		/// <returns>Instance of RazorLightEngine</returns>
 		RazorLightEngine ForEmbeddedResources(Type rootType, RazorLightOptions options);
 
-		RazorLightEngine Create();
-
-		RazorLightEngine Create(RazorLightOptions options);
+		RazorLightEngine Create(RazorLightOptions options = null);
 
 		/// <summary>
 		///Creates RazorLightEngine with a custom RazorLightProject

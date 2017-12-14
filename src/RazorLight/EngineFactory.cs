@@ -10,7 +10,8 @@ using RazorLight.Razor;
 
 namespace RazorLight
 {
-	public class EngineFactory : IEngineFactory
+    [Obsolete("Use RazorLightEngineBuilder instead")]
+    public class EngineFactory : IEngineFactory
     {
         /// <summary>
         /// Creates RazorLightEngine with a filesystem razor project
@@ -62,14 +63,9 @@ namespace RazorLight
 			return Create(project, options);
 		}
 
-		public RazorLightEngine Create()
+		public RazorLightEngine Create(RazorLightOptions options = null)
 		{
-			return Create(null);
-		}
-
-		public RazorLightEngine Create(RazorLightOptions options)
-		{
-			return Create(new EmptyRazorProject(), options);
+			return Create(null, options);
 		}
 
 		/// <summary>
@@ -81,7 +77,7 @@ namespace RazorLight
         {
             var razorOptions = options ?? new RazorLightOptions();
 
-            var sourceGenerator = new RazorSourceGenerator(RazorEngine, project, razorOptions.Namespaces);
+            var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, razorOptions.Namespaces);
 
             var metadataReferenceManager = new DefaultMetadataReferenceManager(razorOptions.AdditionalMetadataReferences);
             var compiler = new RoslynCompilationService(metadataReferenceManager);
@@ -90,37 +86,6 @@ namespace RazorLight
             ICachingProvider cacheProvider = new DefaultCachingProvider();
 
             return new RazorLightEngine(razorOptions, templateFactoryProvider, cacheProvider);
-        }
-
-		public virtual RazorEngine RazorEngine
-        {
-            get
-            {
-                return RazorEngine.Create(builder =>
-                {
-                    Instrumentation.InjectDirective.Register(builder);
-                    Instrumentation.ModelDirective.Register(builder);
-                    NamespaceDirective.Register(builder);
-                    FunctionsDirective.Register(builder);
-                    InheritsDirective.Register(builder);
-                    SectionDirective.Register(builder);
-
-                    //builder.AddTargetExtension(new TemplateTargetExtension()
-                    //{
-                    //    TemplateTypeName = "global::Microsoft.AspNetCore.Mvc.Razor.HelperResult",
-                    //});
-
-                    builder.Features.Add(new ModelExpressionPass());
-                    //builder.Features.Add(new ViewComponentTagHelperPass());
-                    builder.Features.Add(new RazorLightTemplateDocumentClassifierPass());
-
-                    if (!builder.DesignTime)
-                    {
-                        builder.Features.Add(new RazorLightAssemblyAttributeInjectionPass());
-                        builder.Features.Add(new InstrumentationPass());
-                    }
-                });
-            }
         }
     }
 }
