@@ -17,20 +17,9 @@ namespace RazorLight.Tests.Compilation
 	public class RoslynCompilerServiceTest
     {
 		[Fact]
-		public void OperatingAssembly_Returns_EntryAssembly()
-		{
-			var entryAssembly = Assembly.GetEntryAssembly();
-
-			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager());
-
-			Assert.NotNull(compiler.OperatingAssembly);
-			Assert.Equal(compiler.OperatingAssembly, entryAssembly);
-		}
-
-		[Fact]
 		public void Constructor_SetsCompilationOptionsFromDependencyContext()
 		{
-			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager());
+			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager(), Assembly.GetEntryAssembly());
 
 			// Act & Assert
 			var parseOptions = compiler.ParseOptions;
@@ -41,7 +30,7 @@ namespace RazorLight.Tests.Compilation
 		public void EnsureOptions_ConfiguresCompilationOptions()
 		{
 			// Arrange
-			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager());
+			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager(), Assembly.GetEntryAssembly());
 
 			// Act & Assert
 			var compilationOptions = compiler.CSharpCompilationOptions;
@@ -220,7 +209,7 @@ namespace RazorLight.Tests.Compilation
 		[Fact]
 		public async Task Throw_With_CompilationErrors_On_Failed_BuildAsync()
 		{
-			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager());
+			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager(), Assembly.GetEntryAssembly());
 
 			var template = new TestGeneratedRazorTemplate("key", "public class Test { error }");
 
@@ -244,7 +233,7 @@ namespace RazorLight.Tests.Compilation
 		[Fact]
 		public void Throw_OnNullRazorTemplate_OnCompile()
 		{
-			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager());
+			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager(), Assembly.GetEntryAssembly());
 
 			Func<Task> action = () => compiler.CompileAsync(null);
 
@@ -282,7 +271,7 @@ namespace RazorLight.Tests.Compilation
 		{
 			private readonly DependencyContextCompilationOptions _options;
 
-			public TestCSharpCompiler(IMetadataReferenceManager referenceManager, DependencyContextCompilationOptions options) : base(referenceManager)
+			public TestCSharpCompiler(IMetadataReferenceManager referenceManager, DependencyContextCompilationOptions options) : base(referenceManager, Assembly.GetEntryAssembly())
 			{
 				_options = options;
 			}

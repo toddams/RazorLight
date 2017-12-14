@@ -1,20 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc.Razor.Extensions;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Extensions;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using RazorLight.Caching;
 using RazorLight.Compilation;
 using RazorLight.Generation;
-using RazorLight.Instrumentation;
 using RazorLight.Razor;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace RazorLight
 {
     public class RazorLightEngineBuilder
     {
+        protected Assembly operatingAssembly;
+
         protected HashSet<string> namespaces;
 
         protected ConcurrentDictionary<string, string> dynamicTemplates;
@@ -136,6 +135,18 @@ namespace RazorLight
             return this;
         }
 
+        public virtual RazorLightEngineBuilder SetOperatingAssembly(Assembly assembly)
+        {
+            if(assembly == null)
+            {
+                throw new ArgumentNullException(nameof(assembly));
+            }
+
+            operatingAssembly = assembly;
+
+            return this;
+        }
+
         public virtual RazorLightEngine Build()
         {
             var options = new RazorLightOptions();
@@ -162,7 +173,10 @@ namespace RazorLight
 
             var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, options.Namespaces);
             var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences);
-            var compiler = new RoslynCompilationService(metadataReferenceManager);
+
+            var assembly = operatingAssembly ?? Assembly.GetEntryAssembly();
+
+            var compiler = new RoslynCompilationService(metadataReferenceManager, assembly);
             var templateFactoryProvider = new TemplateFactoryProvider(sourceGenerator, compiler, options);
 
             return new RazorLightEngine(options, templateFactoryProvider, cachingProvider);

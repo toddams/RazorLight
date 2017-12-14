@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using Xunit;
 
@@ -71,6 +72,22 @@ namespace RazorLight.Tests
             Action action = () => new RazorLightEngineBuilder().AddPrerenderCallbacks(null);
 
             Assert.Throws<ArgumentNullException>(action);
+        }
+
+        [Fact]
+        public void Throws_On_Null_Assembly()
+        {
+            Action action = () => new RazorLightEngineBuilder().SetOperatingAssembly(null);
+
+            Assert.Throws<ArgumentNullException>(action);
+        }
+
+        [Fact]
+        public void Compiler_OperatingAssembly_IsSetTo_EntryAssembly_If_Not_Specified()
+        {
+            var engine = new RazorLightEngineBuilder().Build();
+
+            Assert.Equal(engine.TemplateFactoryProvider.Compiler.OperatingAssembly, Assembly.GetEntryAssembly());
         }
     }
 }

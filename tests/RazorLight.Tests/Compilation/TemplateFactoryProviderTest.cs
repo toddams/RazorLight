@@ -1,6 +1,7 @@
 ﻿using RazorLight.Compilation;
 using RazorLight.Generation;
 using RazorLight.Razor;
+using System.Reflection;
 using Xunit;
 
 namespace RazorLight.Tests
@@ -13,7 +14,7 @@ namespace RazorLight.Tests
         {
             var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project);
             var metadataReferences = new DefaultMetadataReferenceManager();
-            var compiler = new RoslynCompilationService(metadataReferences);
+            var compiler = new RoslynCompilationService(metadataReferences, Assembly.GetEntryAssembly());
 
             var provider = new TemplateFactoryProvider(sourceGenerator, compiler, new RazorLightOptions());
 

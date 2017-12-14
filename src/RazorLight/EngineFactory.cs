@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -80,7 +81,7 @@ namespace RazorLight
             var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, razorOptions.Namespaces);
 
             var metadataReferenceManager = new DefaultMetadataReferenceManager(razorOptions.AdditionalMetadataReferences);
-            var compiler = new RoslynCompilationService(metadataReferenceManager);
+            var compiler = new RoslynCompilationService(metadataReferenceManager, Assembly.GetEntryAssembly());
             var templateFactoryProvider = new TemplateFactoryProvider(sourceGenerator, compiler, razorOptions);
 
             ICachingProvider cacheProvider = new DefaultCachingProvider();
