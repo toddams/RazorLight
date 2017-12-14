@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="azaza.cshtml" />
-    <EmbeddedResource Include="go.cshtml" />
+    <EmbeddedResource Include="Views\Shared\azaza.cshtml" />
+    <EmbeddedResource Include="Views\Subfolder\go.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
