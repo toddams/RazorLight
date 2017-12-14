@@ -1,18 +1,44 @@
-﻿using System;
-using System.Threading.Tasks;
-using Moq;
+﻿using System.Threading.Tasks;
 using RazorLight.Razor;
-using RazorLight.Tests.Models;
 using RazorLight.Tests.Razor;
 using Xunit;
+using RazorLight.Compilation;
+using Moq;
+using RazorLight.Caching;
+using System;
 
 namespace RazorLight.Tests
 {
     public class RazorLightEngineTest
     {
-		//TODO: add string rendering test
+        [Fact]
+        public void Throws_On_Empty_EngineOptions()
+        {
+            Action action = () => new RazorLightEngine(null, new Mock<ITemplateFactoryProvider>().Object, new DefaultCachingProvider());
 
-		[Fact]
+            Assert.Throws<ArgumentNullException>(action);
+        }
+
+        [Fact]
+        public void Throws_On_Empty_FactoryProvider()
+        {
+            Action action = () => new RazorLightEngine(new RazorLightOptions(), null, new DefaultCachingProvider());
+
+            Assert.Throws<ArgumentNullException>(action);
+        }
+
+        [Fact]
+        public void Allow_Null_CachingProvider()
+        {
+            var engine = new RazorLightEngine(new RazorLightOptions(), new Mock<ITemplateFactoryProvider>().Object, cachingProvider: null);
+
+            Assert.NotNull(engine);
+            Assert.Null(engine.TemplateCache);
+        }
+
+        //TODO: add string rendering test
+
+        [Fact]
 		public async Task Ensure_Content_Added_To_DynamicTemplates()
 		{
 			var options = new RazorLightOptions();

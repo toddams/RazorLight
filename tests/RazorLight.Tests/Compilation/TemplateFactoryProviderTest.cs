@@ -11,7 +11,7 @@ namespace RazorLight.Tests
 
         private TemplateFactoryProvider GetProvider()
         {
-            var sourceGenerator = new RazorSourceGenerator(new EngineFactory().RazorEngine, project);
+            var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project);
             var metadataReferences = new DefaultMetadataReferenceManager();
             var compiler = new RoslynCompilationService(metadataReferences);
 

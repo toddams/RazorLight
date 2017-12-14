@@ -33,8 +33,8 @@ namespace RazorLight.Tests.Extensions
             Assert.True(expando.ContainsKey("Name"));
             Assert.True(expando.ContainsKey("Age"));
 
-            Assert.Equal(expando["Name"], "Test");
-            Assert.Equal(Convert.ToInt32(expando["Age"]), 18);
+            Assert.Equal("Test", expando["Name"]);
+            Assert.Equal(18, Convert.ToInt32(expando["Age"]));
         }
 
         [Fact]
@@ -45,6 +45,7 @@ namespace RazorLight.Tests.Extensions
             Assert.True(TypeExtensions.IsAnonymousType(obj.GetType()));
         }
 
+        [Fact]
         public void Returns_False_For_Strong_Types()
         {
             Assert.False(TypeExtensions.IsAnonymousType(typeof(TestViewModel)));

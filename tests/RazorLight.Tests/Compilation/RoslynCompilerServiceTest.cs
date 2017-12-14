@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using Microsoft.AspNetCore.Razor.Language;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
-using Moq;
 using RazorLight.Compilation;
 using RazorLight.Generation;
 using RazorLight.Razor;
@@ -220,7 +218,7 @@ namespace RazorLight.Tests.Compilation
 		}
 
 		[Fact]
-		public void Throw_With_CompilationErrors_On_Failed_Build()
+		public async Task Throw_With_CompilationErrors_On_Failed_BuildAsync()
 		{
 			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager());
 
@@ -230,7 +228,7 @@ namespace RazorLight.Tests.Compilation
 
 			try
 			{
-				compiler.CompileAndEmit(template);
+				await compiler.CompileAsync(template);
 			}
 			catch (TemplateCompilationException e)
 			{
@@ -248,9 +246,9 @@ namespace RazorLight.Tests.Compilation
 		{
 			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager());
 
-			Action action = () => compiler.CompileAndEmit(null);
+			Func<Task> action = () => compiler.CompileAsync(null);
 
-			Assert.Throws<ArgumentNullException>(action);
+			Assert.ThrowsAsync<ArgumentNullException>(action);
 		}
 
 		private class TestGeneratedRazorTemplate : IGeneratedRazorTemplate
@@ -266,7 +264,17 @@ namespace RazorLight.Tests.Compilation
 
 			public string TemplateKey => templateKey;
 			public string GeneratedCode => generatedCode;
-			public RazorLightProjectItem ProjectItem { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+            public RazorLightProjectItem ProjectItem
+            {
+                get
+                {
+                    return new TextSourceRazorProjectItem(TemplateKey, "");
+                }
+                set
+                {
+                    
+                }
+            }
 		}
 
 
