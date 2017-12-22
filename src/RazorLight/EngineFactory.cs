@@ -84,7 +84,7 @@ namespace RazorLight
             var compiler = new RoslynCompilationService(metadataReferenceManager, Assembly.GetEntryAssembly());
             var templateFactoryProvider = new TemplateFactoryProvider(sourceGenerator, compiler, razorOptions);
 
-            ICachingProvider cacheProvider = new DefaultCachingProvider();
+            ICachingProvider cacheProvider = new MemoryCachingProvider();
 
             return new RazorLightEngine(razorOptions, templateFactoryProvider, cacheProvider);
         }

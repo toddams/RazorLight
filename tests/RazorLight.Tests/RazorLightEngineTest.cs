@@ -14,7 +14,7 @@ namespace RazorLight.Tests
         [Fact]
         public void Throws_On_Empty_EngineOptions()
         {
-            Action action = () => new RazorLightEngine(null, new Mock<ITemplateFactoryProvider>().Object, new DefaultCachingProvider());
+            Action action = () => new RazorLightEngine(null, new Mock<ITemplateFactoryProvider>().Object, new MemoryCachingProvider());
 
             Assert.Throws<ArgumentNullException>(action);
         }
@@ -22,7 +22,7 @@ namespace RazorLight.Tests
         [Fact]
         public void Throws_On_Empty_FactoryProvider()
         {
-            Action action = () => new RazorLightEngine(new RazorLightOptions(), null, new DefaultCachingProvider());
+            Action action = () => new RazorLightEngine(new RazorLightOptions(), null, new MemoryCachingProvider());
 
             Assert.Throws<ArgumentNullException>(action);
         }

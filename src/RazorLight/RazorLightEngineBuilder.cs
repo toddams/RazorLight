@@ -52,9 +52,9 @@ namespace RazorLight
             return this;
         }
 
-        public virtual RazorLightEngineBuilder UseDefaultCachingProvider()
+        public virtual RazorLightEngineBuilder UseMemoryCachingProvider()
         {
-            cachingProvider = new DefaultCachingProvider();
+            cachingProvider = new MemoryCachingProvider();
 
             return this;
         }

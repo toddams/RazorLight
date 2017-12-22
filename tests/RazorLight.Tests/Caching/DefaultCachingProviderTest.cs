@@ -10,7 +10,7 @@ namespace RazorLight.Tests.Caching
         [Fact]
         public void Throws_WhenCahingWithEmptyParams()
         {
-            var cache = new DefaultCachingProvider();
+            var cache = new MemoryCachingProvider();
 
             Assert.Throws<ArgumentNullException>(() => cache.CacheTemplate("someKey", null));
             Assert.Throws<ArgumentNullException>(() => cache.CacheTemplate(null, GetTestFactory()));
@@ -19,7 +19,7 @@ namespace RazorLight.Tests.Caching
         [Fact]
         public void Throws_OnNullTemplateKey_WhenRetrieve()
         {
-            var cache = new DefaultCachingProvider();
+            var cache = new MemoryCachingProvider();
 
             Assert.Throws<ArgumentNullException>(() => cache.RetrieveTemplate(null));
         }
@@ -27,7 +27,7 @@ namespace RazorLight.Tests.Caching
         [Fact]
         public void Ensure_TemplateIsStored()
         {
-            var cache = new DefaultCachingProvider();
+            var cache = new MemoryCachingProvider();
 
             string templateKey = "key";
             var factory = GetTestFactory(templateKey);
@@ -41,7 +41,7 @@ namespace RazorLight.Tests.Caching
         [Fact]
         public void Contains_ReturnsTrue_OnCachedTemplate()
         {
-            var cache = new DefaultCachingProvider();
+            var cache = new MemoryCachingProvider();
             string templateKey = "key";
 
             cache.CacheTemplate(templateKey, GetTestFactory(templateKey));
@@ -52,7 +52,7 @@ namespace RazorLight.Tests.Caching
         [Fact]
         public void Contains_ReturnsFalse_OnNonCachedTemplate()
         {
-            var cache = new DefaultCachingProvider();
+            var cache = new MemoryCachingProvider();
 
             Assert.False(cache.Contains("someKey"));
         }
@@ -60,7 +60,7 @@ namespace RazorLight.Tests.Caching
         [Fact]
         public void Returns_EmptyTemplateCacheResult_OnNonExistingTemplate()
         {
-            var cache = new DefaultCachingProvider();
+            var cache = new MemoryCachingProvider();
 
             var templateResult = cache.RetrieveTemplate("someKey");
 

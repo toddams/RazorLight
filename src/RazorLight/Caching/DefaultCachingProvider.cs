@@ -5,9 +5,9 @@ using System;
 
 namespace RazorLight.Caching
 {
-    public class DefaultCachingProvider : ICachingProvider
+    public class MemoryCachingProvider : ICachingProvider
     {
-        public DefaultCachingProvider()
+        public MemoryCachingProvider()
         {
             var cacheOptions = Options.Create(new MemoryCacheOptions());
             LookupCache = new MemoryCache(cacheOptions);
