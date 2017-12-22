@@ -7,15 +7,16 @@ namespace RazorLight.Extensions
 {
 	public static class ServiceCollectionExtensions
 	{
-        /// <summary>
-        /// Adds RazorLight services that resolve templates from a given <paramref name="root"/>
-        /// </summary>
-        /// <param name="services">Service collection</param>
         public static void AddRazorLight(this IServiceCollection services, Func<IRazorLightEngine> engineFactoryProvider)
         {
             if (services == null)
             {
                 throw new ArgumentNullException(nameof(services));
+            }
+
+            if(engineFactoryProvider == null)
+            {
+                throw new ArgumentNullException(nameof(engineFactoryProvider));
             }
 
             services.AddSingleton<PropertyInjector>();
