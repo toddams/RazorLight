@@ -148,6 +148,18 @@ namespace RazorLight
         /// </summary>
         /// <param name="templatePage">Instance of a template</param>
         /// <param name="model">Template model</param>
+        /// <param name="viewBag">Dynamic viewBag of the template</param>
+        /// <returns>Rendered string</returns>
+        public Task<string> RenderTemplateAsync<T>(ITemplatePage templatePage, T model, ExpandoObject viewBag = null)
+        {
+            return RenderTemplateAsync(templatePage, model, typeof(T));
+        }
+
+        /// <summary>
+        /// Renders a template with a given model
+        /// </summary>
+        /// <param name="templatePage">Instance of a template</param>
+        /// <param name="model">Template model</param>
         /// <param name="modelType">Type of the model</param>
         /// <param name="viewBag">Dynamic viewBag of the template</param>
         /// <returns>Rendered string</returns>
