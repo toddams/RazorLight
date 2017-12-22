@@ -54,7 +54,7 @@ For embedded resource, key - is a namespace and key of the embedded resource rel
 ````CSharp
 var engine = new RazorLightEngineBuilder()
                 .UseEmbeddedResourcesProject(typeof(Program))
-                .UseDefaultCachingProvider()
+                .UseMemoryCachingProvider()
                 .Build();
 ````
 
@@ -66,7 +66,7 @@ If you store your templates in database - it is recommended to create custom Raz
 var project = new EntityFrameworkRazorProject(new AppDbContext());
 var engine = new RazorLightEngineBuilder()
               .UseProject(project)
-              .UseDefaultCachingProvider()
+              .UseMemoryCachingProvider()
               .Build();
 
 // For key as a GUID
@@ -131,7 +131,7 @@ When RazorLight compiles your template - it loads all the assemblies from your e
 var metadataReference = MetadataReference.CreateFromFile("path-to-your-assembly")
 
  var engine = new RazorLightEngineBuilder()
-                .UseDefaultCachingProvider()
+                .UseMemoryCachingProvider()
                 .AddMetadataReferences(metadataReference)
                 .Build();
 ````
