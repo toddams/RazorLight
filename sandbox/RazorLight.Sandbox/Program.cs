@@ -39,8 +39,7 @@ namespace RazorLight.Sandbox
         private static async Task MainAsync()
         {
             var engine = new RazorLightEngineBuilder()
-                .UseEmbeddedResourcesProject(typeof(Program))
-                .UseDefaultCachingProvider()
+                .UseMemoryCachingProvider()
                 .Build();
 
             List<string> results = new List<string>();
