@@ -4,6 +4,10 @@ Use Razor to build templates from Files / EmbeddedResources / Strings / Database
 
 [![Build Status](https://travis-ci.org/toddams/RazorLight.svg?branch=master)](https://travis-ci.org/toddams/RazorLight)  [![NuGet Pre Release](https://img.shields.io/nuget/vpre/RazorLight.svg?maxAge=2592000?style=flat-square)](https://www.nuget.org/packages/RazorLight/) [![Join the chat at https://gitter.im/gitterHQ/gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Razor-Light)
 
+# Table of contents
+- [Quickstart](#Quickstart)
+- [Template sources](#Templatesources)
+
 # Quickstart
 Install the nuget package using following command:
 
@@ -54,7 +58,7 @@ For embedded resource, key - is a namespace and key of the embedded resource rel
 ````CSharp
 var engine = new RazorLightEngineBuilder()
                 .UseEmbeddedResourcesProject(typeof(Program))
-                .UseMemoryCachingProvider()
+                .UseDefaultCachingProvider()
                 .Build();
 ````
 
@@ -66,7 +70,7 @@ If you store your templates in database - it is recommended to create custom Raz
 var project = new EntityFrameworkRazorProject(new AppDbContext());
 var engine = new RazorLightEngineBuilder()
               .UseProject(project)
-              .UseMemoryCachingProvider()
+              .UseDefaultCachingProvider()
               .Build();
 
 // For key as a GUID
@@ -131,7 +135,7 @@ When RazorLight compiles your template - it loads all the assemblies from your e
 var metadataReference = MetadataReference.CreateFromFile("path-to-your-assembly")
 
  var engine = new RazorLightEngineBuilder()
-                .UseMemoryCachingProvider()
+                .UseDefaultCachingProvider()
                 .AddMetadataReferences(metadataReference)
                 .Build();
 ````
