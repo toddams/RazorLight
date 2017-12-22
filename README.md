@@ -7,6 +7,14 @@ Use Razor to build templates from Files / EmbeddedResources / Strings / Database
 # Table of contents
 - [Quickstart](#quickstart)
 - [Template sources](#template-sources)
+  * [File source](#file-source)
+  * [Embedded resource source](#embeddedresource-source)
+  * [Database (custom)](#custom-source)
+- [Includes (aka Partial)](#includes-aka-partial-views)
+- [Encoding](#encoding)
+- [Additional metadata references](#additional-metadata-references)
+- [Enable Intellisense support](#enable-intellisense-support)
+- [FAQ](#faq)
 
 # Quickstart
 Install the nuget package using following command:
