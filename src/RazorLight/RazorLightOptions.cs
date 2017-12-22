@@ -1,16 +1,26 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System;
 
 namespace RazorLight
 {
-    public class RazorLightOptions
-    {
-        public ICollection<string> Namespaces { get; set; }
+	public class RazorLightOptions
+	{
+		public RazorLightOptions()
+		{
+			Namespaces = new HashSet<string>();
+			DynamicTemplates = new ConcurrentDictionary<string, string>();
+			AdditionalMetadataReferences = new HashSet<MetadataReference>();
+			PreRenderCallbacks = new List<Action<ITemplatePage>>();
+		}
 
-        //metadataReferences
+		public ISet<string> Namespaces { get; set; }
 
-        //encodeFactory
+		public IDictionary<string, string> DynamicTemplates { get; set; }
 
-        //PrerenderCallbacks
-    }
+		public HashSet<MetadataReference> AdditionalMetadataReferences { get; set; }
+
+		public virtual IList<Action<ITemplatePage>> PreRenderCallbacks { get; set; }
+	}
 }

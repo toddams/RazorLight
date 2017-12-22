@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Runtime.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using RazorLight.TagHelpers;
 using System.Buffers;
+using RazorLight.Text;
 
 namespace RazorLight
 {
@@ -25,6 +26,8 @@ namespace RazorLight
         private TagHelperAttributeInfo _tagHelperAttributeInfo;
         //private IUrlHelper _urlHelper;
 
+        public abstract void SetModel(object model);
+
         /// <inheritdoc />
         public virtual PageContext PageContext { get; set; }
 
@@ -37,23 +40,40 @@ namespace RazorLight
         /// <inheritdoc />
         public string Layout { get; set; }
 
+        public virtual dynamic ViewBag
+        {
+            get
+            {
+                if (PageContext == null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                return PageContext.ViewBag;
+            }
+        }
+
+        public Func<string, object, Task> IncludeFunc { get; set; }
+
         private Stack<TagHelperScopeInfo> TagHelperScopes { get; } = new Stack<TagHelperScopeInfo>();
 
         /// <inheritdoc />
         public IDictionary<string, RenderAsyncDelegate> PreviousSectionWriters { get; set; }
 
         /// <inheritdoc />
-        public IDictionary<string, RenderAsyncDelegate> SectionWriters { get; set; }
+        public IDictionary<string, RenderAsyncDelegate> SectionWriters { get; } =
+            new Dictionary<string, RenderAsyncDelegate>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets the <see cref="System.Text.Encodings.Web.HtmlEncoder"/> to use when this template />
         /// handles non-<see cref="IHtmlContent"/> C# expressions.
         /// </summary>
-        [RazorInject]
-        public HtmlEncoder HtmlEncoder { get; set; } = = HtmlEncoder.Default;
+        public HtmlEncoder HtmlEncoder { get; set; } = HtmlEncoder.Default;
 
         /// <inheritdoc />
         public string Key { get; set; }
+
+        public bool DisableEncoding { get; set; } = false;
 
         /// <summary>
         /// Gets the <see cref="TextWriter"/> that the template is writing output to.
@@ -93,6 +113,7 @@ namespace RazorLight
             {
                 if (_bufferScope == null)
                 {
+                    //TODO: replace with services maybe
                     //var services = ViewContext.HttpContext.RequestServices;
                     //_bufferScope = services.GetRequiredService<IViewBufferScope>();
                     _bufferScope = new MemoryPoolViewBufferScope(ArrayPool<ViewBufferValue>.Shared, ArrayPool<char>.Shared);
@@ -142,6 +163,16 @@ namespace RazorLight
 
         public abstract void EnsureRenderedBodyOrSections();
 
+        /// <summary>
+		/// Returns the specified string as a raw string. This will ensure it is not encoded.
+		/// </summary>
+		/// <param name="rawString">The raw string to write.</param>
+		/// <returns>An instance of <see cref="IRawString"/>.</returns>
+		public IRawString Raw(string rawString)
+        {
+            return new RawString(rawString);
+        }
+
         #region Tag helpers
 
         /// <summary>
@@ -170,7 +201,7 @@ namespace RazorLight
         /// </remarks>
         public void StartTagHelperWritingScope(HtmlEncoder encoder)
         {
-            var buffer = new ViewBuffer(BufferScope, Key, ViewBuffer.TagHelperPageSize); //TODO: add template key
+            var buffer = new ViewBuffer(BufferScope, Key, ViewBuffer.TagHelperPageSize);
             TagHelperScopes.Push(new TagHelperScopeInfo(buffer, HtmlEncoder, PageContext.Writer));
 
             // If passed an HtmlEncoder, override the property.
@@ -334,32 +365,37 @@ namespace RazorLight
 
             var writer = Output;
             var encoder = HtmlEncoder;
-            if (value is IHtmlContent htmlContent)
+
+            switch(value)
             {
-                var bufferedWriter = writer as ViewBufferTextWriter;
-                if (bufferedWriter == null || !bufferedWriter.IsBuffering)
-                {
-                    htmlContent.WriteTo(writer, encoder);
-                }
-                else
-                {
-                    if (value is IHtmlContentContainer htmlContentContainer)
+                case IRawString raw:
+                    raw.WriteTo(writer);
+                    break;
+                case IHtmlContent html:
+                    var bufferedWriter = writer as ViewBufferTextWriter;
+                    if (bufferedWriter == null || !bufferedWriter.IsBuffering)
                     {
-                        // This is likely another ViewBuffer.
-                        htmlContentContainer.MoveTo(bufferedWriter.Buffer);
+                        html.WriteTo(writer, encoder);
                     }
                     else
                     {
-                        // Perf: This is the common case for IHtmlContent, ViewBufferTextWriter is inefficient
-                        // for writing character by character.
-                        bufferedWriter.Buffer.AppendHtml(htmlContent);
+                        if (value is IHtmlContentContainer htmlContentContainer)
+                        {
+                            // This is likely another ViewBuffer.
+                            htmlContentContainer.MoveTo(bufferedWriter.Buffer);
+                        }
+                        else
+                        {
+                            // Perf: This is the common case for IHtmlContent, ViewBufferTextWriter is inefficient
+                            // for writing character by character.
+                            bufferedWriter.Buffer.AppendHtml(html);
+                        }
                     }
-                }
-
-                return;
+                    break;
+                default:
+                    Write(value.ToString());
+                    break;
             }
-
-            Write(value.ToString());
         }
 
         /// <summary>
@@ -374,7 +410,7 @@ namespace RazorLight
             {
                 // Perf: Encode right away instead of writing it character-by-character.
                 // character-by-character isn't efficient when using a writer backed by a ViewBuffer.
-                var encoded = encoder.Encode(value);
+                var encoded = DisableEncoding ? value : encoder.Encode(value);
                 writer.Write(encoded);
             }
         }

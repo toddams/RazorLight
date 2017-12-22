@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Html;
+using RazorLight.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RazorLight
@@ -13,6 +13,21 @@ namespace RazorLight
         private bool _renderedBody;
         private bool _ignoreBody;
         private HashSet<string> _ignoredSections;
+
+        public async Task IncludeAsync(string key, object model = null)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            if(IncludeFunc == null)
+            {
+                throw new InvalidOperationException(nameof(IncludeFunc) + "is not set");
+            }
+
+            await IncludeFunc(key, model);
+        }
 
         /// <summary>
         /// In a Razor layout page, renders the portion of a content page that is not within a named section.
@@ -36,6 +51,8 @@ namespace RazorLight
         {
             _ignoreBody = true;
         }
+
+        #region Sections
 
         /// <summary>
         /// Creates a named content section in the page that can be invoked in a Layout page using
@@ -265,5 +282,7 @@ namespace RazorLight
                 throw new InvalidOperationException($"Method {methodName} can not be called");
             }
         }
+
+        #endregion
     }
 }

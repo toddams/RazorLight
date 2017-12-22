@@ -9,5 +9,8 @@ namespace RazorLight
 		/// </summary>
 		/// <value>The writer.</value>
 		TextWriter Writer { get; set; }
+
+
+        dynamic ViewBag { get; }
     }
 }

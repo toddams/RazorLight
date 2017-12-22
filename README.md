@@ -1,163 +1,174 @@
-# RazorLight [![Join the chat at https://gitter.im/gitterHQ/gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Razor-Light)
+# RazorLight
 
-| Build status | Nuget package |
-| --- | --- |
-| [![Build Status](https://travis-ci.org/toddams/RazorLight.svg?branch=master)](https://travis-ci.org/toddams/RazorLight) | [![NuGet Pre Release](https://img.shields.io/nuget/vpre/RazorLight.svg?maxAge=2592000?style=flat-square)](https://www.nuget.org/packages/RazorLight/) |
+Use Razor to build templates from Files / EmbeddedResources / Strings / Database or your custom source outside of ASP.NET MVC. No redundant dependenies and workarounds in pair with excellent performance and **NetStandard 2.0** support
 
-## Status
-RazorLight 2.0-alpha is released with support of NetStandard 2.0 (hence, .NET Core 2.0). Project documentation is out of date at the moment and will be updated soon
+[![Build Status](https://travis-ci.org/toddams/RazorLight.svg?branch=master)](https://travis-ci.org/toddams/RazorLight)  [![NuGet Pre Release](https://img.shields.io/nuget/vpre/RazorLight.svg?maxAge=2592000?style=flat-square)](https://www.nuget.org/packages/RazorLight/) [![Join the chat at https://gitter.im/gitterHQ/gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Razor-Light)
 
-## Introduction
-Install the nuget package
+# Table of contents
+- [Quickstart](#quickstart)
+- [Template sources](#template-sources)
+  * [Files](#file-source)
+  * [Embedded resources](#embeddedresource-source)
+  * [Database (custom)](#custom-source)
+- [Includes (aka Partial)](#includes-aka-partial-views)
+- [Encoding](#encoding)
+- [Additional metadata references](#additional-metadata-references)
+- [Enable Intellisense support](#enable-intellisense-support)
+- [FAQ](#faq)
 
-	Install-Package RazorLight
-
-
-Use [Razor parsing engine](https://github.com/aspnet/Razor) to build dynamic templates from strings / files / embedded resources without any efforts. From the very beginning library was built for [.NET Core](https://dotnet.github.io/) projects (NetStandard 1.6), but now Full .NET Framework v4.5.1 (and higher) is also supported.
-
-## Features
-* Pass a model to your views (aka @model MyTestViewModel)
-* Build templates from strings / files / embedded resources
-* Layout pages, sections and ViewStart pages (like in ASP.NET MVC)
-* ASP.NET MVC Integration ([RazorLight.MVC](https://www.nuget.org/packages/RazorLight.MVC/)). Inject services in your templates using @inject feature (Dependency Injection)
-* Performance. After template is compiled - result is put in MemoryCache. Templates are recompiled when RazorLight detects that template file was changed
-* Create a custom ITemplateManager to resolve templates for ex. from your database
-
-
-## Examples
-
-### Files
-In real world scenario you have a special folder where you store all your views files. You might also want to have some caching enabled. When you parse a file, RazorLight compiles a view and result is put into MemoryCache. Files in cache are tracked by FileWatcher, so you can safely modify your views. Once it detects that file was changed - template will be automatically recompiled and cached again.
-
-```Csharp
-var engine = EngineFactory.CreatePhysical(@"D:\path\to\views\folder");
-
-var model = new TestModel()
-{
-	Title = "Hello, world",
-	Description = "Some text here"
-};
-
-string result = engine.Parse("Test.cshtml", model);
-
-```
-
-*Note:* if you specify a model directly in a file and pass an anonymous object as a model parameter - you will get an ```InvalidCastException```
-
-
-### Strings
-```Csharp
-string content = "Hello @Model.Name. Welcome to @Model.Title repository";
-
-var model = new
-{
-  Name = "John Doe",
-  Title = "RazorLight"
-};
-
-string result = engine.ParseString(content, model); //Output: Hello John Doe, Welcome to RazorLight repository
-```
-
-*Note:* when you parse a string - result is not cached
-
-### Embedded resources
-
-Include your resource as embeded in *project.json*
-````Javascript
-"buildOptions": {
-    "embed": [
-      "Test.cshtml"
-    ]
-  },
-````
-
-Then create a RazorLightEngine for embedded resources
-
-```CSharp
-//typeof(TestViewModel) - root object inside your resource assembly
-var engine = EngineFactory.CreateEmbedded(typeof(TestViewModel)) 
-
-var model = new TestModel()
-{
-    Title = "Hello, world",
-    Description = "Some text here"
-};
-
-//Note: pass the name of the view without extension
-string result = engine.Parse("Test", model); 
+# Quickstart
+Install the nuget package using following command:
 
 ````
+Install-Package RazorLight -Version 2.0.0-beta1
+````
 
-## ASP.NET MVC Core integration
-- **Add package**
-
-    ````Install-Package RazorLight.MVC````
-
-- **Add RazorLight services in Startup.cs**
+The simplest scenario is to create a template from string. Each template must have a ````templateKey```` that is assosiated with it, so you can render the same template next time without recompilation.
 
 ````CSharp
-public void ConfigureServices(IServiceCollection services)
+var engine = new RazorLightEngineBuilder()
+              .UseMemoryCachingProvider()
+              .Build();
+
+string template = "Hello, @Model.Name. Welcome to RazorLight repository";
+ViewModel model = new ViewModel() { Name = "John Doe" };
+
+string result = await engine.CompileRenderAsync("templateKey", template, model);
+````
+
+To render a compiled template:
+````CSharp
+var cacheResult = engine.TemplateCache.RetrieveTemplate("templateKey");
+if(cacheResult.Success)
 {
-     ....
-    services.AddRazorLight("/Views"); // <- This one
-     ....
+    string result = await engine.RenderTemplateAsync(cacheResult.Template, model);
 }
 ````
 
-- **Retreive IRazorLightEngine instance from controller constructor**
+# Template sources
+
+RazorLight can resolve templates from any source, but there are a built-in providers that resolve template source from filesystem and embedded resources.
+
+## File source
+
+When resolving a template from filesystem, templateKey - is a relative path to the root folder, that you pass to RazorLightEngineBuilder.
 ````CSharp
-private readonly IRazorLightEngine engine;
+var engine = new RazorLightEngineBuilder()
+              .UseFilesystemProject("C:/RootFolder/With/YourTemplates");
+              .UseMemoryCachingProvider()
+              .Build();
 
-public HomeController(IRazorLightEngine engine)
-{
-    this.engine = engine;
-}
+string result = await engine.CompileRenderAsync("Subfolder/View.cshtml", new { Name = "John Doe" });
 ````
-- **Inject services to your templates**
+
+## EmbeddedResource source
+For embedded resource, key - is a namespace and key of the embedded resource relative to root Type. Then root type namespace and templateKey will be combined into YourAssembly.NamespaceOfRootType.Templates.View.cshtml
 ````CSharp
-@inject MyProject.TestService myService
+var engine = new RazorLightEngineBuilder()
+                .UseEmbeddedResourcesProject(typeof(Program))
+                .UseDefaultCachingProvider()
+                .Build();
 ````
-## Roadmap
-* async/await
-* Tag helpers
-* Precompiled views
-* Fluent API
-* Extensible template sources
-* More flexible caching
 
-## FAQ
-### I'm getting "Can't load metadata reference from the entry assembly" exception
-Just set ```preserveCompilationContext": true``` under the buildOptions section in your project.json OR *.csproj file
+## Custom source
 
-⚠ Don't forget to clean and rebuild the project after this change!
+If you store your templates in database - it is recommended to create custom RazorLightProject that is responsible for gettings templages source from it. The class will be used to get template source and ViewImports. RazorLight will use it to resolve Layouts, when you specify it inside the template.
 
-Example project.json:
-```
-{
-    "version": "x.x.x.x",
-    
-    ...
-    
-    "buildOptions": {
-        ...
-        "preserveCompilationContext": true
-    }
+````CSharp
+var project = new EntityFrameworkRazorProject(new AppDbContext());
+var engine = new RazorLightEngineBuilder()
+              .UseProject(project)
+              .UseDefaultCachingProvider()
+              .Build();
 
-    ...
+// For key as a GUID
+string result = await engine.CompileRenderAsync("6cc277d5-253e-48e0-8a9a-8fe3cae17e5b", new { Name = "John Doe" });
+
+// Or integer
+int templateKey = 322;
+string result = await engine.CompileRenderAsync(templateKey.ToString(), new { Name = "John Doe" });
+````
+
+You can find a full sample [here](https://github.com/toddams/RazorLight/tree/dev-2.0/samples/RazorLight.Samples)
+
+
+# Includes (aka Partial views)
+
+Include feature is useful when you have reusable parts of your templates you want to share between different views. Includes are an effective way of breaking up large templates into smaller components. They can reduce duplication of template content and allow elements to be reused.
+
+````CSharp
+@model MyProject.TestViewModel
+<div>
+    Hello @Model.Title
+</div>
+
+@{ await IncludeAsync("SomeView.cshtml", Model); }
+````
+First argument takes a key of the template to resolve, second argument is a model of the view (can be null)
+
+# Encoding
+By the default RazorLight encodes Model values as HTML, but sometimes you want to output them as is. You can disable encoding for specific value using @Raw() function
+
+````CSharp
+/* With encoding (default) */
+
+string template = "Render @Model.Tag";
+string result = await engine.CompileRenderAsync("templateKey", template, new { Tag = "<html>&" });
+
+Console.WriteLine(result); // Output: &lt;html&gt;&amp
+
+/* Without encoding */
+
+string template = "Render @Raw(Model.Tag)";
+string result = await engine.CompileRenderAsync("templateKey", template, new { Tag = "<html>&" });
+
+Console.WriteLine(result); // Output: <html>&
+````
+In order to disable encoding for the entire document - just set ````"DisableEncoding"```` variable to true
+````html
+@model TestViewModel
+@{
+    DisableEncoding = true;
 }
-```
-Example *.csproj:
-````
-<TargetFramework>netcoreapp1.1</TargetFramework>
-<DefineConstants>DEBUG;TRACE</DefineConstants>
-<PreserveCompilationContext>true</PreserveCompilationContext>
+
+<html>
+    Hello @Model.Tag
+</html>
 ````
 
-### Restoring nuget packages fails with following error message - Version conflict detected for Microsoft.CodeAnalysis.CSharp
-In order to avoid this problem - please install this packages with following versions
+# Additional metadata references
+When RazorLight compiles your template - it loads all the assemblies from your entry assembly and creates MetadataReference from it. This is a default strategy and it works in 99% of the time. But sometimes compilation crashes with an exception message like "Can not find assembly My.Super.Assembly2000". In order to solve this problem you can pass additional metadata references to RazorLight.
+
+````CSharp
+var metadataReference = MetadataReference.CreateFromFile("path-to-your-assembly")
+
+ var engine = new RazorLightEngineBuilder()
+                .UseDefaultCachingProvider()
+                .AddMetadataReferences(metadataReference)
+                .Build();
 ````
-"Microsoft.CodeAnalysis.Common": "1.3.2",
-"Microsoft.CodeAnalysis.CSharp": "1.3.2",
-"Microsoft.CodeAnalysis.CSharp.Workspaces": "1.3.2",
-"Microsoft.CodeAnalysis.Workspaces.Common": "1.3.2",
+
+# Enable Intellisense support
+Visual Studio tooling knows nothing about RazorLight and assumes, that the view you are using - is a typical ASP.NET MVC template. In order to enable Intellisense for RazorLight templates, you should give Visual Studio a little hint about the base template class, that all your templates inherit implicitly
+
+````CSharp
+@using RazorLight
+@inherits TemplatePage<MyModel>
+
+<html>
+    Your awesome template goes here, @Model.Name
+</html>
+````
+____
+![Intellisense](github/autocomplete.png)
+
+# FAQ
+## I'm getting "Can't load metadata reference from the entry assembly" exception
+
+Set PreserveCompilationContext to true in your *.csproj file
+
+````XML
+<ItemGroup>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+</ItemGroup>
 ````

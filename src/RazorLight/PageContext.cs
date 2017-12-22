@@ -10,6 +10,7 @@ namespace RazorLight
         public PageContext()
         {
             _viewBag = new ExpandoObject();
+            Writer = new StringWriter();
         }
 
         public PageContext(ExpandoObject viewBag)
@@ -19,11 +20,10 @@ namespace RazorLight
 
         public TextWriter Writer { get; set; }
 
-        /// <summary>
-        /// Gets the dynamic view bag.
-        /// </summary>
         public dynamic ViewBag => _viewBag;
 
         public string ExecutingPageKey { get; set; }
+
+        public ModelTypeInfo ModelTypeInfo { get; set; }
     }
 }

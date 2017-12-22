@@ -4,104 +4,104 @@ using System.Reflection;
 
 namespace RazorLight.Internal
 {
-    internal class PropertyActivator<TContext>
-    {
-        private readonly Func<TContext, object> _valueAccessor;
-        private readonly Action<object, object> _fastPropertySetter;
+	internal class PropertyActivator<TContext>
+	{
+		private readonly Func<TContext, object> _valueAccessor;
+		private readonly Action<object, object> _fastPropertySetter;
 
-        public PropertyActivator(
-            PropertyInfo propertyInfo,
-            Func<TContext, object> valueAccessor)
-        {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+		public PropertyActivator(
+			PropertyInfo propertyInfo,
+			Func<TContext, object> valueAccessor)
+		{
+			if (propertyInfo == null)
+			{
+				throw new ArgumentNullException(nameof(propertyInfo));
+			}
 
-            if (valueAccessor == null)
-            {
-                throw new ArgumentNullException(nameof(valueAccessor));
-            }
+			if (valueAccessor == null)
+			{
+				throw new ArgumentNullException(nameof(valueAccessor));
+			}
 
-            PropertyInfo = propertyInfo;
-            _valueAccessor = valueAccessor;
-            _fastPropertySetter = PropertyHelper.MakeFastPropertySetter(propertyInfo);
-        }
+			PropertyInfo = propertyInfo;
+			_valueAccessor = valueAccessor;
+			_fastPropertySetter = FastPropertySetter.MakeFastPropertySetter(propertyInfo);
+		}
 
-        public PropertyInfo PropertyInfo { get; private set; }
+		public PropertyInfo PropertyInfo { get; private set; }
 
-        public object Activate(object instance, TContext context)
-        {
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+		public object Activate(object instance, TContext context)
+		{
+			if (instance == null)
+			{
+				throw new ArgumentNullException(nameof(instance));
+			}
 
-            var value = _valueAccessor(context);
-            _fastPropertySetter(instance, value);
-            return value;
-        }
+			var value = _valueAccessor(context);
+			_fastPropertySetter(instance, value);
+			return value;
+		}
 
-        public static PropertyActivator<TContext>[] GetPropertiesToActivate(
-            Type type,
-            Type activateAttributeType,
-            Func<PropertyInfo, PropertyActivator<TContext>> createActivateInfo)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+		public static PropertyActivator<TContext>[] GetPropertiesToActivate(
+			Type type,
+			Type activateAttributeType,
+			Func<PropertyInfo, PropertyActivator<TContext>> createActivateInfo)
+		{
+			if (type == null)
+			{
+				throw new ArgumentNullException(nameof(type));
+			}
 
-            if (activateAttributeType == null)
-            {
-                throw new ArgumentNullException(nameof(activateAttributeType));
-            }
+			if (activateAttributeType == null)
+			{
+				throw new ArgumentNullException(nameof(activateAttributeType));
+			}
 
-            if (createActivateInfo == null)
-            {
-                throw new ArgumentNullException(nameof(createActivateInfo));
-            }
+			if (createActivateInfo == null)
+			{
+				throw new ArgumentNullException(nameof(createActivateInfo));
+			}
 
-            return GetPropertiesToActivate(type, activateAttributeType, createActivateInfo, includeNonPublic: false);
-        }
+			return GetPropertiesToActivate(type, activateAttributeType, createActivateInfo, includeNonPublic: false);
+		}
 
-        public static PropertyActivator<TContext>[] GetPropertiesToActivate(
-            Type type,
-            Type activateAttributeType,
-            Func<PropertyInfo, PropertyActivator<TContext>> createActivateInfo,
-            bool includeNonPublic)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+		public static PropertyActivator<TContext>[] GetPropertiesToActivate(
+			Type type,
+			Type activateAttributeType,
+			Func<PropertyInfo, PropertyActivator<TContext>> createActivateInfo,
+			bool includeNonPublic)
+		{
+			if (type == null)
+			{
+				throw new ArgumentNullException(nameof(type));
+			}
 
-            if (activateAttributeType == null)
-            {
-                throw new ArgumentNullException(nameof(activateAttributeType));
-            }
+			if (activateAttributeType == null)
+			{
+				throw new ArgumentNullException(nameof(activateAttributeType));
+			}
 
-            if (createActivateInfo == null)
-            {
-                throw new ArgumentNullException(nameof(createActivateInfo));
-            }
+			if (createActivateInfo == null)
+			{
+				throw new ArgumentNullException(nameof(createActivateInfo));
+			}
 
-            var properties = type.GetRuntimeProperties()
-                .Where((property) =>
-                {
-                    return
-                        property.IsDefined(activateAttributeType) &&
-                        property.GetIndexParameters().Length == 0 &&
-                        property.SetMethod != null &&
-                        !property.SetMethod.IsStatic;
-                });
+			var properties = type.GetRuntimeProperties()
+				.Where((property) =>
+				{
+					return
+						property.IsDefined(activateAttributeType) &&
+						property.GetIndexParameters().Length == 0 &&
+						property.SetMethod != null &&
+						!property.SetMethod.IsStatic;
+				});
 
-            if (!includeNonPublic)
-            {
-                properties = properties.Where(property => property.SetMethod.IsPublic);
-            }
+			if (!includeNonPublic)
+			{
+				properties = properties.Where(property => property.SetMethod.IsPublic);
+			}
 
-            return properties.Select(createActivateInfo).ToArray();
-        }
-    }
+			return properties.Select(createActivateInfo).ToArray();
+		}
+	}
 }
