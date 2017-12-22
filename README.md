@@ -7,8 +7,8 @@ Use Razor to build templates from Files / EmbeddedResources / Strings / Database
 # Table of contents
 - [Quickstart](#quickstart)
 - [Template sources](#template-sources)
-  * [File source](#file-source)
-  * [Embedded resource source](#embeddedresource-source)
+  * [Files](#file-source)
+  * [Embedded resources](#embeddedresource-source)
   * [Database (custom)](#custom-source)
 - [Includes (aka Partial)](#includes-aka-partial-views)
 - [Encoding](#encoding)
