@@ -54,7 +54,7 @@ RazorLight can resolve templates from any source, but there are a built-in provi
 When resolving a template from filesystem, templateKey - is a relative path to the root folder, that you pass to RazorLightEngineBuilder.
 ````CSharp
 var engine = new RazorLightEngineBuilder()
-              .UseFilesystemProject("C:/RootFolder/With/YourTemplates");
+              .UseFilesystemProject("C:/RootFolder/With/YourTemplates")
               .UseMemoryCachingProvider()
               .Build();
 
