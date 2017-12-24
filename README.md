@@ -165,10 +165,11 @@ ____
 # FAQ
 ## I'm getting "Can't load metadata reference from the entry assembly" exception
 
-Set PreserveCompilationContext to true in your *.csproj file
+Set PreserveCompilationContext to true in your *.csproj file's PropertyGroup tag.
 
 ````XML
-<ItemGroup>
+<PropertyGroup>
+    ...
     <PreserveCompilationContext>true</PreserveCompilationContext>
-</ItemGroup>
+</PropertyGroup>
 ````
