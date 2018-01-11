@@ -119,7 +119,7 @@ namespace RazorLight
             {
                 ITemplatePage template = await _engine.CompileTemplateAsync(key);
 
-                await _engine.RenderTemplateAsync(template, model, model?.GetType(), context.Writer);
+                await _engine.RenderTemplateAsync(template, model, model?.GetType(), context.Writer, context.ViewBag);
             };
             
             //_pageActivator.Activate(page, context);
