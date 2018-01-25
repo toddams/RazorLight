@@ -41,7 +41,7 @@ To render a compiled template:
 var cacheResult = engine.TemplateCache.RetrieveTemplate("templateKey");
 if(cacheResult.Success)
 {
-    string result = await engine.RenderTemplateAsync(cacheResult.Template, model);
+    string result = await engine.RenderTemplateAsync(cacheResult.Template.TemplatePageFactory(), model);
 }
 ````
 
