@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System;
+using RazorLight.Caching;
 
 namespace RazorLight
 {
@@ -22,5 +23,7 @@ namespace RazorLight
 		public HashSet<MetadataReference> AdditionalMetadataReferences { get; set; }
 
 		public virtual IList<Action<ITemplatePage>> PreRenderCallbacks { get; set; }
+
+		public ICachingProvider CachingProvider { get; set; }
 	}
 }

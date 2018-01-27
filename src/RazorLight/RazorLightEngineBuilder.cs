@@ -171,6 +171,11 @@ namespace RazorLight
                 options.PreRenderCallbacks = prerenderCallbacks;
             }
 
+			if(cachingProvider != null)
+			{
+				options.CachingProvider = cachingProvider;
+			}
+
             var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, options.Namespaces);
             var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences);
 
