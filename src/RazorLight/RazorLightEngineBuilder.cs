@@ -52,6 +52,13 @@ namespace RazorLight
             return this;
         }
 
+        public RazorLightEngineBuilder UseFileSystemProject(string root, string extension)
+        {
+            project = new FileSystemRazorProject(root, extension);
+
+            return this;
+        }
+
         public virtual RazorLightEngineBuilder UseMemoryCachingProvider()
         {
             cachingProvider = new MemoryCachingProvider();
