@@ -27,6 +27,27 @@ namespace RazorLight.Tests.Razor
         }
 
         [Fact]
+        public void Ensure_ExtensionProperty_IsDefaultIfNotProvided()
+        {
+            string root = Path.Combine(DirectoryUtils.RootDirectory, "Assets", "Files");
+
+            var project = new FileSystemRazorProject(root);
+
+            Assert.Equal(project.Extension, FileSystemRazorProject.DefaultExtension);
+        }
+
+        [Fact]
+        public void Ensure_ExtensionProperty_AssignedOnConstructor()
+        {
+            string root = Path.Combine(DirectoryUtils.RootDirectory, "Assets", "Files");
+            string extension = FileSystemRazorProject.DefaultExtension + "_test";
+
+            var project = new FileSystemRazorProject(root, extension);
+
+            Assert.Equal(project.Extension, extension);
+        }
+
+        [Fact]
         public void Null_TemplateKey_ThrowsOn_GetItem()
         {
             var project = new FileSystemRazorProject(DirectoryUtils.RootDirectory);
