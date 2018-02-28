@@ -34,18 +34,28 @@ namespace RazorLight.Compilation
         {
             var dependencyContext = DependencyContext.Load(assembly);
 
-            return Resolve(dependencyContext);
+            return Resolve(assembly, dependencyContext);
         }
 
-        internal IReadOnlyList<MetadataReference> Resolve(DependencyContext dependencyContext)
+        internal IReadOnlyList<MetadataReference> Resolve(Assembly assembly, DependencyContext dependencyContext)
         {
             var libraryPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            var references = dependencyContext.CompileLibraries.SelectMany(library => library.ResolveReferencePaths());
-
-            if (!references.Any())
+            IEnumerable<string> references = null;
+            if (dependencyContext == null)
             {
-                throw new RazorLightException("Can't load metadata reference from the entry assembly. " +
-                    "Make sure PreserveCompilationContext is set to true in *.csproj file");
+                var context = new HashSet<string>();
+                var x = GetReferencedAssemblies(assembly, context).Union(new Assembly[] { assembly }).ToArray();
+                references = x.Select(p => AssemblyDirectory(p));
+            }
+            else
+            {
+                references = dependencyContext.CompileLibraries.SelectMany(library => library.ResolveReferencePaths());
+
+                if (!references.Any())
+                {
+                    throw new RazorLightException("Can't load metadata reference from the entry assembly. " +
+                                                  "Make sure PreserveCompilationContext is set to true in *.csproj file");
+                }
             }
 
             var metadataRerefences = new List<MetadataReference>();
@@ -70,6 +80,34 @@ namespace RazorLight.Compilation
             }
 
             return metadataRerefences;
+        }
+
+        private static IEnumerable<Assembly> GetReferencedAssemblies(Assembly a, HashSet<string> visitedAssemblies = null)
+        {
+            visitedAssemblies = visitedAssemblies ?? new HashSet<string>();
+            if (!visitedAssemblies.Add(a.GetName().EscapedCodeBase))
+            {
+                yield break;
+            }
+
+            foreach (var assemblyRef in a.GetReferencedAssemblies())
+            {
+                if (visitedAssemblies.Contains(assemblyRef.EscapedCodeBase)) { continue; }
+                var loadedAssembly = Assembly.Load(assemblyRef);
+                yield return loadedAssembly;
+                foreach (var referenced in GetReferencedAssemblies(loadedAssembly, visitedAssemblies))
+                {
+                    yield return referenced;
+                }
+
+            }
+        }
+
+        private static string AssemblyDirectory(Assembly assembly)
+        {
+            string codeBase = assembly.CodeBase;
+            UriBuilder uri = new UriBuilder(codeBase);
+            return Uri.UnescapeDataString(uri.Path);
         }
     }
 }
