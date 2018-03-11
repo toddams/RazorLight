@@ -45,9 +45,16 @@ namespace RazorLight
             return this;
         }
 
-        public RazorLightEngineBuilder UseFilesystemProject(string root)
+        public RazorLightEngineBuilder UseFileSystemProject(string root)
         {
             project = new FileSystemRazorProject(root);
+
+            return this;
+        }
+
+        public RazorLightEngineBuilder UseFileSystemProject(string root, string extension)
+        {
+            project = new FileSystemRazorProject(root, extension);
 
             return this;
         }

@@ -12,11 +12,19 @@ namespace RazorLight.Razor
     /// </summary>
     public class FileSystemRazorProject : RazorLightProject
     {
+        public const string DefaultExtension = ".cshtml";
         private readonly IFileProvider fileProvider;
 
         public FileSystemRazorProject(string root)
+            : this(root, DefaultExtension)
         {
-            if(!Directory.Exists(root))
+        }
+
+        public FileSystemRazorProject(string root, string extension)
+        {
+            Extension = extension ?? throw new ArgumentNullException(nameof(extension));
+
+            if (!Directory.Exists(root))
             {
                 throw new DirectoryNotFoundException($"Root directory {root} not found");
             }
@@ -25,7 +33,7 @@ namespace RazorLight.Razor
             fileProvider = new PhysicalFileProvider(Root);
         }
 
-        public virtual string Extension { get; set; } = ".cshtml";
+        public virtual string Extension { get; set; }
 
         /// <summary>
         /// Looks up for the template source with a given <paramref name="templateKey" />

@@ -28,7 +28,7 @@ namespace RazorLight.Tests
         [Fact]
         public void Throws_On_Null_RootPath_ForFilesystemProject()
         {
-            Action action = () => new RazorLightEngineBuilder().UseFilesystemProject(null);
+            Action action = () => new RazorLightEngineBuilder().UseFileSystemProject(null);
 
             Assert.Throws<DirectoryNotFoundException>(action);
         }

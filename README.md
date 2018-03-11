@@ -41,7 +41,7 @@ To render a compiled template:
 var cacheResult = engine.TemplateCache.RetrieveTemplate("templateKey");
 if(cacheResult.Success)
 {
-    string result = await engine.RenderTemplateAsync(cacheResult.Template, model);
+    string result = await engine.RenderTemplateAsync(cacheResult.Template.TemplatePageFactory(), model);
 }
 ````
 
@@ -54,7 +54,7 @@ RazorLight can resolve templates from any source, but there are a built-in provi
 When resolving a template from filesystem, templateKey - is a relative path to the root folder, that you pass to RazorLightEngineBuilder.
 ````CSharp
 var engine = new RazorLightEngineBuilder()
-              .UseFilesystemProject("C:/RootFolder/With/YourTemplates");
+              .UseFilesystemProject("C:/RootFolder/With/YourTemplates")
               .UseMemoryCachingProvider()
               .Build();
 
@@ -165,10 +165,11 @@ ____
 # FAQ
 ## I'm getting "Can't load metadata reference from the entry assembly" exception
 
-Set PreserveCompilationContext to true in your *.csproj file
+Set PreserveCompilationContext to true in your *.csproj file's PropertyGroup tag.
 
 ````XML
-<ItemGroup>
+<PropertyGroup>
+    ...
     <PreserveCompilationContext>true</PreserveCompilationContext>
-</ItemGroup>
+</PropertyGroup>
 ````
