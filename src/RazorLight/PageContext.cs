@@ -1,5 +1,6 @@
 ﻿using System.Dynamic;
 using System.IO;
+using RazorLight.ViewFeatures;
 
 namespace RazorLight
 {
@@ -25,5 +26,9 @@ namespace RazorLight
         public string ExecutingPageKey { get; set; }
 
         public ModelTypeInfo ModelTypeInfo { get; set; }
-    }
+
+		public FormContext FormContext { get; set; }
+
+		public ViewFeatures.Rendering.Html5DateRenderingMode Html5DateRenderingMode { get; set; }
+	}
 }

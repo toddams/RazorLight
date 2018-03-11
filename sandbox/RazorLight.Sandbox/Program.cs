@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using RazorLight.Extensions;
-using System.Threading;
-using System.Collections.Generic;
 
 namespace RazorLight.Sandbox
 {
@@ -15,59 +11,24 @@ namespace RazorLight.Sandbox
             MainAsync().GetAwaiter().GetResult();
         }
 
-        private static readonly object locker = new object();
-
-        private static int _j;
-        public static int j
-        {
-            get
-            {
-                lock (locker)
-                {
-                    return _j;
-                }
-            }
-            set
-            {
-                lock(locker)
-                {
-                    _j = value;
-                }
-            }
-        }
-
         private static async Task MainAsync()
         {
             var engine = new RazorLightEngineBuilder()
                 .UseMemoryCachingProvider()
+                .UseFileSystemProject(@"C:\Projects\RazorLight\sandbox\RazorLight.Sandbox\Views\Subfolder")
                 .Build();
 
-            List<string> results = new List<string>();
+            var page = await engine.CompileTemplateAsync("A");
 
-            for (int i = 0; i < 100; i++)
+
+            using (var writer = new StringWriter())
             {
-                ThreadPool.QueueUserWorkItem(async (s) =>
-                {
-                    try
-                    {
-                        results.Add(await engine.CompileRenderAsync("Views.Subfolder.go", null, null, null));
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("J = " + j + " ============================\n" + e.StackTrace);
-                    }
+                await engine.RenderTemplateAsync(page, null, null, writer);
 
-                    j++;
-                });
+                string result = writer.ToString();
+                await writer.FlushAsync();
+                Console.WriteLine(result);
             }
-
-            while(j < 100)
-            {
-                Console.WriteLine("Waiting: " + j);
-                Thread.Sleep(100);
-            }
-
-            Console.WriteLine("Finished");
         }
     }
 }

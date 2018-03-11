@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using RazorLight.Compilation;
+using RazorLight.Internal;
 
 namespace RazorLight
 {
@@ -209,7 +210,13 @@ namespace RazorLight
 
             templatePage.PageContext = pageContext;
 
-            using (var renderer = new TemplateRenderer(templatePage, this, HtmlEncoder.Default))
+			IViewBufferScope bufferScope = new MemoryPoolViewBufferScope();
+
+            using (var renderer = new TemplateRenderer(
+				templatePage, 
+				this, 
+				HtmlEncoder.Default,
+				bufferScope))
             {
                 await renderer.RenderAsync().ConfigureAwait(false);
             }

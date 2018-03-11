@@ -11,13 +11,14 @@ namespace RazorLight
     public class TemplateRenderer : IDisposable
     {
         private readonly HtmlEncoder _htmlEncoder;
-        private MemoryPoolViewBufferScope _bufferScope;
+        private readonly IViewBufferScope _bufferScope;
         private IRazorLightEngine _engine;
 
         public TemplateRenderer(
             ITemplatePage razorPage,
             IRazorLightEngine razorEngine,
-            HtmlEncoder htmlEncoder)
+            HtmlEncoder htmlEncoder,
+			IViewBufferScope bufferScope)
         {
             if (razorPage == null)
             {
@@ -36,6 +37,7 @@ namespace RazorLight
 
             _engine = razorEngine;
             _htmlEncoder = htmlEncoder;
+			_bufferScope = bufferScope;
 
             RazorPage = razorPage;
         }
@@ -54,7 +56,6 @@ namespace RazorLight
         public virtual async Task RenderAsync()
         {
             var context = RazorPage.PageContext;
-            _bufferScope = new MemoryPoolViewBufferScope();
 
             var bodyWriter = await RenderPageAsync(RazorPage, context, invokeViewStarts: false).ConfigureAwait(false);
             await RenderLayoutAsync(context, bodyWriter).ConfigureAwait(false);
@@ -117,9 +118,11 @@ namespace RazorLight
             page.PageContext = context;
             page.IncludeFunc = async (key, model) =>
             {
-                ITemplatePage template = await _engine.CompileTemplateAsync(key);
+				var viewBuffer = new ViewBuffer(_bufferScope, partialViewName, ViewBuffer.PartialViewPageSize);
 
-                await _engine.RenderTemplateAsync(template, model, model?.GetType(), context.Writer, context.ViewBag);
+				ITemplatePage template = await _engine.CompileTemplateAsync(key).ConfigureAwait(false);
+
+                await _engine.RenderTemplateAsync(template, model, model?.GetType(), context.Writer, context.ViewBag).ConfigureAwait(false);
             };
             
             //_pageActivator.Activate(page, context);
@@ -262,7 +265,10 @@ namespace RazorLight
 
 		public void Dispose()
         {
-            _bufferScope?.Dispose();
-        }
+			if (_bufferScope is IDisposable scope)
+			{
+				scope.Dispose();
+			}
+		}
     }
 }
