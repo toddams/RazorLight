@@ -12,11 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\RazorLight\RazorLight.csproj" />
+    <EmbeddedResource Include="Views\Shared\azaza.cshtml" />
+    <EmbeddedResource Include="Views\Subfolder\go.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Shared\" />
+    <ProjectReference Include="..\..\src\RazorLight\RazorLight.csproj" />
   </ItemGroup>
 
 </Project>

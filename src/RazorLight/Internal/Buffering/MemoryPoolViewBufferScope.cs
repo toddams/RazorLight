@@ -130,36 +130,4 @@ namespace RazorLight.Internal
             }
         }
     }
-
-    public class SafeMemoryPoolViewBufferScope : IViewBufferScope, IDisposable
-    {
-        private readonly object _lock = new object();
-        private readonly MemoryPoolViewBufferScope _pool;
-
-        public SafeMemoryPoolViewBufferScope()
-        {
-            _pool = new MemoryPoolViewBufferScope();
-        }
-
-        public ViewBufferValue[] GetPage(int pageSize)
-        {
-            lock (_lock)
-            {
-                return _pool.GetPage(pageSize);
-            }
-        }
-
-        public void ReturnSegment(ViewBufferValue[] segment)
-        {
-            lock (_lock)
-            {
-                _pool.ReturnSegment(segment);
-            }
-        }
-
-        public PagedBufferedTextWriter CreateWriter(TextWriter writer) => _pool.CreateWriter(writer);
-
-        public void Dispose() => _pool.Dispose();
-    }
 }
-
