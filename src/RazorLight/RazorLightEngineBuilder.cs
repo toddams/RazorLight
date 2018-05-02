@@ -20,6 +20,8 @@ namespace RazorLight
 
         protected HashSet<MetadataReference> metadataReferences;
 
+        protected HashSet<string> excludedAssemblies;
+
         protected List<Action<ITemplatePage>> prerenderCallbacks;
 
         protected RazorLightProject project;
@@ -112,6 +114,22 @@ namespace RazorLight
             return this;
         }
 
+        public virtual RazorLightEngineBuilder ExcludeAssemblies(params string[] assemblyNames)
+        {
+            if (assemblyNames == null)
+            {
+                throw new ArgumentNullException(nameof(assemblyNames));
+            }
+
+            excludedAssemblies = new HashSet<string>();
+
+            foreach (var assemblyName in assemblyNames)
+            {
+                excludedAssemblies.Add(assemblyName);
+            }
+
+            return this;
+        }
         public virtual RazorLightEngineBuilder AddPrerenderCallbacks(params Action<ITemplatePage>[] callbacks)
         {
             if (callbacks == null)
@@ -168,13 +186,18 @@ namespace RazorLight
                 options.AdditionalMetadataReferences = metadataReferences;
             }
 
+            if (excludedAssemblies != null)
+            {
+                options.ExcludedAssemblies = excludedAssemblies;
+            }
+
             if (prerenderCallbacks != null)
             {
                 options.PreRenderCallbacks = prerenderCallbacks;
             }
 
             var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, options.Namespaces);
-            var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences);
+            var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences, options.ExcludedAssemblies);
 
             var assembly = operatingAssembly ?? Assembly.GetEntryAssembly();
 

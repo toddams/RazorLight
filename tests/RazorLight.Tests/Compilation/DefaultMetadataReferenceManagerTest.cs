@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.DependencyModel;
-using Moq;
 using RazorLight.Compilation;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,7 @@ namespace RazorLight.Tests.Compilation
         [Fact]
         public void Throws_OnEmptyManager_InConstructor()
         {
-            Assert.Throws<ArgumentNullException>(() => { new DefaultMetadataReferenceManager(null); });
+            Assert.Throws<ArgumentNullException>(() => { new DefaultMetadataReferenceManager(null, null); });
         }
 
         [Fact]
@@ -40,9 +39,9 @@ namespace RazorLight.Tests.Compilation
             Exception ex = null;
             try
             {
-                PoseContext.Isolate(() => 
+                PoseContext.Isolate(() =>
                 {
-                    manager.Resolve(DependencyContext.Default);
+                    manager.Resolve(null, DependencyContext.Default);
                 }, classPropShim);
 
             }
@@ -56,5 +55,5 @@ namespace RazorLight.Tests.Compilation
             Assert.Equal(ex.Message, "Can't load metadata reference from the entry assembly. " +
                     "Make sure PreserveCompilationContext is set to true in *.csproj file");
         }
-	}
+    }
 }

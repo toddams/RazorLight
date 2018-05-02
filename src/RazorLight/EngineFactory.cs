@@ -80,7 +80,7 @@ namespace RazorLight
 
             var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, razorOptions.Namespaces);
 
-            var metadataReferenceManager = new DefaultMetadataReferenceManager(razorOptions.AdditionalMetadataReferences);
+            var metadataReferenceManager = new DefaultMetadataReferenceManager(razorOptions.AdditionalMetadataReferences, razorOptions.ExcludedAssemblies);
             var compiler = new RoslynCompilationService(metadataReferenceManager, Assembly.GetEntryAssembly());
             var templateFactoryProvider = new TemplateFactoryProvider(sourceGenerator, compiler, razorOptions);
 

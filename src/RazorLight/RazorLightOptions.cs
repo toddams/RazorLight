@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System;
+using System.Reflection;
 
 namespace RazorLight
 {
@@ -12,7 +13,8 @@ namespace RazorLight
 			Namespaces = new HashSet<string>();
 			DynamicTemplates = new ConcurrentDictionary<string, string>();
 			AdditionalMetadataReferences = new HashSet<MetadataReference>();
-			PreRenderCallbacks = new List<Action<ITemplatePage>>();
+		    ExcludedAssemblies = new HashSet<string>();
+            PreRenderCallbacks = new List<Action<ITemplatePage>>();
 		}
 
 		public ISet<string> Namespaces { get; set; }
@@ -21,6 +23,8 @@ namespace RazorLight
 
 		public HashSet<MetadataReference> AdditionalMetadataReferences { get; set; }
 
-		public virtual IList<Action<ITemplatePage>> PreRenderCallbacks { get; set; }
+	    public HashSet<string> ExcludedAssemblies { get; set; }
+
+        public virtual IList<Action<ITemplatePage>> PreRenderCallbacks { get; set; }
 	}
 }
