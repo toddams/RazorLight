@@ -24,7 +24,7 @@ namespace RazorLight.Text
         /// <param name="value">The value</param>
         public RawString(string value)
         {
-            if(string.IsNullOrEmpty(value))
+            if (value == null)
             {
                 throw new ArgumentNullException(nameof(value));
             }

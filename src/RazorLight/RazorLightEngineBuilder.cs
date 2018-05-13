@@ -132,12 +132,7 @@ namespace RazorLight
                 throw new ArgumentNullException(nameof(dynamicTemplates));
             }
 
-            this.dynamicTemplates = new ConcurrentDictionary<string, string>();
-
-            foreach (var pair in dynamicTemplates)
-            {
-                dynamicTemplates.Add(pair);
-            }
+            this.dynamicTemplates = new ConcurrentDictionary<string, string>(dynamicTemplates);
 
             return this;
         }
