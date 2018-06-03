@@ -178,15 +178,17 @@ namespace RazorLight
 				options.CachingProvider = cachingProvider;
 			}
 
-            var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, options.Namespaces);
+
             var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences);
-
             var assembly = operatingAssembly ?? Assembly.GetEntryAssembly();
-
             var compiler = new RoslynCompilationService(metadataReferenceManager, assembly);
-            var templateFactoryProvider = new TemplateFactoryProvider(sourceGenerator, compiler, options);
 
-            return new RazorLightEngine(options, templateFactoryProvider, cachingProvider);
+			var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, options.Namespaces);
+			var templateCompiler = new RazorTemplateCompiler(sourceGenerator, compiler, project);
+
+			var templateFactoryProvider = new TemplateFactoryProvider();
+
+            return new RazorLightEngine(options, templateCompiler, templateFactoryProvider, cachingProvider);
         }
     }
 }

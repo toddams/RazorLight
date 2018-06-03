@@ -44,7 +44,7 @@ namespace RazorLight.Tests
                 RazorEngine.Create(),
                 new EmbeddedRazorProject(typeof(RazorSourceGeneratorTest)));
 
-            Assert.NotNull(generator.Engine);
+            Assert.NotNull(generator.ProjectEngine);
             Assert.NotNull(generator.Project);
         }
 

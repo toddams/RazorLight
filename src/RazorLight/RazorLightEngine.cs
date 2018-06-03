@@ -12,19 +12,24 @@ namespace RazorLight
     public class RazorLightEngine : IRazorLightEngine
     {
 		public RazorLightEngine(
-            RazorLightOptions options,
-            ITemplateFactoryProvider factoryProvider,
+			RazorLightOptions options,
+			RazorTemplateCompiler templateCompiler,
+			ITemplateFactoryProvider factoryProvider,
             ICachingProvider cachingProvider)
         {
 			Options = options ?? throw new ArgumentNullException(nameof(options));
-            TemplateFactoryProvider = factoryProvider ?? throw new ArgumentNullException(nameof(factoryProvider));
+			TemplateFactoryProvider = factoryProvider ?? throw new ArgumentNullException(nameof(factoryProvider));
+			TemplateCompiler = templateCompiler ?? throw new ArgumentNullException(nameof(templateCompiler));
 
 			TemplateCache = cachingProvider;
         }
 
 		public ICachingProvider TemplateCache { get; }
-		public ITemplateFactoryProvider TemplateFactoryProvider { get; }
 		public RazorLightOptions Options { get; }
+		public RazorTemplateCompiler TemplateCompiler { get; }
+		public ITemplateFactoryProvider TemplateFactoryProvider { get; }
+
+		public bool IsCachingEnabled => TemplateCache != null;
 
         /// <summary>
         /// Compiles and renders a template with a given <paramref name="key"/>
@@ -108,26 +113,27 @@ namespace RazorLight
 		/// <returns>An instance of a template</returns>
 		public async Task<ITemplatePage> CompileTemplateAsync(string key)
         {
-            if(TemplateCache != null)
-            {
-                var cacheLookupResult = TemplateCache.RetrieveTemplate(key);
-                if (cacheLookupResult.Success)
-                {
-                    return cacheLookupResult.Template.TemplatePageFactory();
-                }
-            }
+			if (IsCachingEnabled)
+			{
+				var cacheLookupResult = TemplateCache.RetrieveTemplate(key);
+				if(cacheLookupResult.Success)
+				{
+					return cacheLookupResult.Template.TemplatePageFactory();
+				}
+			}
 
-            TemplateFactoryResult result = await TemplateFactoryProvider.CreateFactoryAsync(key).ConfigureAwait(false);
+			CompiledTemplateDescriptor templateDescriptor = await TemplateCompiler.CompileAsync(key);
+			Func<ITemplatePage> templateFactory = TemplateFactoryProvider.CreateFactory(templateDescriptor);
 
-            if(TemplateCache != null)
-            {
-                TemplateCache.CacheTemplate(
-                key,
-                result.TemplatePageFactory,
-                result.TemplateDescriptor.ExpirationToken);
-            }
+			if (IsCachingEnabled)
+			{
+				TemplateCache.CacheTemplate(
+				key,
+				templateFactory,
+				templateDescriptor.ExpirationToken);
+			}
 
-            return result.TemplatePageFactory();
+			return templateFactory();
         }
 
         /// <summary>

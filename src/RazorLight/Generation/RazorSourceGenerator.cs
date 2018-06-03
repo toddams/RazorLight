@@ -11,21 +11,21 @@ namespace RazorLight.Generation
 {
     public class RazorSourceGenerator
     {
-        public RazorSourceGenerator(RazorEngine engine, RazorLightProject project = null, ISet<string> namespaces = null)
+        public RazorSourceGenerator(RazorEngine projectEngine, RazorLightProject project = null, ISet<string> namespaces = null)
         {
-            if(engine == null)
+            if(projectEngine == null)
             {
-                throw new ArgumentNullException(nameof(engine));
+                throw new ArgumentNullException(nameof(projectEngine));
             }
 
 			Namespaces = namespaces ?? new HashSet<string>();
 
-            Engine = engine;
+            ProjectEngine = projectEngine;
             Project = project;
             DefaultImports = GetDefaultImports();
         }
 
-        public RazorEngine Engine { get; set; }
+        public RazorEngine ProjectEngine { get; set; }
 
         public RazorLightProject Project { get; set; }
 
@@ -75,7 +75,7 @@ namespace RazorLight.Generation
             }
 
             RazorCodeDocument codeDocument = await CreateCodeDocumentAsync(projectItem);
-            Engine.Process(codeDocument);
+            ProjectEngine.Process(codeDocument);
 
             RazorCSharpDocument document = codeDocument.GetCSharpDocument();
             if (document.Diagnostics.Count > 0)

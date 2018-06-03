@@ -1,15 +1,9 @@
-﻿using System.Threading.Tasks;
-using RazorLight.Generation;
-using RazorLight.Razor;
+﻿using System;
 
 namespace RazorLight.Compilation
 {
     public interface ITemplateFactoryProvider
     {
-        Task<TemplateFactoryResult> CreateFactoryAsync(string templateKey);
-        Task<TemplateFactoryResult> CreateFactoryAsync(RazorLightProjectItem projectItem);
-
-		RazorSourceGenerator SourceGenerator { get; }
-		RoslynCompilationService Compiler { get; }
+		Func<ITemplatePage> CreateFactory(CompiledTemplateDescriptor templateDescriptor);
 	}
 }
