@@ -72,7 +72,7 @@ var engine = new RazorLightEngineBuilder()
 
 ## Custom source
 
-If you store your templates in database - it is recommended to create custom RazorLightProject that is responsible for gettings templages source from it. The class will be used to get template source and ViewImports. RazorLight will use it to resolve Layouts, when you specify it inside the template.
+If you store your templates in database - it is recommended to create custom RazorLightProject that is responsible for gettings templates source from it. The class will be used to get template source and ViewImports. RazorLight will use it to resolve Layouts, when you specify it inside the template.
 
 ````CSharp
 var project = new EntityFrameworkRazorProject(new AppDbContext());
