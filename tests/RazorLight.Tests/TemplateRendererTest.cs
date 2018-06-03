@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Moq;
+using RazorLight.Internal;
 using Xunit;
 
 namespace RazorLight.Tests
@@ -29,7 +30,7 @@ namespace RazorLight.Tests
 			engineMock.SetupGet(e => e.Options).Returns(options);
 
 			//Act
-			var templateRenderer = new TemplateRenderer(page, engineMock.Object, HtmlEncoder.Default);
+			var templateRenderer = new TemplateRenderer(page, engineMock.Object, HtmlEncoder.Default, new MemoryPoolViewBufferScope());
 			await templateRenderer.RenderAsync();
 
 			//Assert
@@ -82,7 +83,7 @@ namespace RazorLight.Tests
 			using (var writer = new StringWriter())
 			{
 				page.PageContext.Writer = writer;
-				var renderer = new TemplateRenderer(page, engineMock.Object, encoder);
+				var renderer = new TemplateRenderer(page, engineMock.Object, encoder, new MemoryPoolViewBufferScope());
 				await renderer.RenderAsync();
 
 				output = writer.ToString();

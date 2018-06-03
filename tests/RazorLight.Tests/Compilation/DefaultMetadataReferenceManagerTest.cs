@@ -27,34 +27,5 @@ namespace RazorLight.Tests.Compilation
             Assert.NotNull(manager.AdditionalMetadataReferences);
             Assert.Equal(metadata, manager.AdditionalMetadataReferences);
         }
-
-        [Fact]
-        public void Throws_WhenCantResolve_DependencyLibraries()
-        {
-            var manager = new DefaultMetadataReferenceManager();
-
-            IReadOnlyList<CompilationLibrary> a = new List<CompilationLibrary>();
-
-            Shim classPropShim = Shim.Replace(() => Is.A<DependencyContext>().CompileLibraries).With((DependencyContext @this) => a);
-
-            Exception ex = null;
-            try
-            {
-                PoseContext.Isolate(() => 
-                {
-                    manager.Resolve(DependencyContext.Default);
-                }, classPropShim);
-
-            }
-            catch (Exception e)
-            {
-                ex = e.InnerException;
-            }
-
-            Assert.NotNull(ex);
-            Assert.NotNull(ex.Message);
-            Assert.Equal(ex.Message, "Can't load metadata reference from the entry assembly. " +
-                    "Make sure PreserveCompilationContext is set to true in *.csproj file");
-        }
 	}
 }

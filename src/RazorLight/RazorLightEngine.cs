@@ -5,38 +5,26 @@ using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using RazorLight.Compilation;
+using RazorLight.Internal;
 
 namespace RazorLight
 {
     public class RazorLightEngine : IRazorLightEngine
     {
-        private ITemplateFactoryProvider templateFactoryProvider;
-        private ICachingProvider cache;
-
-        public RazorLightEngine(
+		public RazorLightEngine(
             RazorLightOptions options,
             ITemplateFactoryProvider factoryProvider,
             ICachingProvider cachingProvider)
         {
-            if(options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+			Options = options ?? throw new ArgumentNullException(nameof(options));
+            TemplateFactoryProvider = factoryProvider ?? throw new ArgumentNullException(nameof(factoryProvider));
 
-            if(factoryProvider == null)
-            {
-                throw new ArgumentNullException(nameof(factoryProvider));
-            }
-
-            Options = options;
-            templateFactoryProvider = factoryProvider;
-            cache = cachingProvider;
+			TemplateCache = cachingProvider;
         }
 
-        public ICachingProvider TemplateCache => cache;
-        public ITemplateFactoryProvider TemplateFactoryProvider => templateFactoryProvider;
-
-        public RazorLightOptions Options { get; }
+		public ICachingProvider TemplateCache { get; }
+		public ITemplateFactoryProvider TemplateFactoryProvider { get; }
+		public RazorLightOptions Options { get; }
 
         /// <summary>
         /// Compiles and renders a template with a given <paramref name="key"/>
@@ -120,27 +108,26 @@ namespace RazorLight
 		/// <returns>An instance of a template</returns>
 		public async Task<ITemplatePage> CompileTemplateAsync(string key)
         {
-            if(cache != null)
+            if(TemplateCache != null)
             {
-                var cacheLookupResult = cache.RetrieveTemplate(key);
+                var cacheLookupResult = TemplateCache.RetrieveTemplate(key);
                 if (cacheLookupResult.Success)
                 {
                     return cacheLookupResult.Template.TemplatePageFactory();
                 }
             }
 
+            TemplateFactoryResult result = await TemplateFactoryProvider.CreateFactoryAsync(key).ConfigureAwait(false);
 
-            var pageFactoryResult = await templateFactoryProvider.CreateFactoryAsync(key).ConfigureAwait(false);
-
-            if(cache != null)
+            if(TemplateCache != null)
             {
-                cache.CacheTemplate(
+                TemplateCache.CacheTemplate(
                 key,
-                pageFactoryResult.TemplatePageFactory,
-                pageFactoryResult.TemplateDescriptor.ExpirationToken);
+                result.TemplatePageFactory,
+                result.TemplateDescriptor.ExpirationToken);
             }
 
-            return pageFactoryResult.TemplatePageFactory();
+            return result.TemplatePageFactory();
         }
 
         /// <summary>
@@ -168,9 +155,8 @@ namespace RazorLight
             using (var writer = new StringWriter())
             {
                 await RenderTemplateAsync(templatePage, model, modelType, writer, viewBag);
-                string result = writer.ToString();
 
-                return result;
+                return writer.ToString();
             }
         }
 
@@ -184,35 +170,61 @@ namespace RazorLight
         /// <param name="textWriter">Output</param>
         public async Task RenderTemplateAsync(
             ITemplatePage templatePage,
-            object model, Type modelType,
+            object model, 
+			Type modelType,
             TextWriter textWriter,
             ExpandoObject viewBag = null)
         {
-			if(textWriter == null)
+			SetModelContext(templatePage, textWriter, model, modelType, viewBag);
+
+			using (var scope = new MemoryPoolViewBufferScope())
+			{
+				var renderer = new TemplateRenderer(templatePage, this, HtmlEncoder.Default, scope);
+				await renderer.RenderAsync().ConfigureAwait(false);
+			}
+        }
+
+		public async Task RenderIncludedTemplateAsync(
+			ITemplatePage templatePage,
+			object model,
+			Type modelType,
+			TextWriter textWriter,
+			ExpandoObject viewBag,
+			TemplateRenderer templateRenderer)
+		{
+			SetModelContext(templatePage, textWriter, model, modelType, viewBag);
+
+			templateRenderer.RazorPage = templatePage;
+			await templateRenderer.RenderAsync().ConfigureAwait(false);
+		}
+
+		private void SetModelContext(
+			ITemplatePage templatePage,
+			TextWriter textWriter,
+			object model,
+			Type modelType,
+			ExpandoObject viewBag)
+		{
+			if (textWriter == null)
 			{
 				throw new ArgumentNullException(nameof(textWriter));
 			}
 
-            var pageContext = new PageContext(viewBag)
-            {
-                ExecutingPageKey = templatePage.Key,
-                Writer = textWriter
-            };
+			var pageContext = new PageContext(viewBag)
+			{
+				ExecutingPageKey = templatePage.Key,
+				Writer = textWriter
+			};
 
-            if (model != null)
-            {
-                pageContext.ModelTypeInfo = new ModelTypeInfo(modelType);
+			if (model != null)
+			{
+				pageContext.ModelTypeInfo = new ModelTypeInfo(modelType);
 
-                object pageModel = pageContext.ModelTypeInfo.CreateTemplateModel(model);
-                templatePage.SetModel(pageModel);
-            }
+				object pageModel = pageContext.ModelTypeInfo.CreateTemplateModel(model);
+				templatePage.SetModel(pageModel);
+			}
 
-            templatePage.PageContext = pageContext;
-
-            using (var renderer = new TemplateRenderer(templatePage, this, HtmlEncoder.Default))
-            {
-                await renderer.RenderAsync().ConfigureAwait(false);
-            }
-        }
-    }
+			templatePage.PageContext = pageContext;
+		}
+	}
 }

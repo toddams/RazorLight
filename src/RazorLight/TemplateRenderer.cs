@@ -8,42 +8,28 @@ using System.Threading.Tasks;
 
 namespace RazorLight
 {
-    public class TemplateRenderer : IDisposable
+    public class TemplateRenderer
     {
         private readonly HtmlEncoder _htmlEncoder;
-        private MemoryPoolViewBufferScope _bufferScope;
-        private IRazorLightEngine _engine;
+        private readonly IRazorLightEngine _engine;
+        private readonly IViewBufferScope _bufferScope;
 
         public TemplateRenderer(
             ITemplatePage razorPage,
-            IRazorLightEngine razorEngine,
-            HtmlEncoder htmlEncoder)
+			IRazorLightEngine razorEngine,
+            HtmlEncoder htmlEncoder,
+			IViewBufferScope bufferScope)
         {
-            if (razorPage == null)
-            {
-                throw new ArgumentNullException(nameof(razorPage));
-            }
-
-            if(razorEngine == null)
-            {
-                throw new ArgumentNullException(nameof(razorEngine));
-            }
-
-            if(razorPage == null)
-            {
-                throw new ArgumentNullException(nameof(razorPage));
-            }
-
-            _engine = razorEngine;
-            _htmlEncoder = htmlEncoder;
-
-            RazorPage = razorPage;
+            RazorPage = razorPage ?? throw new ArgumentNullException(nameof(razorPage));
+			_engine = razorEngine ?? throw new ArgumentNullException(nameof(razorEngine));
+			_bufferScope = bufferScope ?? throw new ArgumentNullException(nameof(bufferScope));
+			_htmlEncoder = htmlEncoder ?? throw new ArgumentNullException(nameof(htmlEncoder));
         }
 
         /// <summary>
         /// Gets <see cref="ITemplatePage"/> instance that the views executes on.
         /// </summary>
-        public ITemplatePage RazorPage { get; }
+        public ITemplatePage RazorPage { get; set; }
 
         ///// <summary>
         ///// Gets the sequence of _ViewStart <see cref="ITemplatePage"/> instances that are executed by this view.
@@ -54,7 +40,6 @@ namespace RazorLight
         public virtual async Task RenderAsync()
         {
             var context = RazorPage.PageContext;
-            _bufferScope = new MemoryPoolViewBufferScope();
 
             var bodyWriter = await RenderPageAsync(RazorPage, context, invokeViewStarts: false).ConfigureAwait(false);
             await RenderLayoutAsync(context, bodyWriter).ConfigureAwait(false);
@@ -119,7 +104,7 @@ namespace RazorLight
             {
                 ITemplatePage template = await _engine.CompileTemplateAsync(key);
 
-                await _engine.RenderTemplateAsync(template, model, model?.GetType(), context.Writer, context.ViewBag);
+                await _engine.RenderIncludedTemplateAsync(template, model, model?.GetType(), context.Writer, context.ViewBag, this);
             };
             
             //_pageActivator.Activate(page, context);
@@ -259,10 +244,5 @@ namespace RazorLight
 				}
 			}
 		}
-
-		public void Dispose()
-        {
-            _bufferScope?.Dispose();
-        }
     }
 }

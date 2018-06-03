@@ -23,5 +23,8 @@ namespace RazorLight
         Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, ExpandoObject viewBag = null);
         Task<string> RenderTemplateAsync<T>(ITemplatePage templatePage, T model, ExpandoObject viewBag = null);
         Task RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, TextWriter textWriter, ExpandoObject viewBag = null);
-    }
+
+		//Temporary method added for testing. Will be replaced with HtmlHelper.Partial
+		Task RenderIncludedTemplateAsync(ITemplatePage template, object model, Type type, TextWriter writer, ExpandoObject viewBag, TemplateRenderer templateRenderer);
+	}
 }
