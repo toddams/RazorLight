@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +30,10 @@ namespace RazorLight.Tests.DependencyInjection
 			builder.AppendLine("@inject RazorLight.Tests.Models.TestViewModel test");
 			builder.AppendLine("Hello @test");
 
-			var engine = new EngineFactory().ForEmbeddedResources(typeof(Root));
+			var engine = new RazorLightEngineBuilder()
+				.UseEmbeddedResourcesProject(typeof(Root))
+				.Build();
+
 			engine.Options.DynamicTemplates.Add(templateKey, builder.ToString());
 			ITemplatePage templatePage = await engine.CompileTemplateAsync(templateKey);
 

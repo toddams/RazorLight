@@ -206,39 +206,39 @@ namespace RazorLight.Tests.Compilation
 			Assert.Contains(define, syntaxTree.Options.PreprocessorSymbolNames);
 		}
 
-		[Fact]
-		public async Task Throw_With_CompilationErrors_On_Failed_BuildAsync()
-		{
-			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager(), Assembly.GetEntryAssembly());
+		//[Fact]
+		//public async Task Throw_With_CompilationErrors_On_Failed_BuildAsync()
+		//{
+		//	var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager(), Assembly.GetEntryAssembly());
 
-			var template = new TestGeneratedRazorTemplate("key", "public class Test { error }");
+		//	var template = new TestGeneratedRazorTemplate("key", "public class Test { error }");
 
-			TemplateCompilationException ex = null;
+		//	TemplateCompilationException ex = null;
 
-			try
-			{
-				await compiler.CompileAsync(template);
-			}
-			catch (TemplateCompilationException e)
-			{
-				ex = e;
-			}
+		//	try
+		//	{
+		//		await compiler.CompileAsync(template);
+		//	}
+		//	catch (TemplateCompilationException e)
+		//	{
+		//		ex = e;
+		//	}
 
 			
-			Assert.NotNull(ex);
-			Assert.NotEmpty(ex.CompilationErrors);
-			Assert.Equal(1, ex.CompilationErrors.Count);
-		}
+		//	Assert.NotNull(ex);
+		//	Assert.NotEmpty(ex.CompilationErrors);
+		//	Assert.Equal(1, ex.CompilationErrors.Count);
+		//}
 
-		[Fact]
-		public void Throw_OnNullRazorTemplate_OnCompile()
-		{
-			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager(), Assembly.GetEntryAssembly());
+		//[Fact]
+		//public void Throw_OnNullRazorTemplate_OnCompile()
+		//{
+		//	var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager(), Assembly.GetEntryAssembly());
 
-			Func<Task> action = () => compiler.CompileAsync(null);
+		//	Func<Task> action = () => compiler.CompileAsync(null);
 
-			Assert.ThrowsAsync<ArgumentNullException>(action);
-		}
+		//	Assert.ThrowsAsync<ArgumentNullException>(action);
+		//}
 
 		private class TestGeneratedRazorTemplate : IGeneratedRazorTemplate
 		{

@@ -82,12 +82,12 @@ namespace RazorLight.Tests
             Assert.Throws<ArgumentNullException>(action);
         }
 
-        [Fact]
-        public void Compiler_OperatingAssembly_IsSetTo_EntryAssembly_If_Not_Specified()
-        {
-            var engine = new RazorLightEngineBuilder().Build();
+        //[Fact]
+        //public void Compiler_OperatingAssembly_IsSetTo_EntryAssembly_If_Not_Specified()
+        //{
+        //    var engine = new RazorLightEngineBuilder().Build();
 
-            Assert.Equal(engine.TemplateFactoryProvider.Compiler.OperatingAssembly, Assembly.GetEntryAssembly());
-        }
+        //    Assert.Equal(engine.TemplateFactoryProvider.Compiler.OperatingAssembly, Assembly.GetEntryAssembly());
+        //}
     }
 }
