@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Razor.Extensions;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using RazorLight.Instrumentation;
@@ -11,7 +12,7 @@ namespace RazorLight
 		{
 			get
 			{
-				var razorProjectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, null, builder =>
+				var razorProjectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, new NullRazorProjectFileSystem() , builder =>
 				{
 					Instrumentation.InjectDirective.Register(builder);
 					Instrumentation.ModelDirective.Register(builder);
@@ -40,5 +41,18 @@ namespace RazorLight
 				return razorProjectEngine.Engine;
 			}
 		}
-    }
+
+		private class NullRazorProjectFileSystem : RazorProjectFileSystem
+		{
+			public override IEnumerable<RazorProjectItem> EnumerateItems(string basePath)
+			{
+				throw new System.NotImplementedException();
+			}
+
+			public override RazorProjectItem GetItem(string path)
+			{
+				throw new System.NotImplementedException();
+			}
+		}
+	}
 }
