@@ -21,15 +21,19 @@ namespace RazorLight.Instrumentation
                 builder.Description = ""; //TODO: add description
             });
 
-        public static IRazorEngineBuilder Register(IRazorEngineBuilder builder)
-        {
-            builder.AddDirective(Directive);
-            builder.Features.Add(new Pass());
-            builder.AddTargetExtension(new InjectTargetExtension());
-            return builder;
-        }
+		public static RazorProjectEngineBuilder Register(RazorProjectEngineBuilder builder)
+		{
+			if (builder == null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
 
-        internal class Pass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
+			builder.AddDirective(Directive);
+			builder.Features.Add(new Pass());
+			builder.AddTargetExtension(new InjectTargetExtension());
+			return builder;
+		}
+		internal class Pass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
         {
             // Runs after the @model and @namespace directives
             public override int Order => 10;
