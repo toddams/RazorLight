@@ -6,18 +6,34 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="azaza.cshtml" />
     <None Remove="go.cshtml" />
+    <None Remove="Views\Subfolder\A.cshtml" />
+    <None Remove="Views\Subfolder\B.cshtml" />
+    <None Remove="Views\Subfolder\C.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Views\Shared\azaza.cshtml" />
-    <EmbeddedResource Include="Views\Subfolder\go.cshtml" />
+    <EmbeddedResource Include="Views\Subfolder\A.cshtml" />
+    <EmbeddedResource Include="Views\Subfolder\B.cshtml" />
+    <EmbeddedResource Include="Views\Subfolder\C.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\RazorLight\RazorLight.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Shared\" />
   </ItemGroup>
 
 </Project>
