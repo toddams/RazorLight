@@ -36,53 +36,55 @@ namespace RazorLight.Precompile
 
         private int Execute()
         {
-            if (!ParseArguments())
-            {
-                return 1;
-            }
+   //         if (!ParseArguments())
+   //         {
+   //             return 1;
+   //         }
 
-            var engine = new EngineFactory().ForFileSystem(Options.ContentRootOption.Value());
-            factoryProvider = (TemplateFactoryProvider)engine.TemplateFactoryProvider;
-            compiler = factoryProvider.Compiler;
+			//var engine = new RazorLightEngineBuilder()
+			//	.UseFileSystemProject(Options.ContentRootOption.Value())
+			//	.Build();
 
-            ViewCompilationInfo[] results = GenerateCode();
-            bool success = true;
+   //         factoryProvider = (TemplateFactoryProvider)engine.TemplateFactoryProvider;
+			//compiler = engine.TemplateCompiler;
+   //         ViewCompilationInfo[] results = GenerateCode();
+   //         bool success = true;
 
-            foreach (var result in results)
-            {
-                if (result.CSharpDocument.Diagnostics.Count > 0)
-                {
-                    success = false;
-                    foreach (var error in result.CSharpDocument.Diagnostics)
-                    {
-                        Application.Error.WriteLine($"{result.TemplateFileInfo.FullPath} ({error.Span.LineIndex}): {error.GetMessage()}");
-                    }
-                }
-            }
+   //         foreach (var result in results)
+   //         {
+   //             if (result.CSharpDocument.Diagnostics.Count > 0)
+   //             {
+   //                 success = false;
+   //                 foreach (var error in result.CSharpDocument.Diagnostics)
+   //                 {
+   //                     Application.Error.WriteLine($"{result.TemplateFileInfo.FullPath} ({error.Span.LineIndex}): {error.GetMessage()}");
+   //                 }
+   //             }
+   //         }
 
-            if (!success)
-            {
-                return 1;
-            }
+   //         if (!success)
+   //         {
+   //             return 1;
+   //         }
 
-            string precompileAssemblyName = $"{Options.ApplicationName}_Precompiled";
-            CSharpCompilation compilation = CompileViews(results, precompileAssemblyName);
+   //         string precompileAssemblyName = $"{Options.ApplicationName}_Precompiled";
+   //         CSharpCompilation compilation = CompileViews(results, precompileAssemblyName);
 
-            string assemblyPath = Path.Combine(Options.OutputPath, precompileAssemblyName + ".dll");
-            EmitResult emitResult = EmitAssembly(
-                compilation,
-                compiler.EmitOptions,
-                assemblyPath);
+   //         string assemblyPath = Path.Combine(Options.OutputPath, precompileAssemblyName + ".dll");
+   //         EmitResult emitResult = EmitAssembly(
+   //             compilation,
+   //             compiler.EmitOptions,
+   //             assemblyPath);
 
-            if (!emitResult.Success)
-            {
-                foreach (var diagnostic in emitResult.Diagnostics)
-                {
-                    Application.Error.WriteLine(CSharpDiagnosticFormatter.Instance.Format(diagnostic));
-                }
+   //         if (!emitResult.Success)
+   //         {
+   //             foreach (var diagnostic in emitResult.Diagnostics)
+   //             {
+   //                 Application.Error.WriteLine(CSharpDiagnosticFormatter.Instance.Format(diagnostic));
+   //             }
 
-                return 1;
-            }
+   //             return 1;
+   //         }
 
             return 0;
         }
