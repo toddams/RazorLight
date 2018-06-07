@@ -184,7 +184,7 @@ namespace RazorLight
             var compiler = new RoslynCompilationService(metadataReferenceManager, assembly);
 
 			var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, options.Namespaces);
-			var templateCompiler = new RazorTemplateCompiler(sourceGenerator, compiler, project);
+			var templateCompiler = new RazorTemplateCompiler(sourceGenerator, compiler, project, options);
 
 			var templateFactoryProvider = new TemplateFactoryProvider();
 

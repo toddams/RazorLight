@@ -14,13 +14,14 @@ using RazorLight.Razor;
 
 namespace RazorLight.Compilation
 {
-	public class RazorTemplateCompiler
+	public class RazorTemplateCompiler : IRazorTemplateCompiler
 	{
 		private readonly object _cacheLock = new object();
 
 		private RazorSourceGenerator _razorSourceGenerator;
 		private RoslynCompilationService _compiler;
 
+		private readonly RazorLightOptions _razorLightOptions;
 		private readonly RazorLightProject _razorProject;
 		private readonly IMemoryCache _cache;
 		private readonly ConcurrentDictionary<string, string> _normalizedPathCache;
@@ -29,11 +30,13 @@ namespace RazorLight.Compilation
 		public RazorTemplateCompiler(
 			RazorSourceGenerator sourceGenerator,
 			RoslynCompilationService roslynCompilationService,
-			RazorLightProject razorLightProject)
+			RazorLightProject razorLightProject,
+			RazorLightOptions razorLightOptions)
 		{
 			_razorSourceGenerator = sourceGenerator;
 			_compiler = roslynCompilationService;
 			_razorProject = razorLightProject;
+			_razorLightOptions = razorLightOptions;
 
 			// This is our L0 cache, and is a durable store. Views migrate into the cache as they are requested
 			// from either the set of known precompiled views, or by being compiled.
@@ -50,6 +53,8 @@ namespace RazorLight.Compilation
 				5, //Change capacity when precompiled views are arrived
 				StringComparer.OrdinalIgnoreCase);
 		}
+
+		public ICompilationService CompilationService => _compiler;
 
 		public Task<CompiledTemplateDescriptor> CompileAsync(string templateKey)
 		{
@@ -143,7 +148,7 @@ namespace RazorLight.Compilation
 
 				try
 				{
-					var descriptor = CompileAndEmit(normalizedKey);
+					CompiledTemplateDescriptor descriptor = CompileAndEmit(item.ProjectItem);
 					descriptor.ExpirationToken = cacheEntryOptions.ExpirationTokens.FirstOrDefault();
 					taskSource.SetResult(descriptor);
 				}
@@ -158,7 +163,17 @@ namespace RazorLight.Compilation
 
 		private async Task<ViewCompilerWorkItem> CreateRuntimeCompilationWorkItem(string normalizedKey)
 		{
-			RazorLightProjectItem projectItem = await _razorProject.GetItemAsync(normalizedKey);
+			RazorLightProjectItem projectItem = null;
+
+			if (_razorLightOptions.DynamicTemplates.TryGetValue(normalizedKey, out string templateContent))
+			{
+				projectItem = new TextSourceRazorProjectItem(normalizedKey, templateContent);
+			}
+			else
+			{
+				projectItem = await _razorProject.GetItemAsync(normalizedKey);
+			}
+
 			if (!projectItem.Exists)
 			{
 				// If the file doesn't exist, we can't do compilation right now - we still want to cache
@@ -184,14 +199,15 @@ namespace RazorLight.Compilation
 			{
 				SupportsCompilation = true,
 
+				ProjectItem = projectItem,
 				NormalizedKey = normalizedKey,
 				ExpirationToken = projectItem.ExpirationToken,
 			};
 		}
 
-		protected virtual CompiledTemplateDescriptor CompileAndEmit(string templateKey)
+		protected virtual CompiledTemplateDescriptor CompileAndEmit(RazorLightProjectItem projectItem)
 		{
-			IGeneratedRazorTemplate generatedTemplate = _razorSourceGenerator.GenerateCodeAsync(templateKey).GetAwaiter().GetResult();
+			IGeneratedRazorTemplate generatedTemplate = _razorSourceGenerator.GenerateCodeAsync(projectItem).GetAwaiter().GetResult();
 			Assembly assembly = _compiler.CompileAndEmit(generatedTemplate);
 
 			// Anything we compile from source will use Razor 2.1 and so should have the new metadata.
@@ -202,7 +218,7 @@ namespace RazorLight.Compilation
 			return new CompiledTemplateDescriptor()
 			{
 				Item = item,
-				TemplateKey = templateKey,
+				TemplateKey = projectItem.Key,
 				TemplateAttribute = attribute
 			};
 		}
@@ -275,6 +291,8 @@ namespace RazorLight.Compilation
 			public IChangeToken ExpirationToken { get; set; }
 
 			public CompiledTemplateDescriptor Descriptor { get; set; }
+
+			public RazorLightProjectItem ProjectItem { get; set; }
 		}
 
 		#endregion
