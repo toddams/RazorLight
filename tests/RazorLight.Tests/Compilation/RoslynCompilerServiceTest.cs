@@ -206,39 +206,39 @@ namespace RazorLight.Tests.Compilation
 			Assert.Contains(define, syntaxTree.Options.PreprocessorSymbolNames);
 		}
 
-		//[Fact]
-		//public async Task Throw_With_CompilationErrors_On_Failed_BuildAsync()
-		//{
-		//	var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager(), Assembly.GetEntryAssembly());
+		[Fact]
+		public void Throw_With_CompilationErrors_On_Failed_BuildAsync()
+		{
+			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager(), Assembly.GetEntryAssembly());
 
-		//	var template = new TestGeneratedRazorTemplate("key", "public class Test { error }");
+			var template = new TestGeneratedRazorTemplate("key", "public class Test { error }");
 
-		//	TemplateCompilationException ex = null;
+			TemplateCompilationException ex = null;
 
-		//	try
-		//	{
-		//		await compiler.CompileAsync(template);
-		//	}
-		//	catch (TemplateCompilationException e)
-		//	{
-		//		ex = e;
-		//	}
+			try
+			{
+				compiler.CompileAndEmit(template);
+			}
+			catch (TemplateCompilationException e)
+			{
+				ex = e;
+			}
 
-			
-		//	Assert.NotNull(ex);
-		//	Assert.NotEmpty(ex.CompilationErrors);
-		//	Assert.Equal(1, ex.CompilationErrors.Count);
-		//}
 
-		//[Fact]
-		//public void Throw_OnNullRazorTemplate_OnCompile()
-		//{
-		//	var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager(), Assembly.GetEntryAssembly());
+			Assert.NotNull(ex);
+			Assert.NotEmpty(ex.CompilationErrors);
+			Assert.Equal(1, ex.CompilationErrors.Count);
+		}
 
-		//	Func<Task> action = () => compiler.CompileAsync(null);
+		[Fact]
+		public void Throw_OnNullRazorTemplate_OnCompile()
+		{
+			var compiler = new RoslynCompilationService(new DefaultMetadataReferenceManager(), Assembly.GetEntryAssembly());
 
-		//	Assert.ThrowsAsync<ArgumentNullException>(action);
-		//}
+			Func<Assembly> action = () => compiler.CompileAndEmit(null);
+
+			Assert.Throws<ArgumentNullException>(action);
+		}
 
 		private class TestGeneratedRazorTemplate : IGeneratedRazorTemplate
 		{
