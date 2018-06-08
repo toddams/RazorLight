@@ -13,7 +13,7 @@ namespace RazorLight
     {
 		public RazorLightEngine(
 			RazorLightOptions options,
-			RazorTemplateCompiler templateCompiler,
+			IRazorTemplateCompiler templateCompiler,
 			ITemplateFactoryProvider factoryProvider,
             ICachingProvider cachingProvider)
         {
@@ -24,9 +24,9 @@ namespace RazorLight
 			TemplateCache = cachingProvider;
         }
 
-		public ICachingProvider TemplateCache { get; }
 		public RazorLightOptions Options { get; }
-		public RazorTemplateCompiler TemplateCompiler { get; }
+		public ICachingProvider TemplateCache { get; }
+		public IRazorTemplateCompiler TemplateCompiler { get; }
 		public ITemplateFactoryProvider TemplateFactoryProvider { get; }
 
 		public bool IsCachingEnabled => TemplateCache != null;

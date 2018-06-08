@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -25,7 +26,7 @@ namespace RazorLight.Compilation
 		private readonly IMetadataReferenceManager metadataReferenceManager;
 		private readonly bool isDevelopment;
 		private readonly Assembly operatingAssembly;
-		private IReadOnlyList<MetadataReference> metadataReferences;
+		private readonly List<MetadataReference> metadataReferences = new List<MetadataReference>();
 
 		public RoslynCompilationService(IMetadataReferenceManager referenceManager, Assembly operatingAssembly)
 		{
@@ -33,18 +34,11 @@ namespace RazorLight.Compilation
 			this.operatingAssembly = operatingAssembly ?? throw new ArgumentNullException(nameof(operatingAssembly));
 
 			isDevelopment = IsAssemblyDebugBuild(OperatingAssembly);
-			metadataReferences = metadataReferenceManager.Resolve(OperatingAssembly);
-
 			var pdbFormat = SymbolsUtility.SupportsFullPdbGeneration() ?
 				DebugInformationFormat.Pdb :
 				DebugInformationFormat.PortablePdb;
 
-
-			var dependencyContextOptions = GetDependencyContextCompilationOptions();
-
 			EmitOptions = new EmitOptions(debugInformationFormat: pdbFormat);
-			CSharpCompilationOptions = GetCompilationOptions(dependencyContextOptions);
-			ParseOptions = GetParseOptions(dependencyContextOptions);
 		}
 
 		#region Options
@@ -57,10 +51,48 @@ namespace RazorLight.Compilation
 			}
 		}
 		public virtual EmitOptions EmitOptions { get; }
-		public virtual CSharpCompilationOptions CSharpCompilationOptions { get; }
-		public virtual CSharpParseOptions ParseOptions { get; }
+		public virtual CSharpCompilationOptions CSharpCompilationOptions
+		{
+			get
+			{
+				EnsureOptions();
+				return _compilationOptions;
+			}
+		}
+		public virtual CSharpParseOptions ParseOptions
+		{
+			get
+			{
+				EnsureOptions();
+				return _parseOptions;
+			}
+		}
 
 		#endregion
+
+		private CSharpParseOptions _parseOptions;
+		private CSharpCompilationOptions _compilationOptions;
+
+		private static readonly object locker = new object();
+
+		private bool _optionsInitialized;
+		private void EnsureOptions()
+		{
+			lock(locker)
+			{
+				if (!_optionsInitialized)
+				{
+					var dependencyContextOptions = GetDependencyContextCompilationOptions();
+					_parseOptions = GetParseOptions(dependencyContextOptions);
+					_compilationOptions = GetCompilationOptions(dependencyContextOptions);
+
+					metadataReferences.AddRange(metadataReferenceManager.Resolve(OperatingAssembly));
+
+					_optionsInitialized = true;
+				}
+			}
+		}
+
 
 		public Assembly CompileAndEmit(IGeneratedRazorTemplate razorTemplate)
 		{
