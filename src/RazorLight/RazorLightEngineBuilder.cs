@@ -45,7 +45,15 @@ namespace RazorLight
             return this;
         }
 
-        public RazorLightEngineBuilder UseFileSystemProject(string root)
+		public RazorLightEngineBuilder UseEmbeddedResourcesProject(Assembly assembly, string rootNamespace)
+		{
+			project = new EmbeddedRazorProject(assembly, rootNamespace);
+
+			return this;
+		}
+
+
+		public RazorLightEngineBuilder UseFileSystemProject(string root)
         {
             project = new FileSystemRazorProject(root);
 
@@ -185,10 +193,11 @@ namespace RazorLight
 
 			var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, options.Namespaces);
 			var templateCompiler = new RazorTemplateCompiler(sourceGenerator, compiler, project, options);
-
 			var templateFactoryProvider = new TemplateFactoryProvider();
 
-            return new RazorLightEngine(options, templateCompiler, templateFactoryProvider, cachingProvider);
+			var engineHandler = new EngineHandler(options, templateCompiler, templateFactoryProvider, cachingProvider);
+
+            return new RazorLightEngine(engineHandler);
         }
     }
 }

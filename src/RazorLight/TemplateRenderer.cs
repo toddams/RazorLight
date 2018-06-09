@@ -11,17 +11,17 @@ namespace RazorLight
     public class TemplateRenderer
     {
         private readonly HtmlEncoder _htmlEncoder;
-        private readonly IRazorLightEngine _engine;
+        private readonly IEngineHandler _engineHandler;
         private readonly IViewBufferScope _bufferScope;
 
         public TemplateRenderer(
             ITemplatePage razorPage,
-			IRazorLightEngine razorEngine,
+			IEngineHandler engineHandler,
             HtmlEncoder htmlEncoder,
 			IViewBufferScope bufferScope)
         {
             RazorPage = razorPage ?? throw new ArgumentNullException(nameof(razorPage));
-			_engine = razorEngine ?? throw new ArgumentNullException(nameof(razorEngine));
+			_engineHandler = engineHandler ?? throw new ArgumentNullException(nameof(engineHandler));
 			_bufferScope = bufferScope ?? throw new ArgumentNullException(nameof(bufferScope));
 			_htmlEncoder = htmlEncoder ?? throw new ArgumentNullException(nameof(htmlEncoder));
         }
@@ -79,7 +79,7 @@ namespace RazorLight
             try
             {
 				//Apply engine-global callbacks
-				ExecutePageCallbacks(page, _engine.Options.PreRenderCallbacks.ToList());
+				ExecutePageCallbacks(page, _engineHandler.Options.PreRenderCallbacks.ToList());
 
 				if (invokeViewStarts)
                 {
@@ -102,9 +102,9 @@ namespace RazorLight
             page.PageContext = context;
             page.IncludeFunc = async (key, model) =>
             {
-                ITemplatePage template = await _engine.CompileTemplateAsync(key);
+                ITemplatePage template = await _engineHandler.CompileTemplateAsync(key);
 
-                await _engine.RenderIncludedTemplateAsync(template, model, model?.GetType(), context.Writer, context.ViewBag, this);
+                await _engineHandler.RenderIncludedTemplateAsync(template, model, context.Writer, context.ViewBag, this);
             };
             
             //_pageActivator.Activate(page, context);
@@ -175,7 +175,8 @@ namespace RazorLight
                     throw new InvalidOperationException("Layout can not be rendered");
                 }
 
-                ITemplatePage layoutPage = await _engine.CompileTemplateAsync(previousPage.Layout).ConfigureAwait(false);
+                ITemplatePage layoutPage = await _engineHandler.CompileTemplateAsync(previousPage.Layout).ConfigureAwait(false);
+				layoutPage.SetModel(context.Model);
 
                 if (renderedLayouts.Count > 0 &&
                     renderedLayouts.Any(l => string.Equals(l.Key, layoutPage.Key, StringComparison.Ordinal)))
@@ -197,7 +198,6 @@ namespace RazorLight
             }
 
             // Now we've reached and rendered the outer-most layout page. Nothing left to execute.
-
             // Ensure all defined sections were rendered or RenderBody was invoked for page without defined sections.
             foreach (var layoutPage in renderedLayouts)
             {

@@ -25,5 +25,7 @@ namespace RazorLight
         public string ExecutingPageKey { get; set; }
 
         public ModelTypeInfo ModelTypeInfo { get; set; }
-    }
+
+		public object Model { get; set; }
+	}
 }
