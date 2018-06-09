@@ -25,14 +25,14 @@ namespace RazorLight.Tests.Razor
         }
 
         [Fact]
-        public void RootType_IsApplied_OnConstructor()
+        public void Assembly_IsApplied_OnConstructor_FromRootType()
         {
             var type = typeof(EmbeddedRazorProject);
 
             var project = new EmbeddedRazorProject(type);
 
-            Assert.NotNull(project.RootType);
-            Assert.Equal(project.RootType, type);
+            Assert.NotNull(project.Assembly);
+            Assert.Equal(project.Assembly, type.Assembly);
         }
 
         [Fact]

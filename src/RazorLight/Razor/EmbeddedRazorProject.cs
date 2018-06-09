@@ -17,29 +17,35 @@ namespace RazorLight.Razor
                 throw new ArgumentNullException(nameof(rootType));
             }
 
-            this.RootType = rootType;
+			this.Assembly = rootType.Assembly;
         }
 
-        /// <summary>
-		/// The type from the assembly that contains embedded resources
-		/// </summary>
-		public Type RootType { get; }
+		public EmbeddedRazorProject(Assembly assembly, string rootNamespace = "")
+		{
+			Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 
-        public virtual string Extension { get; set; } = ".cshtml";
+			RootNamespace = rootNamespace;
+		}
 
-        public override Task<RazorLightProjectItem> GetItemAsync(string templateKey)
-        {
-            if(string.IsNullOrEmpty(templateKey))
-            {
-                throw new ArgumentNullException(nameof(templateKey));
-            }
+		public Assembly Assembly { get; set; }
 
-            if (!templateKey.EndsWith(Extension))
-            {
-                templateKey = templateKey + Extension;
-            }
+		public string RootNamespace { get; set; }
 
-            var item = new EmbeddedRazorProjectItem(RootType, templateKey);
+		public virtual string Extension { get; set; } = ".cshtml";
+
+		public override Task<RazorLightProjectItem> GetItemAsync(string templateKey)
+		{
+			if (string.IsNullOrEmpty(templateKey))
+			{
+				throw new ArgumentNullException(nameof(templateKey));
+			}
+
+			if (!templateKey.EndsWith(Extension))
+			{
+				templateKey = templateKey + Extension;
+			}
+
+            var item = new EmbeddedRazorProjectItem(Assembly, RootNamespace, templateKey);
 
             return Task.FromResult((RazorLightProjectItem)item);
         }
