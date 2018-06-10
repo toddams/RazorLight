@@ -20,8 +20,7 @@ namespace Samples.EntityFrameworkProject
             // Create engine that uses entityFramework to fetch templates from db
             // You can create project that uses your IRepository<T>
             var project = new EntityFrameworkRazorLightProject(db);
-            IRazorLightEngine engine = new EngineFactory().Create(project);
-
+			var engine = new RazorLightEngineBuilder().UseProject(project).Build();
 
 
             // As our key in database is integer, but engine takes string as a key - pass integer ID as a string
