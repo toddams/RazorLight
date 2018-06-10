@@ -114,7 +114,16 @@ namespace RazorLight.Tests.Compilation
 			Assert.Same(descriptor, result);
 		}
 
+		[Fact]
+		public void Throws_TemplateNotFoundException_If_ProjectItem_NotExist()
+		{
+			var project = new EmbeddedRazorProject(typeof(Root).Assembly);
+			var compiler = TestRazorTemplateCompiler.Create(project:project);
 
+			Func<Task> task = new Func<Task>(() => compiler.CompileAsync("Not.Existing.Key"));
+
+			Assert.ThrowsAsync<TemplateNotFoundException>(task);
+		}
 
 		public class TestRazorTemplateCompiler : RazorTemplateCompiler
 		{

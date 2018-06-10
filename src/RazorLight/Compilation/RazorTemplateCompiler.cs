@@ -182,23 +182,7 @@ namespace RazorLight.Compilation
 
 			if (!projectItem.Exists)
 			{
-				// If the file doesn't exist, we can't do compilation right now - we still want to cache
-				// the fact that we tried. This will allow us to retrigger compilation if the view file
-				// is added.
-				return new ViewCompilerWorkItem()
-				{
-					// We don't have enough information to compile
-					SupportsCompilation = false,
-
-					Descriptor = new CompiledTemplateDescriptor()
-					{
-						TemplateKey = projectItem.Key,
-						ExpirationToken = projectItem.ExpirationToken,
-					},
-
-					// We can try again if the file gets created.
-					ExpirationToken = projectItem.ExpirationToken,
-				};
+				throw new TemplateNotFoundException($"Project can not find template with key {projectItem.Key}");
 			}
 
 			return new ViewCompilerWorkItem()
