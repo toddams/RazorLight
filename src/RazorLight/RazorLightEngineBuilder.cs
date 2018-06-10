@@ -45,7 +45,7 @@ namespace RazorLight
             return this;
         }
 
-		public RazorLightEngineBuilder UseEmbeddedResourcesProject(Assembly assembly, string rootNamespace)
+		public RazorLightEngineBuilder UseEmbeddedResourcesProject(Assembly assembly, string rootNamespace = null)
 		{
 			project = new EmbeddedRazorProject(assembly, rootNamespace);
 
