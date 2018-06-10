@@ -12,22 +12,25 @@ namespace RazorLight.Compilation
 {
     public class DefaultMetadataReferenceManager : IMetadataReferenceManager
     {
-        private readonly HashSet<MetadataReference> additionalMetadataReferences;
-        public HashSet<MetadataReference> AdditionalMetadataReferences => additionalMetadataReferences;
+        public HashSet<MetadataReference> AdditionalMetadataReferences { get; }
+        public HashSet<string> ExcludedAssemblies { get; }
 
         public DefaultMetadataReferenceManager()
         {
-            additionalMetadataReferences = new HashSet<MetadataReference>();
+            AdditionalMetadataReferences = new HashSet<MetadataReference>();
+            ExcludedAssemblies = new HashSet<string>();
         }
 
         public DefaultMetadataReferenceManager(HashSet<MetadataReference> metadataReferences)
         {
-            if(metadataReferences == null)
-            {
-                throw new ArgumentNullException(nameof(metadataReferences));
-            }
+            AdditionalMetadataReferences = metadataReferences ?? throw new ArgumentNullException(nameof(metadataReferences));
+            ExcludedAssemblies = new HashSet<string>();
+        }
 
-            additionalMetadataReferences = metadataReferences;
+        public DefaultMetadataReferenceManager(HashSet<MetadataReference> metadataReferences, HashSet<string> excludedAssemblies)
+        {
+            AdditionalMetadataReferences = metadataReferences ?? throw new ArgumentNullException(nameof(metadataReferences));
+            ExcludedAssemblies = excludedAssemblies ?? throw new ArgumentNullException(nameof(excludedAssemblies));
         }
 
         public IReadOnlyList<MetadataReference> Resolve(Assembly assembly)
@@ -44,7 +47,7 @@ namespace RazorLight.Compilation
             if (dependencyContext == null)
             {
                 var context = new HashSet<string>();
-                var x = GetReferencedAssemblies(assembly, context).Union(new Assembly[] { assembly }).ToArray();
+                var x = GetReferencedAssemblies(assembly, ExcludedAssemblies, context).Union(new Assembly[] { assembly }).ToArray();
                 references = x.Select(p => AssemblyDirectory(p));
             }
             else
@@ -82,7 +85,7 @@ namespace RazorLight.Compilation
             return metadataRerefences;
         }
 
-        private static IEnumerable<Assembly> GetReferencedAssemblies(Assembly a, HashSet<string> visitedAssemblies = null)
+        private static IEnumerable<Assembly> GetReferencedAssemblies(Assembly a, IEnumerable<string> excludedAssemblies, HashSet<string> visitedAssemblies = null)
         {
             visitedAssemblies = visitedAssemblies ?? new HashSet<string>();
             if (!visitedAssemblies.Add(a.GetName().EscapedCodeBase))
@@ -93,9 +96,11 @@ namespace RazorLight.Compilation
             foreach (var assemblyRef in a.GetReferencedAssemblies())
             {
                 if (visitedAssemblies.Contains(assemblyRef.EscapedCodeBase)) { continue; }
+
+                if (excludedAssemblies.Any(s => s.Contains(assemblyRef.Name))) { continue; }
                 var loadedAssembly = Assembly.Load(assemblyRef);
                 yield return loadedAssembly;
-                foreach (var referenced in GetReferencedAssemblies(loadedAssembly, visitedAssemblies))
+                foreach (var referenced in GetReferencedAssemblies(loadedAssembly, excludedAssemblies, visitedAssemblies))
                 {
                     yield return referenced;
                 }
