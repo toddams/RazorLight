@@ -125,6 +125,23 @@ namespace RazorLight.Tests.Compilation
 			Assert.ThrowsAsync<TemplateNotFoundException>(task);
 		}
 
+		[Fact]
+		public async Task Ensure_TemplateIsCompiled_ForExisting_ProjectItem()
+		{
+			var project = new EmbeddedRazorProject(typeof(Root).Assembly, "Assets.Embedded");
+			var compiler = TestRazorTemplateCompiler.Create(project:project);
+
+			string templateKey = "Empty.cshtml";
+			var result = await compiler.CompileAsync(templateKey);
+
+			Assert.NotNull(result);
+			Assert.NotNull(result.TemplateAttribute.TemplateType);
+			Assert.Equal(result.TemplateKey, templateKey);
+			Assert.False(result.IsPrecompiled);
+		}
+
+
+
 		public class TestRazorTemplateCompiler : RazorTemplateCompiler
 		{
 			public TestRazorTemplateCompiler(
