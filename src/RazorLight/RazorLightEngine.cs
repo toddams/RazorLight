@@ -35,13 +35,13 @@ namespace RazorLight
 			throw new NotImplementedException();
 		}
 
-		[Obsolete("Please, use generic version of RenderTemplateAsync")]
+		[Obsolete("Please, use generic version of RenderTemplateAsync", true)]
 		public Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, ExpandoObject viewBag = null)
 		{
 			throw new NotImplementedException();
 		}
 
-		[Obsolete("Please, use generic version of RenderTemplateAsync")]
+		[Obsolete("Please, use generic version of RenderTemplateAsync", true)]
 		public Task RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, TextWriter textWriter, ExpandoObject viewBag = null)
 		{
 			throw new NotImplementedException();
