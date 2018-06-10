@@ -8,11 +8,12 @@ namespace RazorLight.Tests.Text
     public class RawStringTest
     {
         [Fact]
-        public void String_Can_Not_Be_Null()
+        public void String_Can_Be_Null()
         {
-            string value = null;
+			var raw = new RawString(null);
 
-            Assert.Throws<ArgumentNullException>(() => { new RawString(value); });
+			Assert.NotNull(raw);
+			Assert.Equal(raw.Value, string.Empty);
         }
 
         [Fact]

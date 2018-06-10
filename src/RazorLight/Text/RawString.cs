@@ -26,7 +26,7 @@ namespace RazorLight.Text
         {
             if (string.IsNullOrWhiteSpace(value))
             {
-                _value = string.Empty;
+                value = string.Empty;
             }
 
             _value = value;
