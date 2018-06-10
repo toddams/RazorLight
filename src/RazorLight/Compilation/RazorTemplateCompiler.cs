@@ -70,18 +70,18 @@ namespace RazorLight.Compilation
 				return cachedResult;
 			}
 
-			string normalizedPath = GetNormalizedPath(templateKey);
+			string normalizedPath = GetNormalizedKey(templateKey);
 			if (_cache.TryGetValue(normalizedPath, out cachedResult))
 			{
 				return cachedResult;
 			}
 
 			// Entry does not exist. Attempt to create one.
-			cachedResult = OnCacheMissAsync(normalizedPath);
+			cachedResult = OnCacheMissAsync(templateKey);
 			return cachedResult;
 		}
 
-		private Task<CompiledTemplateDescriptor> OnCacheMissAsync(string normalizedKey)
+		private Task<CompiledTemplateDescriptor> OnCacheMissAsync(string templateKey)
 		{
 			ViewCompilerWorkItem item;
 			TaskCompletionSource<CompiledTemplateDescriptor> taskSource;
@@ -92,6 +92,8 @@ namespace RazorLight.Compilation
 			// actual work for compiling files happens outside the critical section.
 			lock (_cacheLock)
 			{
+				string normalizedKey = GetNormalizedKey(templateKey);
+
 				// Double-checked locking to handle a possible race.
 				if (_cache.TryGetValue(normalizedKey, out Task<CompiledTemplateDescriptor> result))
 				{
@@ -105,7 +107,7 @@ namespace RazorLight.Compilation
 				}
 				else
 				{
-					item = CreateRuntimeCompilationWorkItem(normalizedKey).GetAwaiter().GetResult();
+					item = CreateRuntimeCompilationWorkItem(templateKey).GetAwaiter().GetResult();
 				}
 
 				// At this point, we've decided what to do - but we should create the cache entry and
@@ -128,7 +130,7 @@ namespace RazorLight.Compilation
 					taskSource.SetResult(item.Descriptor);
 				}
 
-				_cache.Set(normalizedKey, taskSource.Task, cacheEntryOptions);
+				_cache.Set(item.NormalizedKey, taskSource.Task, cacheEntryOptions);
 			}
 
 			// Now the lock has been released so we can do more expensive processing.
@@ -161,16 +163,17 @@ namespace RazorLight.Compilation
 			return taskSource.Task;
 		}
 
-		private async Task<ViewCompilerWorkItem> CreateRuntimeCompilationWorkItem(string normalizedKey)
+		private async Task<ViewCompilerWorkItem> CreateRuntimeCompilationWorkItem(string templateKey)
 		{
 			RazorLightProjectItem projectItem = null;
 
-			if (_razorLightOptions.DynamicTemplates.TryGetValue(normalizedKey, out string templateContent))
+			if (_razorLightOptions.DynamicTemplates.TryGetValue(templateKey, out string templateContent))
 			{
-				projectItem = new TextSourceRazorProjectItem(normalizedKey, templateContent);
+				projectItem = new TextSourceRazorProjectItem(templateKey, templateContent);
 			}
 			else
 			{
+				string normalizedKey = GetNormalizedKey(templateKey);
 				projectItem = await _razorProject.GetItemAsync(normalizedKey);
 			}
 
@@ -186,7 +189,7 @@ namespace RazorLight.Compilation
 
 					Descriptor = new CompiledTemplateDescriptor()
 					{
-						TemplateKey = normalizedKey,
+						TemplateKey = projectItem.Key,
 						ExpirationToken = projectItem.ExpirationToken,
 					},
 
@@ -200,7 +203,7 @@ namespace RazorLight.Compilation
 				SupportsCompilation = true,
 
 				ProjectItem = projectItem,
-				NormalizedKey = normalizedKey,
+				NormalizedKey = projectItem.Key,
 				ExpirationToken = projectItem.ExpirationToken,
 			};
 		}
@@ -225,18 +228,25 @@ namespace RazorLight.Compilation
 
 		#region helpers
 
-		private string GetNormalizedPath(string relativePath)
+		private string GetNormalizedKey(string templateKey)
 		{
-			Debug.Assert(relativePath != null);
-			if (relativePath.Length == 0)
+			Debug.Assert(templateKey != null);
+
+			//Support path normalization only on Filesystem projects
+			if(!(_razorProject is FileSystemRazorProject))
 			{
-				return relativePath;
+				return templateKey;
 			}
 
-			if (!_normalizedPathCache.TryGetValue(relativePath, out var normalizedPath))
+			if (templateKey.Length == 0)
 			{
-				normalizedPath = NormalizeKey(relativePath);
-				_normalizedPathCache[relativePath] = normalizedPath;
+				return templateKey;
+			}
+
+			if (!_normalizedPathCache.TryGetValue(templateKey, out var normalizedPath))
+			{
+				normalizedPath = NormalizeKey(templateKey);
+				_normalizedPathCache[templateKey] = normalizedPath;
 			}
 
 			return normalizedPath;
