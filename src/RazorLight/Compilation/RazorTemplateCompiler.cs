@@ -24,7 +24,7 @@ namespace RazorLight.Compilation
 		private readonly RazorLightOptions _razorLightOptions;
 		private readonly RazorLightProject _razorProject;
 		private readonly IMemoryCache _cache;
-		private readonly ConcurrentDictionary<string, string> _normalizedPathCache;
+		private readonly ConcurrentDictionary<string, string> _normalizedKeysCache;
 		private readonly Dictionary<string, CompiledTemplateDescriptor> _precompiledViews;
 
 		public RazorTemplateCompiler(
@@ -33,17 +33,17 @@ namespace RazorLight.Compilation
 			RazorLightProject razorLightProject,
 			RazorLightOptions razorLightOptions)
 		{
-			_razorSourceGenerator = sourceGenerator;
-			_compiler = roslynCompilationService;
-			_razorProject = razorLightProject;
-			_razorLightOptions = razorLightOptions;
+			_razorSourceGenerator = sourceGenerator ?? throw new ArgumentNullException(nameof(sourceGenerator));
+			_compiler = roslynCompilationService ?? throw new ArgumentNullException(nameof(roslynCompilationService));
+			_razorProject = razorLightProject ?? throw new ArgumentNullException(nameof(razorLightProject));
+			_razorLightOptions = razorLightOptions ?? throw new ArgumentNullException(nameof(razorLightOptions));
 
 			// This is our L0 cache, and is a durable store. Views migrate into the cache as they are requested
 			// from either the set of known precompiled views, or by being compiled.
 			var cacheOptions = Options.Create(new MemoryCacheOptions());
 			_cache = new MemoryCache(cacheOptions);
 
-			_normalizedPathCache = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
+			_normalizedKeysCache = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
 
 			// We need to validate that the all of the precompiled views are unique by path (case-insenstive).
 			// We do this because there's no good way to canonicalize paths on windows, and it will create
@@ -55,6 +55,9 @@ namespace RazorLight.Compilation
 		}
 
 		public ICompilationService CompilationService => _compiler;
+
+		internal IMemoryCache Cache => _cache;
+		internal ConcurrentDictionary<string, string> NormalizedKeysCache => _normalizedKeysCache;
 
 		public Task<CompiledTemplateDescriptor> CompileAsync(string templateKey)
 		{
@@ -228,7 +231,7 @@ namespace RazorLight.Compilation
 
 		#region helpers
 
-		private string GetNormalizedKey(string templateKey)
+		internal string GetNormalizedKey(string templateKey)
 		{
 			Debug.Assert(templateKey != null);
 
@@ -243,16 +246,16 @@ namespace RazorLight.Compilation
 				return templateKey;
 			}
 
-			if (!_normalizedPathCache.TryGetValue(templateKey, out var normalizedPath))
+			if (!_normalizedKeysCache.TryGetValue(templateKey, out var normalizedPath))
 			{
 				normalizedPath = NormalizeKey(templateKey);
-				_normalizedPathCache[templateKey] = normalizedPath;
+				_normalizedKeysCache[templateKey] = normalizedPath;
 			}
 
 			return normalizedPath;
 		}
 
-		private string NormalizeKey(string templateKey)
+		protected string NormalizeKey(string templateKey)
 		{
 			if(!(_razorProject is FileSystemRazorProject))
 			{
