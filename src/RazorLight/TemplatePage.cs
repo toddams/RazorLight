@@ -256,7 +256,7 @@ namespace RazorLight
                 if (sectionsNotIgnored.Length > 0)
                 {
                     var sectionNames = string.Join(", ", sectionsNotIgnored);
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException($"One or more section(s) have been ignored. Ignored section(s): '{sectionNames}'");
                 }
             }
             else if (BodyContent != null && !_renderedBody && !_ignoreBody)
