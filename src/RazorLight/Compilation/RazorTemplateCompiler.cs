@@ -116,7 +116,7 @@ namespace RazorLight.Compilation
 				// At this point, we've decided what to do - but we should create the cache entry and
 				// release the lock first.
 				cacheEntryOptions = new MemoryCacheEntryOptions();
-				if(item.ExpirationToken != null)
+				if(item?.ExpirationToken != null)
 				{
 					cacheEntryOptions.ExpirationTokens.Add(item.ExpirationToken);
 				}
