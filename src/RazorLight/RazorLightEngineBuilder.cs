@@ -30,12 +30,7 @@ namespace RazorLight
 
         public virtual RazorLightEngineBuilder UseProject(RazorLightProject project)
         {
-            if (project == null)
-            {
-                throw new ArgumentNullException(nameof(project));
-            }
-
-            this.project = project;
+            this.project = project ?? throw new ArgumentNullException(nameof(project));
 
             return this;
         }
@@ -177,6 +172,9 @@ namespace RazorLight
 
         public virtual RazorLightEngine Build()
         {
+            if(project == null)
+                throw new RazorLightProjectIsNotSpecified();
+            
             var options = new RazorLightOptions();
 
             if (namespaces != null)
@@ -209,12 +207,11 @@ namespace RazorLight
 				options.CachingProvider = cachingProvider;
 			}
 
-
             var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences, options.ExcludedAssemblies);
             var assembly = operatingAssembly ?? Assembly.GetEntryAssembly();
             var compiler = new RoslynCompilationService(metadataReferenceManager, assembly);
-
-			var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, options.Namespaces);
+            
+            var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, options.Namespaces);
 			var templateCompiler = new RazorTemplateCompiler(sourceGenerator, compiler, project, options);
 			var templateFactoryProvider = new TemplateFactoryProvider();
 
