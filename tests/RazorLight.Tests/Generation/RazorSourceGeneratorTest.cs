@@ -120,13 +120,14 @@ namespace RazorLight.Tests
 
 
         [Fact]
-        public void GenerateCode_ByKey_Throws_OnEmpty_Project()
+        public async void GenerateCode_ByKey_Throws_OnEmpty_Project()
         {
             var generator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project: null);
 
             Func<Task> action = () => generator.GenerateCodeAsync("key");
 
-            Assert.ThrowsAsync<InvalidOperationException>(action);
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(action);
+            Assert.Equal("Can not resolve a content for the template \"key\" as there is no project set. You can only render a template by passing it's content directly via string using corresponding function overload", exception.Message);
         }
     }
 }
