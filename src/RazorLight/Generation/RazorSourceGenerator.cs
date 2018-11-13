@@ -47,8 +47,8 @@ namespace RazorLight.Generation
 
 			if(Project == null)
 			{
-				string _message = "Can not resolve a content for the template \"{0}\" as there is no project set." +
-					"You can only render a template by passing it's content directly via string using coresponding function overload";
+				string _message = $"Can not resolve a content for the template \"{key}\" as there is no project set. " +
+					"You can only render a template by passing it's content directly via string using corresponding function overload";
 
 				throw new InvalidOperationException(_message);
 			}
