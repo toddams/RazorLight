@@ -120,7 +120,7 @@ namespace RazorLight.Tests
 
 
         [Fact]
-        public async void GenerateCode_ByKey_Throws_OnEmpty_Project()
+        public async Task GenerateCode_ByKey_Throws_OnEmpty_Project()
         {
             var generator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project: null);
 
