@@ -322,7 +322,7 @@ namespace RazorLight.Internal
             for (var i = 0; i < Count; i++)
             {
                 var page = this[i];
-                Array.Clear(page.Buffer, 0, page.Count);
+                //Array.Clear(page.Buffer, 0, page.Count); //cant do it. Buffer is passed as reference, so it is messing up things
                 _bufferScope.ReturnSegment(page.Buffer);
             }
 
@@ -355,7 +355,7 @@ namespace RazorLight.Internal
                     destinationPage.Count += page.Count;
 
                     // Now we can return the source page, and it can be reused in the scope of this request.
-                    Array.Clear(page.Buffer, 0, page.Count);
+                    //Array.Clear(page.Buffer, 0, page.Count); //cant do it. Buffer is passed as reference, so it is messing up things
                     _bufferScope.ReturnSegment(page.Buffer);
 
                 }

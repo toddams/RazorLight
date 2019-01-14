@@ -38,3 +38,4 @@ node_modules
 *.orig
 nuget
 RazorLight.Sandbox/
+/tests/RazorLight.Tests/PageRenderingTests.cs

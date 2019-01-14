@@ -116,7 +116,7 @@ namespace RazorLight
                     //TODO: replace with services maybe
                     //var services = ViewContext.HttpContext.RequestServices;
                     //_bufferScope = services.GetRequiredService<IViewBufferScope>();
-                    _bufferScope = new MemoryPoolViewBufferScope(ArrayPool<ViewBufferValue>.Shared, ArrayPool<char>.Shared);
+                    _bufferScope = new NoPoolingViewBufferScope(ArrayPool<ViewBufferValue>.Shared, ArrayPool<char>.Shared);
                 }
 
                 return _bufferScope;

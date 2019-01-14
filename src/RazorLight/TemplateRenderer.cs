@@ -11,7 +11,7 @@ namespace RazorLight
     public class TemplateRenderer : IDisposable
     {
         private readonly HtmlEncoder _htmlEncoder;
-        private MemoryPoolViewBufferScope _bufferScope;
+        private NoPoolingViewBufferScope _bufferScope;
         private IRazorLightEngine _engine;
 
         public TemplateRenderer(
@@ -54,7 +54,7 @@ namespace RazorLight
         public virtual async Task RenderAsync()
         {
             var context = RazorPage.PageContext;
-            _bufferScope = new MemoryPoolViewBufferScope();
+            _bufferScope = new NoPoolingViewBufferScope();
 
             var bodyWriter = await RenderPageAsync(RazorPage, context, invokeViewStarts: false).ConfigureAwait(false);
             await RenderLayoutAsync(context, bodyWriter).ConfigureAwait(false);
