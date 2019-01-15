@@ -4,13 +4,16 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>RazorLight</PackageId>
+    <PackageId>RazorLight_wik8wz</PackageId>
     <Title>RazorLight</Title>
     <Version>2.0.0-beta1</Version>
     <Description>Use Razor to build your templates from strings / files / EmbeddedResources outside of ASP.NET MVC for .NET Core</Description>
-    <Authors>toddams</Authors>
+    <Authors>toddams, wik8wz</Authors>
     <PackageTags>RazorLight, razor, render, dotnet-core, dotnet, core, template-engine, email, emails</PackageTags>
-    <RepositoryUrl>https://github.com/toddams/RazorLight</RepositoryUrl>
+    <RepositoryUrl>https://github.com/wik8wz/RazorLight</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReleaseNotes>Fork of https://github.com/toddams/RazorLight fixed large html rendering issues</PackageReleaseNotes>
+	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
   
   <ItemGroup>
@@ -27,5 +30,6 @@
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Primitives" Version="2.0.0" />
     <PackageReference Include="System.Buffers" Version="4.4.0" />
+	<None Include="LICENSE.txt" Pack="true" PackagePath=""/>
   </ItemGroup>
 </Project>
