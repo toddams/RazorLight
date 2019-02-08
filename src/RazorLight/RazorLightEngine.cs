@@ -97,7 +97,7 @@ namespace RazorLight
         /// <returns>Rendered string</returns>
         public Task<string> RenderTemplateAsync<T>(ITemplatePage templatePage, T model, ExpandoObject viewBag = null)
         {
-            return RenderTemplateAsync(templatePage, model, viewBag);
+            return _handler.RenderTemplateAsync(templatePage, model, viewBag);
         }
 
         /// <summary>
