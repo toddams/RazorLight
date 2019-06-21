@@ -23,7 +23,7 @@ Install the nuget package using following command:
 Install-Package RazorLight -Version 2.0.0-beta1
 ````
 
-The simplest scenario is to create a template from string. Each template must have a ````templateKey```` that is assosiated with it, so you can render the same template next time without recompilation.
+The simplest scenario is to create a template from string. Each template must have a ````templateKey```` that is associated with it, so you can render the same template next time without recompilation.
 
 ````CSharp
 var engine = new RazorLightEngineBuilder()
