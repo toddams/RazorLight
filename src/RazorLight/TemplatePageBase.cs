@@ -173,6 +173,11 @@ namespace RazorLight
             return new RawString(rawString);
         }
 
+		public static IHtmlContent HelperFunction(Func<object, IHtmlContent> body)
+		{	
+			return body(null);
+		}
+
         #region Tag helpers
 
         /// <summary>
