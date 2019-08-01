@@ -1,19 +1,36 @@
-﻿using System.Threading.Tasks;
-using RazorLight.Razor;
-using RazorLight.Tests.Razor;
-using Xunit;
-using RazorLight.Compilation;
-using Moq;
-using RazorLight.Caching;
-using System;
-
-namespace RazorLight.Tests
+﻿namespace RazorLight.Tests
 {
-    public class RazorLightEngineTest
-    {
-        //TODO: add string rendering test
+	using System.Threading.Tasks;
+	using Xunit;
 
-  //      [Fact]
+	public class RazorLightEngineTest
+	{
+
+		[Fact]
+		public async Task Ensure_Option_DisablEncoding_Renders_Models_Raw()
+		{
+			//Assing
+			var engine = new RazorLightEngineBuilder()
+				.UseMemoryCachingProvider()
+				.UseFileSystemProject(DirectoryUtils.RootDirectory)
+				.DisableEncoding()
+				.Build();
+
+			string key = "key";
+			string content = "@Model.Entity";
+
+			var model = new { Entity = "<pre></pre>" };
+
+			// act
+			var result = await engine.CompileRenderStringAsync(key, content, model);
+
+			// assert
+			Assert.Contains("<pre></pre>", result);
+		}
+
+		//TODO: add string rendering test
+
+		//      [Fact]
 		//public async Task Ensure_Content_Added_To_DynamicTemplates()
 		//{
 		//	var options = new RazorLightOptions();

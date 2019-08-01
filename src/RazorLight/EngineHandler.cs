@@ -59,7 +59,9 @@ namespace RazorLight
 				templateDescriptor.ExpirationToken);
 			}
 
-			return templateFactory();
+			ITemplatePage templatePage = templateFactory();
+			templatePage.DisableEncoding = Options.DisableEncoding;
+			return templatePage;
 		}
 
 		/// <summary>
