@@ -32,6 +32,8 @@ namespace RazorLight
 					{
 						TemplateTypeName = "global::RazorLight.Razor.RazorLightHelperResult",
 					});
+
+					OverrideRuntimeNodeWriterTemplateTypeNamePhase.Register(builder);
 				});
 
 				return razorProjectEngine.Engine;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
@@ -145,6 +145,21 @@ namespace RazorLight.Tests
 			result = result.Replace(Environment.NewLine, "");
 
 			Assert.Equal(expected, result);
+		}
+
+		[Fact]
+		public async Task Templates_Supports_Conditional_Attribute_Rendering()
+		{
+			// https://github.com/aspnet/AspNetCore/issues/5076
+			var engine = new RazorLightEngineBuilder()
+				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "Assets.Embedded")
+				.Build();
+
+			string expected = "<strong attr=\"class=\"Conditional Attribute\"\"></strong>";
+
+			var result = await engine.CompileRenderAsync("ConditionalAttributeRendering",true);
+
+			Assert.Contains(expected, result);
 		}
 
 		public class TestModel

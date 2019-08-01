@@ -1,0 +1,72 @@
+﻿using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
+using System;
+using System.Linq;
+
+namespace RazorLight.Instrumentation
+{
+	internal class OverrideRuntimeNodeWriterTemplateTypeNamePhase : RazorEnginePhaseBase
+	{
+		public static void Register(RazorProjectEngineBuilder builder)
+		{
+			var defaultRazorCSharpLoweringPhase = builder.Phases.SingleOrDefault(x => x.GetType() == Type.GetType("Microsoft.AspNetCore.Razor.Language.DefaultRazorCSharpLoweringPhase, Microsoft.AspNetCore.Razor.Language"));
+
+			if (defaultRazorCSharpLoweringPhase == null)
+			{
+				throw new RazorLightException("SetTemplateTypePhase cannot be registered as DefaultRazorCSharpLoweringPhase could not be located");
+			}
+
+			// This phase needs to run just before DefaultRazorCSharpLoweringPhase
+			var phaseIndex = builder.Phases.IndexOf(defaultRazorCSharpLoweringPhase);
+			builder.Phases.Insert(phaseIndex, new OverrideRuntimeNodeWriterTemplateTypeNamePhase("global::RazorLight.Razor.RazorLightHelperResult"));
+		}
+
+		private readonly string _templateTypeName;
+
+		public OverrideRuntimeNodeWriterTemplateTypeNamePhase(string templateTypeName)
+		{
+			_templateTypeName = templateTypeName;
+		}
+
+		protected override void ExecuteCore(RazorCodeDocument codeDocument)
+		{
+			var documentNode = codeDocument.GetDocumentIntermediateNode();
+			ThrowForMissingDocumentDependency(documentNode);
+
+			documentNode.Target = new RuntimeNodeWriterTemplateTypeNameCodeTarget(documentNode.Target, _templateTypeName);
+		}
+
+		internal class RuntimeNodeWriterTemplateTypeNameCodeTarget : CodeTarget
+		{
+			private readonly CodeTarget _target;
+			private readonly string _templateTypeName;
+
+			public RuntimeNodeWriterTemplateTypeNameCodeTarget(CodeTarget target, string templateTypeName)
+			{
+				_target = target;
+				_templateTypeName = templateTypeName;
+			}
+
+			public override IntermediateNodeWriter CreateNodeWriter()
+			{
+				var writer = _target.CreateNodeWriter();
+				if (writer is RuntimeNodeWriter runtimeNodeWriter)
+				{
+					runtimeNodeWriter.TemplateTypeName = _templateTypeName;
+				}
+
+				return writer;
+			}
+
+			public override TExtension GetExtension<TExtension>()
+			{
+				return _target.GetExtension<TExtension>();
+			}
+
+			public override bool HasExtension<TExtension>()
+			{
+				return _target.HasExtension<TExtension>();
+			}
+		}
+	}
+}
