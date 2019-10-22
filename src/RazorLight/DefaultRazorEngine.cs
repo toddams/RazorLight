@@ -17,15 +17,15 @@ namespace RazorLight
 					Instrumentation.InjectDirective.Register(builder);
 					Instrumentation.ModelDirective.Register(builder);
 
-					NamespaceDirective.Register(builder);
-					FunctionsDirective.Register(builder);
-					InheritsDirective.Register(builder);
-					SectionDirective.Register(builder);
+					//NamespaceDirective.Register(builder);
+					//FunctionsDirective.Register(builder);
+					//InheritsDirective.Register(builder);
+					//SectionDirective.Register(builder);
 
 					builder.Features.Add(new ModelExpressionPass());
 					builder.Features.Add(new RazorLightTemplateDocumentClassifierPass());
 					builder.Features.Add(new RazorLightAssemblyAttributeInjectionPass());
-					builder.Features.Add(new InstrumentationPass());
+					//builder.Features.Add(new InstrumentationPass());
 					//builder.Features.Add(new ViewComponentTagHelperPass());
 
 					builder.AddTargetExtension(new TemplateTargetExtension()
@@ -48,6 +48,11 @@ namespace RazorLight
 			}
 
 			public override RazorProjectItem GetItem(string path)
+			{
+				throw new System.NotImplementedException();
+			}
+
+			public override RazorProjectItem GetItem(string path, string fileKind)
 			{
 				throw new System.NotImplementedException();
 			}
