@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -15,17 +15,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="azaza.cshtml" />
-    <None Remove="go.cshtml" />
-    <None Remove="Views\Subfolder\A.cshtml" />
-    <None Remove="Views\Subfolder\B.cshtml" />
-    <None Remove="Views\Subfolder\C.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Views\Subfolder\A.cshtml" />
-    <EmbeddedResource Include="Views\Subfolder\B.cshtml" />
-    <EmbeddedResource Include="Views\Subfolder\C.cshtml" />
+    <Compile Remove="Views\Subfolder\**" />
+    <EmbeddedResource Remove="Views\Subfolder\**" />
+    <None Remove="*.cshtml" />
+    <None Remove="Views\Subfolder\**" />
   </ItemGroup>
 
   <ItemGroup>
