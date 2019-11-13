@@ -173,3 +173,7 @@ Set PreserveCompilationContext to true in your *.csproj file's PropertyGroup tag
     <PreserveCompilationContext>true</PreserveCompilationContext>
 </PropertyGroup>
 ````
+
+## RazorLight does not work property on AWS Lambda or Azure Functions
+
+Serverless solutions are not supported yet
