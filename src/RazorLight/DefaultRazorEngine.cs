@@ -8,58 +8,61 @@ namespace RazorLight
 {
     internal sealed class DefaultRazorEngine
     {
-		public static RazorEngine Instance
-		{
-			get
-			{
-				var razorProjectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, new NullRazorProjectFileSystem() , builder =>
-				{
-					Instrumentation.InjectDirective.Register(builder);
-					Instrumentation.ModelDirective.Register(builder);
+        public static RazorEngine Instance
+        {
+            get
+            {
+                var configuration = RazorConfiguration.Default;
+                var razorProjectEngine = RazorProjectEngine.Create(configuration, new NullRazorProjectFileSystem(), builder =>
+               {
+                   Instrumentation.InjectDirective.Register(builder);
+                   Instrumentation.ModelDirective.Register(builder);
 
-#if NETSTANDARD2_0
+				   //In RazorLanguageVersion > 3.0 (at least netcore 3.0) the directives are registed out of the box.
+                   if (!RazorLanguageVersion.TryParse("3.0", out var razorLanguageVersion) 
+					   || configuration.LanguageVersion.CompareTo(razorLanguageVersion) < 0)
+                   {
+                       NamespaceDirective.Register(builder);
+                       FunctionsDirective.Register(builder);
+                       InheritsDirective.Register(builder);
+                       SectionDirective.Register(builder);
+                   }
 
-					NamespaceDirective.Register(builder);
-					FunctionsDirective.Register(builder);
-					InheritsDirective.Register(builder);
-					SectionDirective.Register(builder);
-#endif 
-
-					builder.Features.Add(new ModelExpressionPass());
-					builder.Features.Add(new RazorLightTemplateDocumentClassifierPass());
-					builder.Features.Add(new RazorLightAssemblyAttributeInjectionPass());
+                   builder.Features.Add(new ModelExpressionPass());
+                   builder.Features.Add(new RazorLightTemplateDocumentClassifierPass());
+                   builder.Features.Add(new RazorLightAssemblyAttributeInjectionPass());
 #if NETSTANDARD2_0
 					builder.Features.Add(new InstrumentationPass());
 #endif
-					//builder.Features.Add(new ViewComponentTagHelperPass());
+                    //builder.Features.Add(new ViewComponentTagHelperPass());
 
-					builder.AddTargetExtension(new TemplateTargetExtension()
-					{
-						TemplateTypeName = "global::RazorLight.Razor.RazorLightHelperResult",
-					});
+                    builder.AddTargetExtension(new TemplateTargetExtension()
+                   {
+                       TemplateTypeName = "global::RazorLight.Razor.RazorLightHelperResult",
+                   });
 
-					OverrideRuntimeNodeWriterTemplateTypeNamePhase.Register(builder);
-				});
+                   OverrideRuntimeNodeWriterTemplateTypeNamePhase.Register(builder);
+               });
 
-				return razorProjectEngine.Engine;
-			}
-		}
+                return razorProjectEngine.Engine;
+            }
+        }
 
-		private class NullRazorProjectFileSystem : RazorProjectFileSystem
-		{
-			public override IEnumerable<RazorProjectItem> EnumerateItems(string basePath)
-			{
-				throw new System.NotImplementedException();
-			}
+        private class NullRazorProjectFileSystem : RazorProjectFileSystem
+        {
+            public override IEnumerable<RazorProjectItem> EnumerateItems(string basePath)
+            {
+                throw new System.NotImplementedException();
+            }
 
 
 #if NETCOREAPP3_0
 			[System.Obsolete]
 #endif
-			public override RazorProjectItem GetItem(string path)
-			{
-				throw new System.NotImplementedException();
-			}
+            public override RazorProjectItem GetItem(string path)
+            {
+                throw new System.NotImplementedException();
+            }
 
 #if NETCOREAPP3_0
 			public override RazorProjectItem GetItem(string path, string fileKind)
@@ -67,6 +70,6 @@ namespace RazorLight
 				throw new System.NotImplementedException();
 			}
 #endif
-		}
-	}
+        }
+    }
 }
