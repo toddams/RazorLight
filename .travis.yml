@@ -1,6 +1,6 @@
 language: csharp  
 mono: none
-dotnet: 3.0.0
+dotnet: 3.0.100
 dist: trusty
 env:  
   - IS_TESTING_ENVIRONMENT=true
