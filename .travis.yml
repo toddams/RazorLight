@@ -1,7 +1,7 @@
 language: csharp  
 mono: none
 dotnet: 3.0.0
-dist: trusty
+dist: bionic
 
 before_install:
   - wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
