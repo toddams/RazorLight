@@ -246,7 +246,7 @@ namespace RazorLight.Compilation
 				}
 				else
 				{
-					Debug.Fail($"LanguageVersion {languageVersion} specified in the deps file could not be parsed.");
+					Debug.Fail($"LanguageVersion {dependencyContextOptions.LanguageVersion} specified in the deps file could not be parsed.");
 				}
 			}
 

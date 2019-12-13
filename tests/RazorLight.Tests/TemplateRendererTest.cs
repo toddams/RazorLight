@@ -113,6 +113,55 @@ namespace RazorLight.Tests
 			Assert.Equal(expected, result);
 		}
 
+		[Fact]
+		public async Task Templates_Supports_Local_Functions()
+		{
+			// See https://github.com/aspnet/Razor/issues/715
+
+			var engine = new RazorLightEngineBuilder()
+				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "Assets.Embedded")
+				.Build();
+
+			string expected = "<strong>LocalFunction</strong>";
+
+			string result = await engine.CompileRenderAsync("LocalFunction", (object)null);
+			result = result.Replace(Environment.NewLine, "");
+
+			Assert.Equal(expected, result);
+		}
+
+		[Fact]
+		public async Task Templates_Supports_Local_Functions_Using_Helper()
+		{
+			// See https://github.com/aspnet/Razor/issues/715
+
+			var engine = new RazorLightEngineBuilder()
+				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "Assets.Embedded")
+				.Build();
+
+			string expected = "<strong>LocalFunctionUsingHelper</strong>";
+
+			string result = await engine.CompileRenderAsync("LocalFunctionUsingHelper", (object)null);
+			result = result.Replace(Environment.NewLine, "");
+
+			Assert.Equal(expected, result);
+		}
+
+		[Fact]
+		public async Task Templates_Supports_Conditional_Attribute_Rendering()
+		{
+			// https://github.com/aspnet/AspNetCore/issues/5076
+			var engine = new RazorLightEngineBuilder()
+				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "Assets.Embedded")
+				.Build();
+
+			string expected = "<strong attr=\"class=\"Conditional Attribute\"\"></strong>";
+
+			var result = await engine.CompileRenderAsync("ConditionalAttributeRendering",true);
+
+			Assert.Contains(expected, result);
+		}
+
 		public class TestModel
 		{
 			public string Value { get; set; }

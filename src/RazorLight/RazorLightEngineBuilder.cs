@@ -28,6 +28,8 @@ namespace RazorLight
 
         protected ICachingProvider cachingProvider;
 
+        private bool disableEncoding = false;
+
         public virtual RazorLightEngineBuilder UseProject(RazorLightProject project)
         {
             if (project == null)
@@ -46,6 +48,45 @@ namespace RazorLight
 
             return this;
         }
+
+
+		/// <summary>
+		/// Disables encoding of HTML entities in variables.
+		/// </summary>
+		/// <example>
+		/// The model contais a property with value "&gt;hello&lt;".
+		/// 
+		/// In the rendered template this will be:
+		/// 
+		/// <code>
+		/// &gt;hello&lt;
+		/// </code>
+		/// </example>
+		/// <returns>A <see cref="RazorLightEngineBuilder"/></returns>
+		public RazorLightEngineBuilder DisableEncoding()
+		{
+			disableEncoding = true;
+			return this;
+		}
+
+		/// <summary>
+		/// Enables encoding of HTML entities in variables.
+		/// </summary>
+		/// <example>
+		/// The model contais a property with value "&gt;hello&lt;".
+		/// 
+		/// In the rendered template this will be:
+		/// 
+		/// <code>
+		/// &amp;gt;hello&amp;lt;
+		/// </code>
+		/// </example>
+		/// <returns>A <see cref="RazorLightEngineBuilder"/></returns>
+		public RazorLightEngineBuilder EnableEncoding()
+		{
+			disableEncoding = false;
+			return this;
+		}
 
 		public RazorLightEngineBuilder UseEmbeddedResourcesProject(Assembly assembly, string rootNamespace = null)
 		{
@@ -208,6 +249,8 @@ namespace RazorLight
 			{
 				options.CachingProvider = cachingProvider;
 			}
+
+            options.DisableEncoding = disableEncoding;
 
 
             var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences, options.ExcludedAssemblies);

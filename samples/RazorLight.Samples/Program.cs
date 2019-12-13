@@ -26,7 +26,11 @@ namespace Samples.EntityFrameworkProject
             // As our key in database is integer, but engine takes string as a key - pass integer ID as a string
             string templateKey = "2";
             var model = new TestViewModel() { Name = "Johny", Age = 22 };
-            string result = engine.CompileRenderAsync(templateKey, model).Result;
+
+#if NETCOREAPP3_0
+			model.Age = 40;
+#endif
+			string result = engine.CompileRenderAsync(templateKey, model).Result;
 
             //Identation will be a bit fuzzy, as we formatted a string for readability
             Console.WriteLine(result);

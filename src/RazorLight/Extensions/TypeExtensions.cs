@@ -20,6 +20,10 @@ namespace RazorLight.Extensions
             foreach (var propertyDescriptor in anonymousObject.GetType().GetTypeInfo().GetProperties())
             {
                 var obj = propertyDescriptor.GetValue(anonymousObject);
+                if (obj != null && obj.GetType().IsAnonymousType())
+                {
+                    obj = obj.ToExpando();
+                }
                 expando.Add(propertyDescriptor.Name, obj);
             }
 
