@@ -174,6 +174,20 @@ Set PreserveCompilationContext to true in your *.csproj file's PropertyGroup tag
 </PropertyGroup>
 ````
 
+## I'm getting "Cannot find reference assembly 'Microsoft.AspNetCore.Antiforgery.dll'" exception on .NET Core App 3.0 or higher
+
+By default, the 3.0 SDK avoids copying references to the build output.
+Set PreserveCompilationReferences and PreserveCompilationContext to true in your *.csproj file's PropertyGroup tag.
+
+````XML
+<PropertyGroup>
+    ...
+    <PreserveCompilationReferences>true</PreserveCompilationReferences>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+</PropertyGroup>
+````
+For more information, see https://github.com/aspnet/AspNetCore/issues/14418#issuecomment-535107767
+
 ## RazorLight does not work property on AWS Lambda or Azure Functions
 
-Serverless solutions are not supported yet
+Serverless solutions are not supported yet.
