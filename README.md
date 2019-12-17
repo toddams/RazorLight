@@ -94,7 +94,7 @@ You can find a full sample [here](https://github.com/toddams/RazorLight/tree/dev
 
 # Includes (aka Partial views)
 
-Include feature is useful when you have reusable parts of your templates you want to share between different views. Includes are an effective way of breaking up large templates into smaller components. They can reduce duplication of template content and allow elements to be reused.
+Include feature is useful when you have reusable parts of your templates you want to share between different views. Includes are an effective way of breaking up large templates into smaller components. They can reduce duplication of template content and allow elements to be reused. *This feature requires you to use the RazorLight Project system, otherwise there is no way to locate the partial.*
 
 ````CSharp
 @model MyProject.TestViewModel
@@ -163,6 +163,10 @@ ____
 ![Intellisense](github/autocomplete.png)
 
 # FAQ
+## I'm getting a Null Reference Exception after upgrading to RazorLight-2.0.0-beta2 or later.
+
+The most common scenario is that some people were using RazorLight's ability to render raw strings as templates.  While this is still somewhat supported (you can't use advanced features like partial views), what is not supported (right now) is using the caching provider with raw strings.  A workaround is to use a dummy class t
+
 ## I'm getting "Can't load metadata reference from the entry assembly" exception
 
 Set PreserveCompilationContext to true in your *.csproj file's PropertyGroup tag.
@@ -173,6 +177,8 @@ Set PreserveCompilationContext to true in your *.csproj file's PropertyGroup tag
     <PreserveCompilationContext>true</PreserveCompilationContext>
 </PropertyGroup>
 ````
+
+Additionally, RazorLight allows you to specifically locate any `MetadataReference` you can't find.  This might be a useful trick if future versions of the .NET SDK tools ship with bad MSBuild targets that somehow don't "preserve compilation context" and you need an immediate fix while waiting for Microsoft support.
 
 ## I'm getting "Cannot find reference assembly 'Microsoft.AspNetCore.Antiforgery.dll'" exception on .NET Core App 3.0 or higher
 
@@ -186,8 +192,12 @@ Set PreserveCompilationReferences and PreserveCompilationContext to true in your
     <PreserveCompilationContext>true</PreserveCompilationContext>
 </PropertyGroup>
 ````
-For more information, see https://github.com/aspnet/AspNetCore/issues/14418#issuecomment-535107767
+For more information, see https://github.com/aspnet/AspNetCore/issues/14418#issuecomment-535107767 (which discusses the above flags) and https://github.com/microsoft/DockerTools/issues/217#issuecomment-549453362 (which discusses that Runtime Compilation feature was marked obsolete in ASP.NET Core 2.2, and removed from the default template in ASP.NET Core 3.0).
 
 ## RazorLight does not work properly on AWS Lambda or Azure Functions
 
 Serverless solutions are not supported yet.
+
+## RazorLight does not work properly with ASP.NET Integration Testing
+
+RazorLight is not currently designed to support such integration tests.  If you need to test your RazorLight tests, current recommendation is to simply create a project called <YourCompanyName>.<YourProjectName>.Templating and write your template rendering layer as a Domain Service, and write tests against that service.  Then, you can mock in your integration tests any dependencies on RazorLight.
