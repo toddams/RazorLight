@@ -178,7 +178,7 @@ Set PreserveCompilationContext to true in your *.csproj file's PropertyGroup tag
 </PropertyGroup>
 ````
 
-Additionally, RazorLight allows you to specifically locate any `MetadataReference` you can't find.  This might be a useful trick if future versions of the .NET SDK tools ship with bad MSBuild targets that somehow don't "preserve compilation context" and you need an immediate fix while waiting for Microsoft support.
+Additionally, RazorLight allows you to specifically locate any `MetadataReference` you can't find, which could happen if you're running in SCD [(Self-Contained Deployment) mode](https://docs.microsoft.com/en-us/dotnet/core/deploying/), as the C# Compiler used by RazorLight [needs to be able to locate `mscorlib.dll`](https://github.com/toddams/RazorLight/issues/188#issuecomment-523418738).  This might be a useful trick if future versions of the .NET SDK tools ship with bad MSBuild targets that somehow don't "preserve compilation context" and you need an immediate fix while waiting for Microsoft support.
 
 ## I'm getting "Cannot find reference assembly 'Microsoft.AspNetCore.Antiforgery.dll'" exception on .NET Core App 3.0 or higher
 
