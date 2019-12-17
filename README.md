@@ -27,13 +27,15 @@ The simplest scenario is to create a template from string. Each template must ha
 
 ````CSharp
 var engine = new RazorLightEngineBuilder()
+               // required to have a default RazorLightProject type, but not required to create a template from string.
+              .UseEmbeddedResourcesProject(typeof(Program)) 
               .UseMemoryCachingProvider()
               .Build();
 
 string template = "Hello, @Model.Name. Welcome to RazorLight repository";
 ViewModel model = new ViewModel() { Name = "John Doe" };
 
-string result = await engine.CompileRenderAsync("templateKey", template, model);
+string result = await engine.CompileRenderStringAsync("templateKey", template, model);
 ````
 
 To render a compiled template:
