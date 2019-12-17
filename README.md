@@ -198,6 +198,32 @@ For more information, see https://github.com/aspnet/AspNetCore/issues/14418#issu
 
 Serverless solutions are not supported yet.
 
-## RazorLight does not work properly with ASP.NET Integration Testing
+## How to use templates from memory without setting a project?
+
+The short answer is, you have to set a project to use the memory caching provider.  The project doesn't have to do anything.  This is by design, as without a project system, RazorLight cannot locate partial views.
+
+:x:
+You used to be able to write:
+
+```c#
+var razorEngine = new RazorLightEngineBuilder()
+.UseMemoryCachingProvider()
+.Build();
+
+... but this now throws an exception, saying the _razorLightProject cannot be null.
+```
+
+:heavy_check_mark:
+```c#
+var razorEngine = new RazorLightEngineBuilder()
+                .UseEmbeddedResourcesProject(typeof(AnyTypeInYourSolution)) // exception without this (or another project type)
+                .UseMemoryCachingProvider()
+                .Build();
+```
+Affects: RazorLight-2.0.0-beta1 and later.
+
+Original Issue: https://github.com/toddams/RazorLight/issues/250
+
+## RazorLight does not work with ASP.NET Core Integration Testing
 
 RazorLight is not currently designed to support such integration tests.  If you need to test your RazorLight tests, current recommendation is to simply create a project called <YourCompanyName>.<YourProjectName>.Templating and write your template rendering layer as a Domain Service, and write tests against that service.  Then, you can mock in your integration tests any dependencies on RazorLight.
