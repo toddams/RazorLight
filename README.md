@@ -188,6 +188,6 @@ Set PreserveCompilationReferences and PreserveCompilationContext to true in your
 ````
 For more information, see https://github.com/aspnet/AspNetCore/issues/14418#issuecomment-535107767
 
-## RazorLight does not work property on AWS Lambda or Azure Functions
+## RazorLight does not work properly on AWS Lambda or Azure Functions
 
 Serverless solutions are not supported yet.
