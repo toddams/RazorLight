@@ -183,7 +183,11 @@ Original Issue: https://github.com/toddams/RazorLight/issues/250
 
 ### How to embed an image in an email?
 
-This isn't a RazorLight question, but please see [this StackOverflow answer](https://stackoverflow.com/a/32767496/1040437). 
+This isn't a RazorLight question, but please see [this StackOverflow answer](https://stackoverflow.com/a/32767496/1040437).
+
+### How to embed css in an email?
+
+This isn't a RazorLight question, but please look into PreMailer.Net.
 
 ## Compilation and Deployment Issues (FAQ)
 
