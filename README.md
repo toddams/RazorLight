@@ -136,18 +136,6 @@ In order to disable encoding for the entire document - just set ````"DisableEnco
 </html>
 ````
 
-# Additional metadata references
-When RazorLight compiles your template - it loads all the assemblies from your entry assembly and creates MetadataReference from it. This is a default strategy and it works in 99% of the time. But sometimes compilation crashes with an exception message like "Can not find assembly My.Super.Assembly2000". In order to solve this problem you can pass additional metadata references to RazorLight.
-
-````CSharp
-var metadataReference = MetadataReference.CreateFromFile("path-to-your-assembly")
-
- var engine = new RazorLightEngineBuilder()
-                .UseDefaultCachingProvider()
-                .AddMetadataReferences(metadataReference)
-                .Build();
-````
-
 # Enable Intellisense support
 Visual Studio tooling knows nothing about RazorLight and assumes, that the view you are using - is a typical ASP.NET MVC template. In order to enable Intellisense for RazorLight templates, you should give Visual Studio a little hint about the base template class, that all your templates inherit implicitly
 
@@ -162,10 +150,37 @@ Visual Studio tooling knows nothing about RazorLight and assumes, that the view 
 ____
 ![Intellisense](github/autocomplete.png)
 
-# FAQ
+# Compilation and Deployment Issues (FAQ)
+
+Most problems with RazorLight deal with deploying it on a new machine, in a docker container, etc.  If it works fine in your development environment, read this list of problems to see if it matches yours.
+
+## Additional metadata references
+When RazorLight compiles your template - it loads all the assemblies from your entry assembly and creates MetadataReference from it. This is a default strategy and it works in 99% of the time. But sometimes compilation crashes with an exception message like "Can not find assembly My.Super.Assembly2000". In order to solve this problem you can pass additional metadata references to RazorLight.
+
+````CSharp
+var metadataReference = MetadataReference.CreateFromFile("path-to-your-assembly")
+
+ var engine = new RazorLightEngineBuilder()
+                .UseDefaultCachingProvider()
+                .AddMetadataReferences(metadataReference)
+                .Build();
+````
+
 ## I'm getting a Null Reference Exception after upgrading to RazorLight-2.0.0-beta2 or later.
 
-The most common scenario is that some people were using RazorLight's ability to render raw strings as templates.  While this is still somewhat supported (you can't use advanced features like partial views), what is not supported (right now) is using the caching provider with raw strings.  A workaround is to use a dummy class t
+The most common scenario is that some people were using RazorLight's ability to render raw strings as templates.  While this is still somewhat supported (you can't use advanced features like partial views), what is not supported (right now) is using the caching provider with raw strings.  A workaround is to use a dummy class.
+
+## I'm getting "Cannot find compilation library" when I deploy this library on another server
+
+Add these property groups to your **entry point csproj**.
+It has to be the entry point project.  For example: ASP.NET Core web project, .NET Core Console project, etc.
+
+  <PropertyGroup>
+    <!-- This group contains project properties for RazorLight on .NET Core -->
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
+    <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
+  </PropertyGroup>
 
 ## I'm getting "Can't load metadata reference from the entry assembly" exception
 
@@ -183,15 +198,15 @@ Additionally, RazorLight allows you to specifically locate any `MetadataReferenc
 ## I'm getting "Cannot find reference assembly 'Microsoft.AspNetCore.Antiforgery.dll'" exception on .NET Core App 3.0 or higher
 
 By default, the 3.0 SDK avoids copying references to the build output.
-Set PreserveCompilationReferences and PreserveCompilationContext to true in your *.csproj file's PropertyGroup tag.
+Set `PreserveCompilationReferences` and `PreserveCompilationContext` to true in your *.csproj file's PropertyGroup tag.
 
 ````XML
 <PropertyGroup>
-    ...
     <PreserveCompilationReferences>true</PreserveCompilationReferences>
     <PreserveCompilationContext>true</PreserveCompilationContext>
 </PropertyGroup>
 ````
+
 For more information, see https://github.com/aspnet/AspNetCore/issues/14418#issuecomment-535107767 (which discusses the above flags) and https://github.com/microsoft/DockerTools/issues/217#issuecomment-549453362 (which discusses that Runtime Compilation feature was marked obsolete in ASP.NET Core 2.2, and removed from the default template in ASP.NET Core 3.0).
 
 ## RazorLight does not work properly on AWS Lambda or Azure Functions
@@ -209,9 +224,8 @@ You used to be able to write:
 var razorEngine = new RazorLightEngineBuilder()
 .UseMemoryCachingProvider()
 .Build();
-
-... but this now throws an exception, saying the _razorLightProject cannot be null.
 ```
+... but this now throws an exception, saying, "`_razorLightProject cannot be null`".
 
 :heavy_check_mark:
 ```c#
@@ -227,3 +241,5 @@ Original Issue: https://github.com/toddams/RazorLight/issues/250
 ## RazorLight does not work with ASP.NET Core Integration Testing
 
 RazorLight is not currently designed to support such integration tests.  If you need to test your RazorLight tests, current recommendation is to simply create a project called <YourCompanyName>.<YourProjectName>.Templating and write your template rendering layer as a Domain Service, and write tests against that service.  Then, you can mock in your integration tests any dependencies on RazorLight.
+
+If you happen to get this working, please let us know what you did.
