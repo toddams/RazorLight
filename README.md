@@ -170,6 +170,7 @@ Set PreserveCompilationContext to true in your *.csproj file's PropertyGroup tag
 ````XML
 <PropertyGroup>
     ...
+    <PreserveCompilationReferences>true</PreserveCompilationReferences>
     <PreserveCompilationContext>true</PreserveCompilationContext>
 </PropertyGroup>
 ````
