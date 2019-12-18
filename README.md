@@ -20,7 +20,7 @@ Use Razor to build templates from Files / EmbeddedResources / Strings / Database
 Install the nuget package using following command:
 
 ````
-Install-Package RazorLight -Version 2.0.0-beta2
+Install-Package RazorLight -Version 2.0.0-beta3
 ````
 
 The simplest scenario is to create a template from string. Each template must have a ````templateKey```` that is associated with it, so you can render the same template next time without recompilation.
@@ -40,7 +40,7 @@ string result = await engine.CompileRenderStringAsync("templateKey", template, m
 
 To render a compiled template:
 ````CSharp
-var cacheResult = engine.TemplateCache.RetrieveTemplate("templateKey");
+var cacheResult = engine.Handler.Cache.RetrieveTemplate("templateKey");
 if(cacheResult.Success)
 {
     string result = await engine.RenderTemplateAsync(cacheResult.Template.TemplatePageFactory(), model);

@@ -7,6 +7,12 @@ namespace RazorLight
 {
 	public interface IRazorLightEngine
     {
+		/// <summary>
+		/// The Options used to configure RazorLightEngine.
+		/// </summary>
+		/// <remarks>
+		/// Do not call this from your code.  If you need to, use the <see cref="Handler"/> property instead.
+		/// </remarks>
 		RazorLightOptions Options { get; }
 
 		IEngineHandler Handler { get; }
