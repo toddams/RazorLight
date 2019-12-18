@@ -17,6 +17,7 @@ A clear and concise description of what you expected to happen.
  - OS: [ e.g Ubuntu 16.04, Windows Server 2016, etc ]
  - Platform [.NET Framework 4.x / .NET Core 2.x , etc]
  - RazorLight version [ e.g 2.0-beta1 ]
+ - Are you using the OFFICIAL RazorLight package? https://www.nuget.org/packages/razorlight
  - Visual Studio version [ e.g Visual Studio Community 17.8.5 ]
 
 **Additional context**
