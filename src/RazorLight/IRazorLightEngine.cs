@@ -9,7 +9,9 @@ namespace RazorLight
     {
 		RazorLightOptions Options { get; }
 
-        Task<string> CompileRenderAsync<T>(string key, T model, ExpandoObject viewBag = null);
+		IEngineHandler Handler { get; }
+
+		Task<string> CompileRenderAsync<T>(string key, T model, ExpandoObject viewBag = null);
 		Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag = null);
 
 		Task<string> CompileRenderStringAsync<T>(string key, string content, T model, ExpandoObject viewBag = null);
