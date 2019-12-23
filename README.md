@@ -258,6 +258,6 @@ Serverless solutions are not supported yet.
 
 ### RazorLight does not work with ASP.NET Core Integration Testing
 
-RazorLight is not currently designed to support such integration tests.  If you need to test your RazorLight tests, current recommendation is to simply create a project called <YourCompanyName>.<YourProjectName>.Templating and write your template rendering layer as a Domain Service, and write tests against that service.  Then, you can mock in your integration tests any dependencies on RazorLight.
+RazorLight is not currently designed to support such integration tests.  If you need to test your RazorLight tests, current recommendation is to simply create a project called `<YourCompanyName>.<YourProjectName>.Templating` and write your template rendering layer as a Domain Service, and write tests against that service.  Then, you can mock in your integration tests any dependencies on RazorLight.
 
 If you happen to get this working, please let us know what you did.
