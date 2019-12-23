@@ -214,12 +214,14 @@ The most common scenario is that some people were using RazorLight's ability to 
 Add these property groups to your **entry point csproj**.
 It has to be the entry point project.  For example: ASP.NET Core web project, .NET Core Console project, etc.
 
+````XML
   <PropertyGroup>
     <!-- This group contains project properties for RazorLight on .NET Core -->
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
     <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
   </PropertyGroup>
+````
 
 ### I'm getting "Can't load metadata reference from the entry assembly" exception
 
