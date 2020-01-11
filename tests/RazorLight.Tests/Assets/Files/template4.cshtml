@@ -1,0 +1,11 @@
+@using RazorLight
+@model RazorLight.Tests.IntegrationTests.TestViewModel
+@{
+	Layout = "LayoutWithSection.cshtml";
+}
+
+@section section {
+	The content of the section
+}
+
+We are rendering this with @Model.Name
