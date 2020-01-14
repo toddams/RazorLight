@@ -20,14 +20,6 @@ namespace RazorLight.Tests.Razor
 			Assert.Throws<ArgumentNullException>(() => new EmbeddedRazorProjectItem(typeof(Root).Assembly, "namespace", null));
 		}
 
-		[Fact]
-		public void Null_Namespace_WillBe_Empty()
-		{
-			var item = new EmbeddedRazorProjectItem(typeof(Root).Assembly, null, "key");
-
-			Assert.Equal("", item.RootNamespace);
-		}
-
 		//[Fact]
 		//public void Ensure_ConstructorParams_AreApplied()
 		//{

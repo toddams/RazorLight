@@ -128,7 +128,7 @@ namespace RazorLight.Tests.Compilation
 		[Fact]
 		public async Task Ensure_TemplateIsCompiled_ForExisting_ProjectItem()
 		{
-			var project = new EmbeddedRazorProject(typeof(Root).Assembly, "Assets.Embedded");
+			var project = new EmbeddedRazorProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded");
 			var compiler = TestRazorTemplateCompiler.Create(project:project);
 
 			string templateKey = "Empty.cshtml";
