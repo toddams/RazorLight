@@ -116,7 +116,7 @@ namespace RazorLight.Compilation
 				// At this point, we've decided what to do - but we should create the cache entry and
 				// release the lock first.
 				cacheEntryOptions = new MemoryCacheEntryOptions();
-				if(item.ExpirationToken != null)
+				if (item.ExpirationToken != null)
 				{
 					cacheEntryOptions.ExpirationTokens.Add(item.ExpirationToken);
 				}
@@ -220,7 +220,7 @@ namespace RazorLight.Compilation
 			Debug.Assert(templateKey != null);
 
 			//Support path normalization only on Filesystem projects
-			if(!(_razorProject is FileSystemRazorProject))
+			if (!(_razorProject is FileSystemRazorProject))
 			{
 				return templateKey;
 			}
@@ -241,7 +241,7 @@ namespace RazorLight.Compilation
 
 		protected string NormalizeKey(string templateKey)
 		{
-			if(!(_razorProject is FileSystemRazorProject))
+			if (!(_razorProject is FileSystemRazorProject))
 			{
 				return templateKey;
 			}

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RazorLight.Tests
 {
-    public class Root
-    {
-    }
+	public class Root
+	{
+	}
 }

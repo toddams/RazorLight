@@ -7,7 +7,7 @@ using Xunit;
 namespace RazorLight.Tests
 {
 	public class TemplateFactoryProviderTest
-    {
+	{
 		[Fact]
 		public void Ensure_FactoryReturnsValidTemplateType()
 		{

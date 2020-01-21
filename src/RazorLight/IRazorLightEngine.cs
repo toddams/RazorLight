@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace RazorLight
 {
 	public interface IRazorLightEngine
-    {
+	{
 		/// <summary>
 		/// The Options used to configure RazorLightEngine.
 		/// </summary>
@@ -50,16 +50,16 @@ namespace RazorLight
 		[Obsolete("Please, use generic version of RenderTemplateAsync", true)]
 		Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, ExpandoObject viewBag = null);
 
-        /// <summary>
-        /// Renders a template with a given model
-        /// </summary>
-        /// <param name="templatePage">Instance of a template</param>
-        /// <param name="model">Template model</param>
-        /// <param name="viewBag">Dynamic viewBag of the template</param>
-        /// <returns>Rendered string</returns>
+		/// <summary>
+		/// Renders a template with a given model
+		/// </summary>
+		/// <param name="templatePage">Instance of a template</param>
+		/// <param name="model">Template model</param>
+		/// <param name="viewBag">Dynamic viewBag of the template</param>
+		/// <returns>Rendered string</returns>
 		Task<string> RenderTemplateAsync<T>(ITemplatePage templatePage, T model, ExpandoObject viewBag = null);
 
-        [Obsolete("Please, use generic version of RenderTemplateAsync", true)]
+		[Obsolete("Please, use generic version of RenderTemplateAsync", true)]
 		Task RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, TextWriter textWriter, ExpandoObject viewBag = null);
 	}
 }

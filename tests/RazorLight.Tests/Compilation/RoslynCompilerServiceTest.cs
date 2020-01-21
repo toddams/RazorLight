@@ -15,7 +15,7 @@ namespace RazorLight.Tests.Compilation
 {
 	//TODO: finish
 	public class RoslynCompilerServiceTest
-    {
+	{
 		[Fact]
 		public void Constructor_SetsCompilationOptionsFromDependencyContext()
 		{
@@ -81,7 +81,7 @@ namespace RazorLight.Tests.Compilation
 		}
 
 		[Fact]
-        public void Constructor_ConfiguresAllowUnsafe()
+		public void Constructor_ConfiguresAllowUnsafe()
 		{
 			// Arrange
 			var dependencyContextOptions = new DependencyContextCompilationOptions(
@@ -199,7 +199,7 @@ namespace RazorLight.Tests.Compilation
 				debugType: null,
 				emitEntryPoint: null,
 				generateXmlDocumentation: null);
-			var compiler = new TestCSharpCompiler(new DefaultMetadataReferenceManager() , dependencyContextOptions);
+			var compiler = new TestCSharpCompiler(new DefaultMetadataReferenceManager(), dependencyContextOptions);
 			// Act
 			var syntaxTree = compiler.CreateSyntaxTree(SourceText.From(content));
 			// Assert
@@ -253,17 +253,17 @@ namespace RazorLight.Tests.Compilation
 
 			public string TemplateKey => templateKey;
 			public string GeneratedCode => generatedCode;
-            public RazorLightProjectItem ProjectItem
-            {
-                get
-                {
-                    return new TextSourceRazorProjectItem(TemplateKey, "");
-                }
-                set
-                {
-                    
-                }
-            }
+			public RazorLightProjectItem ProjectItem
+			{
+				get
+				{
+					return new TextSourceRazorProjectItem(TemplateKey, "");
+				}
+				set
+				{
+
+				}
+			}
 		}
 
 
