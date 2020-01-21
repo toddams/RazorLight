@@ -7,8 +7,8 @@ using System;
 
 namespace RazorLight.Tests.Extensions
 {
-    public class ServiceCollectionExtensionsTest
-    {
+	public class ServiceCollectionExtensionsTest
+	{
 		private string rootPath = PathUtility.GetViewsPath();
 
 		private IServiceCollection GetServices()
@@ -21,31 +21,31 @@ namespace RazorLight.Tests.Extensions
 			return services;
 		}
 
-        [Fact]
-        public void Throws_On_Null_EngineFactoryProvider()
-        {
-            var services = GetServices();
+		[Fact]
+		public void Throws_On_Null_EngineFactoryProvider()
+		{
+			var services = GetServices();
 
-            Assert.Throws<ArgumentNullException>(() => { services.AddRazorLight(null); });
-        }
+			Assert.Throws<ArgumentNullException>(() => { services.AddRazorLight(null); });
+		}
 
-        [Fact]
-        public void Ensure_FactoryMethod_Is_Called()
-        {
-            var services = GetServices();
-            bool called = false;
+		[Fact]
+		public void Ensure_FactoryMethod_Is_Called()
+		{
+			var services = GetServices();
+			bool called = false;
 
-            services.AddRazorLight(() => 
-            {
-                called = true;
-                return new RazorLightEngineBuilder().UseEmbeddedResourcesProject(typeof(Root).Assembly).Build();
-            });
+			services.AddRazorLight(() =>
+			{
+				called = true;
+				return new RazorLightEngineBuilder().UseEmbeddedResourcesProject(typeof(Root).Assembly).Build();
+			});
 
-            var provider = services.BuildServiceProvider();
-            var engine = provider.GetService<IRazorLightEngine>();
+			var provider = services.BuildServiceProvider();
+			var engine = provider.GetService<IRazorLightEngine>();
 
-            Assert.NotNull(engine);
-            Assert.True(called);
-        }
-    }
+			Assert.NotNull(engine);
+			Assert.True(called);
+		}
+	}
 }

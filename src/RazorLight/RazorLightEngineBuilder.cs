@@ -10,44 +10,44 @@ using System.Reflection;
 
 namespace RazorLight
 {
-    public class RazorLightEngineBuilder
-    {
-        protected Assembly operatingAssembly;
+	public class RazorLightEngineBuilder
+	{
+		protected Assembly operatingAssembly;
 
-        protected HashSet<string> namespaces;
+		protected HashSet<string> namespaces;
 
-        protected ConcurrentDictionary<string, string> dynamicTemplates;
+		protected ConcurrentDictionary<string, string> dynamicTemplates;
 
-        protected HashSet<MetadataReference> metadataReferences;
+		protected HashSet<MetadataReference> metadataReferences;
 
-        protected HashSet<string> excludedAssemblies;
+		protected HashSet<string> excludedAssemblies;
 
-        protected List<Action<ITemplatePage>> prerenderCallbacks;
+		protected List<Action<ITemplatePage>> prerenderCallbacks;
 
-        protected RazorLightProject project;
+		protected RazorLightProject project;
 
-        protected ICachingProvider cachingProvider;
+		protected ICachingProvider cachingProvider;
 
-        private bool disableEncoding = false;
+		private bool disableEncoding = false;
 
-        public virtual RazorLightEngineBuilder UseProject(RazorLightProject project)
-        {
-            if (project == null)
-            {
-                throw new ArgumentNullException(nameof(project));
-            }
+		public virtual RazorLightEngineBuilder UseProject(RazorLightProject project)
+		{
+			if (project == null)
+			{
+				throw new ArgumentNullException(nameof(project));
+			}
 
-            this.project = project;
+			this.project = project;
 
-            return this;
-        }
+			return this;
+		}
 
-        public RazorLightEngineBuilder UseEmbeddedResourcesProject(Type rootType)
-        {
-            project = new EmbeddedRazorProject(rootType);
+		public RazorLightEngineBuilder UseEmbeddedResourcesProject(Type rootType)
+		{
+			project = new EmbeddedRazorProject(rootType);
 
-            return this;
-        }
+			return this;
+		}
 
 
 		/// <summary>
@@ -97,165 +97,165 @@ namespace RazorLight
 
 
 		public RazorLightEngineBuilder UseFileSystemProject(string root)
-        {
-            project = new FileSystemRazorProject(root);
+		{
+			project = new FileSystemRazorProject(root);
 
-            return this;
-        }
+			return this;
+		}
 
-        public RazorLightEngineBuilder UseFileSystemProject(string root, string extension)
-        {
-            project = new FileSystemRazorProject(root, extension);
+		public RazorLightEngineBuilder UseFileSystemProject(string root, string extension)
+		{
+			project = new FileSystemRazorProject(root, extension);
 
-            return this;
-        }
+			return this;
+		}
 
-        public virtual RazorLightEngineBuilder UseMemoryCachingProvider()
-        {
-            cachingProvider = new MemoryCachingProvider();
+		public virtual RazorLightEngineBuilder UseMemoryCachingProvider()
+		{
+			cachingProvider = new MemoryCachingProvider();
 
-            return this;
-        }
+			return this;
+		}
 
-        public virtual RazorLightEngineBuilder UseCachingProvider(ICachingProvider provider)
-        {
-            if (provider == null)
-            {
-                throw new ArgumentNullException(nameof(provider));
-            }
+		public virtual RazorLightEngineBuilder UseCachingProvider(ICachingProvider provider)
+		{
+			if (provider == null)
+			{
+				throw new ArgumentNullException(nameof(provider));
+			}
 
-            cachingProvider = provider;
+			cachingProvider = provider;
 
-            return this;
-        }
+			return this;
+		}
 
-        public virtual RazorLightEngineBuilder AddDefaultNamespaces(params string[] namespaces)
-        {
-            if (namespaces == null)
-            {
-                throw new ArgumentNullException(nameof(namespaces));
-            }
+		public virtual RazorLightEngineBuilder AddDefaultNamespaces(params string[] namespaces)
+		{
+			if (namespaces == null)
+			{
+				throw new ArgumentNullException(nameof(namespaces));
+			}
 
-            this.namespaces = new HashSet<string>();
+			this.namespaces = new HashSet<string>();
 
-            foreach (string @namespace in namespaces)
-            {
-                this.namespaces.Add(@namespace);
-            }
+			foreach (string @namespace in namespaces)
+			{
+				this.namespaces.Add(@namespace);
+			}
 
-            return this;
-        }
+			return this;
+		}
 
-        public virtual RazorLightEngineBuilder AddMetadataReferences(params MetadataReference[] metadata)
-        {
-            if (metadata == null)
-            {
-                throw new ArgumentNullException(nameof(metadata));
-            }
+		public virtual RazorLightEngineBuilder AddMetadataReferences(params MetadataReference[] metadata)
+		{
+			if (metadata == null)
+			{
+				throw new ArgumentNullException(nameof(metadata));
+			}
 
-            metadataReferences = new HashSet<MetadataReference>();
+			metadataReferences = new HashSet<MetadataReference>();
 
-            foreach (var reference in metadata)
-            {
-                metadataReferences.Add(reference);
-            }
+			foreach (var reference in metadata)
+			{
+				metadataReferences.Add(reference);
+			}
 
-            return this;
-        }
+			return this;
+		}
 
-        public virtual RazorLightEngineBuilder ExcludeAssemblies(params string[] assemblyNames)
-        {
-            if (assemblyNames == null)
-            {
-                throw new ArgumentNullException(nameof(assemblyNames));
-            }
+		public virtual RazorLightEngineBuilder ExcludeAssemblies(params string[] assemblyNames)
+		{
+			if (assemblyNames == null)
+			{
+				throw new ArgumentNullException(nameof(assemblyNames));
+			}
 
-            excludedAssemblies = new HashSet<string>();
+			excludedAssemblies = new HashSet<string>();
 
-            foreach (var assemblyName in assemblyNames)
-            {
-                excludedAssemblies.Add(assemblyName);
-            }
+			foreach (var assemblyName in assemblyNames)
+			{
+				excludedAssemblies.Add(assemblyName);
+			}
 
-            return this;
-        }
-        public virtual RazorLightEngineBuilder AddPrerenderCallbacks(params Action<ITemplatePage>[] callbacks)
-        {
-            if (callbacks == null)
-            {
-                throw new ArgumentNullException(nameof(callbacks));
-            }
+			return this;
+		}
+		public virtual RazorLightEngineBuilder AddPrerenderCallbacks(params Action<ITemplatePage>[] callbacks)
+		{
+			if (callbacks == null)
+			{
+				throw new ArgumentNullException(nameof(callbacks));
+			}
 
-            prerenderCallbacks = new List<Action<ITemplatePage>>();
-            prerenderCallbacks.AddRange(callbacks);
+			prerenderCallbacks = new List<Action<ITemplatePage>>();
+			prerenderCallbacks.AddRange(callbacks);
 
-            return this;
-        }
+			return this;
+		}
 
-        public virtual RazorLightEngineBuilder AddDynamicTemplates(IDictionary<string, string> dynamicTemplates)
-        {
-            if (dynamicTemplates == null)
-            {
-                throw new ArgumentNullException(nameof(dynamicTemplates));
-            }
+		public virtual RazorLightEngineBuilder AddDynamicTemplates(IDictionary<string, string> dynamicTemplates)
+		{
+			if (dynamicTemplates == null)
+			{
+				throw new ArgumentNullException(nameof(dynamicTemplates));
+			}
 
-            this.dynamicTemplates = new ConcurrentDictionary<string, string>(dynamicTemplates);
+			this.dynamicTemplates = new ConcurrentDictionary<string, string>(dynamicTemplates);
 
-            return this;
-        }
+			return this;
+		}
 
-        public virtual RazorLightEngineBuilder SetOperatingAssembly(Assembly assembly)
-        {
-            if(assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
+		public virtual RazorLightEngineBuilder SetOperatingAssembly(Assembly assembly)
+		{
+			if (assembly == null)
+			{
+				throw new ArgumentNullException(nameof(assembly));
+			}
 
-            operatingAssembly = assembly;
+			operatingAssembly = assembly;
 
-            return this;
-        }
+			return this;
+		}
 
-        public virtual RazorLightEngine Build()
-        {
-            var options = new RazorLightOptions();
+		public virtual RazorLightEngine Build()
+		{
+			var options = new RazorLightOptions();
 
-            if (namespaces != null)
-            {
-                options.Namespaces = namespaces;
-            }
+			if (namespaces != null)
+			{
+				options.Namespaces = namespaces;
+			}
 
-            if (dynamicTemplates != null)
-            {
-                options.DynamicTemplates = dynamicTemplates;
-            }
+			if (dynamicTemplates != null)
+			{
+				options.DynamicTemplates = dynamicTemplates;
+			}
 
-            if (metadataReferences != null)
-            {
-                options.AdditionalMetadataReferences = metadataReferences;
-            }
+			if (metadataReferences != null)
+			{
+				options.AdditionalMetadataReferences = metadataReferences;
+			}
 
-            if (excludedAssemblies != null)
-            {
-                options.ExcludedAssemblies = excludedAssemblies;
-            }
+			if (excludedAssemblies != null)
+			{
+				options.ExcludedAssemblies = excludedAssemblies;
+			}
 
-            if (prerenderCallbacks != null)
-            {
-                options.PreRenderCallbacks = prerenderCallbacks;
-            }
+			if (prerenderCallbacks != null)
+			{
+				options.PreRenderCallbacks = prerenderCallbacks;
+			}
 
-			if(cachingProvider != null)
+			if (cachingProvider != null)
 			{
 				options.CachingProvider = cachingProvider;
 			}
 
-            options.DisableEncoding = disableEncoding;
+			options.DisableEncoding = disableEncoding;
 
 
-            var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences, options.ExcludedAssemblies);
-            var assembly = operatingAssembly ?? Assembly.GetEntryAssembly();
-            var compiler = new RoslynCompilationService(metadataReferenceManager, assembly);
+			var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences, options.ExcludedAssemblies);
+			var assembly = operatingAssembly ?? Assembly.GetEntryAssembly();
+			var compiler = new RoslynCompilationService(metadataReferenceManager, assembly);
 
 			var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, options.Namespaces);
 			var templateCompiler = new RazorTemplateCompiler(sourceGenerator, compiler, project, options);
@@ -263,7 +263,7 @@ namespace RazorLight
 
 			var engineHandler = new EngineHandler(options, templateCompiler, templateFactoryProvider, cachingProvider);
 
-            return new RazorLightEngine(engineHandler);
-        }
-    }
+			return new RazorLightEngine(engineHandler);
+		}
+	}
 }

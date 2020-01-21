@@ -157,7 +157,7 @@ namespace RazorLight.Tests
 
 			string expected = "<strong attr=\"class=\"Conditional Attribute\"\"></strong>";
 
-			var result = await engine.CompileRenderAsync("ConditionalAttributeRendering",true);
+			var result = await engine.CompileRenderAsync("ConditionalAttributeRendering", true);
 
 			Assert.Contains(expected, result);
 		}

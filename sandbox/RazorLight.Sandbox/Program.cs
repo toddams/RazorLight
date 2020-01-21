@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RazorLight.Sandbox
 {
 	class Program
-    {
+	{
 		public static async Task Main()
 		{
 			var engine = new RazorLightEngineBuilder()
@@ -23,23 +23,23 @@ namespace RazorLight.Sandbox
 
 		private static readonly object locker = new object();
 
-        private static int _j;
-        public static int j
-        {
-            get
-            {
-                lock (locker)
-                {
-                    return _j;
-                }
-            }
-            set
-            {
-                lock(locker)
-                {
-                    _j = value;
-                }
-            }
-        }
-    }
+		private static int _j;
+		public static int j
+		{
+			get
+			{
+				lock (locker)
+				{
+					return _j;
+				}
+			}
+			set
+			{
+				lock (locker)
+				{
+					_j = value;
+				}
+			}
+		}
+	}
 }

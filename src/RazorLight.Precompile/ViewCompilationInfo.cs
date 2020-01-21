@@ -2,18 +2,18 @@
 
 namespace RazorLight.Precompile
 {
-    internal struct ViewCompilationInfo
-    {
-        public ViewCompilationInfo(
-            TemplateFileInfo viewFileInfo,
-            RazorCSharpDocument cSharpDocument)
-        {
-            TemplateFileInfo = viewFileInfo;
-            CSharpDocument = cSharpDocument;
-        }
+	internal struct ViewCompilationInfo
+	{
+		public ViewCompilationInfo(
+			TemplateFileInfo viewFileInfo,
+			RazorCSharpDocument cSharpDocument)
+		{
+			TemplateFileInfo = viewFileInfo;
+			CSharpDocument = cSharpDocument;
+		}
 
-        public TemplateFileInfo TemplateFileInfo { get; }
+		public TemplateFileInfo TemplateFileInfo { get; }
 
-        public RazorCSharpDocument CSharpDocument { get; }
-    }
+		public RazorCSharpDocument CSharpDocument { get; }
+	}
 }

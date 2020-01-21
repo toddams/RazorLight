@@ -2,8 +2,8 @@
 
 namespace RazorLight.Compilation
 {
-    public interface ITemplateFactoryProvider
-    {
+	public interface ITemplateFactoryProvider
+	{
 		Func<ITemplatePage> CreateFactory(CompiledTemplateDescriptor templateDescriptor);
 	}
 }
