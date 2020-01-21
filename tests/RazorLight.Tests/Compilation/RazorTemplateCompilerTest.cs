@@ -10,7 +10,7 @@ using Xunit;
 namespace RazorLight.Tests.Compilation
 {
 	public class RazorTemplateCompilerTest
-    {
+	{
 		[Fact]
 		public void Ensure_Throws_OnNull_Constructor_Dependencies()
 		{
@@ -118,7 +118,7 @@ namespace RazorLight.Tests.Compilation
 		public void Throws_TemplateNotFoundException_If_ProjectItem_NotExist()
 		{
 			var project = new EmbeddedRazorProject(typeof(Root).Assembly);
-			var compiler = TestRazorTemplateCompiler.Create(project:project);
+			var compiler = TestRazorTemplateCompiler.Create(project: project);
 
 			Func<Task> task = new Func<Task>(() => compiler.CompileAsync("Not.Existing.Key"));
 
@@ -129,7 +129,7 @@ namespace RazorLight.Tests.Compilation
 		public async Task Ensure_TemplateIsCompiled_ForExisting_ProjectItem()
 		{
 			var project = new EmbeddedRazorProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded");
-			var compiler = TestRazorTemplateCompiler.Create(project:project);
+			var compiler = TestRazorTemplateCompiler.Create(project: project);
 
 			string templateKey = "Empty.cshtml";
 			var result = await compiler.CompileAsync(templateKey);
@@ -145,9 +145,9 @@ namespace RazorLight.Tests.Compilation
 		public class TestRazorTemplateCompiler : RazorTemplateCompiler
 		{
 			public TestRazorTemplateCompiler(
-				RazorSourceGenerator sourceGenerator, 
-				RoslynCompilationService roslynCompilationService, 
-				RazorLightProject razorLightProject, 
+				RazorSourceGenerator sourceGenerator,
+				RoslynCompilationService roslynCompilationService,
+				RazorLightProject razorLightProject,
 				RazorLightOptions razorLightOptions) : base(sourceGenerator, roslynCompilationService, razorLightProject, razorLightOptions)
 			{
 			}
