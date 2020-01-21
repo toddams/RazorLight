@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
@@ -11,6 +11,7 @@
     <Authors>toddams</Authors>
     <PackageTags>RazorLight, razor, render, dotnet-core, dotnet, core, template-engine, email, emails</PackageTags>
     <RepositoryUrl>https://github.com/toddams/RazorLight</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <IncludeSymbols>true</IncludeSymbols>
