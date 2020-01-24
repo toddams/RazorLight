@@ -197,7 +197,7 @@ namespace RazorLight
         /// Starts a new writing scope and optionally overrides <see cref="HtmlEncoder"/> within that scope.
         /// </summary>
         /// <param name="encoder">
-        /// The <see cref="System.Text.Encodings.Web.HtmlEncoder"/> to use when this <see cref="RazorPage"/> handles
+        /// The <see cref="System.Text.Encodings.Web.HtmlEncoder"/> to use when this <see cref="TemplatePageBase"/> handles
         /// non-<see cref="IHtmlContent"/> C# expressions. If <c>null</c>, does not change <see cref="HtmlEncoder"/>.
         /// </param>
         /// <remarks>

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{25F57564-58FD-4FD2-8CDA-98261E5BEEEC}"
 EndProject
@@ -20,6 +20,23 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.EntityFrameworkProject", "samples\RazorLight.Samples\Samples.EntityFrameworkProject.csproj", "{C9B26DF6-F8E6-481A-B497-C8999641A99D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorLight.Precompile", "src\RazorLight.Precompile\RazorLight.Precompile.csproj", "{AD9A02F6-8078-4DFF-AFA6-4DE8674D5C76}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{634B4E56-928A-4132-AB3F-F2DD43756350}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{DF8F9896-63C0-43AC-8834-1D13AA095928}"
+	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
+		appveyor.yml = appveyor.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Publish", "Publish", "{03C519A7-C5B1-4421-893B-D2995D4A92BC}"
+	ProjectSection(SolutionItems) = preProject
+		makeNuget.cmd = makeNuget.cmd
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
