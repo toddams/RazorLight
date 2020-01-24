@@ -15,10 +15,10 @@ namespace RazorLight.Tests.Compilation
 		public void Ensure_Throws_OnNull_Constructor_Dependencies()
 		{
 			var options = new RazorLightOptions();
-			var metatadaManager = new DefaultMetadataReferenceManager();
+			var metadataManager = new DefaultMetadataReferenceManager();
 			var assembly = Assembly.GetCallingAssembly();
 			var project = new EmbeddedRazorProject(assembly);
-			var compilerService = new RoslynCompilationService(metatadaManager, assembly);
+			var compilerService = new RoslynCompilationService(metadataManager, assembly);
 			var generator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project);
 
 			Action p1 = new Action(() => { new RazorTemplateCompiler(null, compilerService, project, options); });

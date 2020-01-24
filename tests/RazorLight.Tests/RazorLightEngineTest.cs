@@ -1,4 +1,8 @@
-﻿namespace RazorLight.Tests
+﻿using System.Dynamic;
+using RazorLight.Razor;
+using RazorLight.Tests.Razor;
+
+namespace RazorLight.Tests
 {
 	using System.Threading.Tasks;
 	using Xunit;
@@ -7,9 +11,9 @@
 	{
 
 		[Fact]
-		public async Task Ensure_Option_DisablEncoding_Renders_Models_Raw()
+		public async Task Ensure_Option_Disable_Encoding_Renders_Models_Raw()
 		{
-			//Assing
+			//Arrange
 			var engine = new RazorLightEngineBuilder()
 				.UseMemoryCachingProvider()
 				.UseFileSystemProject(DirectoryUtils.RootDirectory)
@@ -28,9 +32,22 @@
 			Assert.Contains("<pre></pre>", result);
 		}
 
-		//TODO: add string rendering test
+		[Fact]
+		public async Task Ensure_QuickStart_Demo_Code_Works()
+		{
+			var engine = new RazorLightEngineBuilder()
+				.UseEmbeddedResourcesProject(typeof(Root))
+				.UseMemoryCachingProvider()
+				.Build();
 
-		//      [Fact]
+			string template = "Hello, @Model.Name. Welcome to RazorLight repository";
+			var model = new { Name = "John Doe" };
+
+			string result = await engine.CompileRenderStringAsync("templateKey", template, model);
+			Assert.Equal("Hello, John Doe. Welcome to RazorLight repository", result);
+		}
+
+		//[Fact]
 		//public async Task Ensure_Content_Added_To_DynamicTemplates()
 		//{
 		//	var options = new RazorLightOptions();
@@ -40,9 +57,11 @@
 		//	var project = new TestRazorProject();
 		//	project.Value = new TextSourceRazorProjectItem(key, content);
 
-		//	var engine = new EngineFactory().Create(project, options);
+		//	var engine = new RazorLightEngineBuilder()
+		//		.UseProject(project)
+		//		.Build();
 
-		//	await engine.CompileRenderAsync(key, content, new object(), typeof(object));
+		//	await engine.CompileRenderStringAsync(key, content, new object(), new ExpandoObject());
 
 		//	Assert.NotEmpty(options.DynamicTemplates);
 		//	Assert.Contains(options.DynamicTemplates, t => t.Key == key && t.Value == content);
