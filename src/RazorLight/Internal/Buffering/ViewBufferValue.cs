@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 namespace RazorLight.Internal
 {
@@ -51,7 +52,7 @@ namespace RazorLight.Internal
 				var valueAsContent = Value as IHtmlContent;
 				if (valueAsContent != null)
 				{
-					valueAsContent.WriteTo(writer, HtmlEncoder.Default);
+					valueAsContent.WriteTo(writer, HtmlEncoder.Create(UnicodeRanges.All));
 					return writer.ToString();
 				}
 

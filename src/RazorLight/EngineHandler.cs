@@ -2,6 +2,7 @@
 using System.Dynamic;
 using System.IO;
 using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 using RazorLight.Caching;
 using RazorLight.Compilation;
@@ -100,7 +101,7 @@ namespace RazorLight
 
 			using (var scope = new MemoryPoolViewBufferScope())
 			{
-				var renderer = new TemplateRenderer(templatePage, this, HtmlEncoder.Default, scope);
+				var renderer = new TemplateRenderer(templatePage, this, HtmlEncoder.Create(UnicodeRanges.All), scope);
 				await renderer.RenderAsync().ConfigureAwait(false);
 			}
 		}
