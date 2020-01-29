@@ -58,10 +58,8 @@ namespace RazorLight.Tests.IntegrationTests
 				.Build();
 
 			var model = new TestViewModel {Name = "RazorLight", NumberOfItems = 300};
-			var renderedResult = await engine.CompileRenderAsync("template6.cshtml", model);
-			Assert.NotNull(renderedResult);
-			renderedResult.ShouldMatchSnapshot();
-		}	
+			Assert.ThrowsAsync<TemplateCompilationException>(async () => await engine.CompileRenderAsync("template6.cshtml", model));
+		}
 		
 		[Fact]
 		public async Task Should_Render_IncludeAsync()
