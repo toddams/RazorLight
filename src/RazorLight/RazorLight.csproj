@@ -6,7 +6,7 @@
   <PropertyGroup>
     <PackageId>RazorLight</PackageId>
     <Title>RazorLight</Title>
-    <Version>2.0.0-beta4</Version>
+    <Version>2.0.0-beta5</Version>
     <Description>Use Razor to build your templates from strings / files / EmbeddedResources outside of ASP.NET MVC for .NET Core</Description>
     <Authors>toddams</Authors>
     <PackageTags>RazorLight, razor, render, dotnet-core, dotnet, core, template-engine, email, emails</PackageTags>

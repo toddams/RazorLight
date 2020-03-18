@@ -20,7 +20,7 @@ Use Razor to build templates from Files / EmbeddedResources / Strings / Database
 Install the nuget package using following command:
 
 ````
-Install-Package RazorLight -Version 2.0.0-beta4
+Install-Package RazorLight -Version 2.0.0-beta5
 ````
 
 The simplest scenario is to create a template from string. Each template must have a ````templateKey```` that is associated with it, so you can render the same template next time without recompilation.
