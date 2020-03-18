@@ -31,8 +31,8 @@ namespace RazorLight.Tests
 			engineMock.SetupGet(e => e.Options).Returns(options);
 
 			//Act
-			var templateRenderer = new TemplateRenderer(page, engineMock.Object, HtmlEncoder.Default, new MemoryPoolViewBufferScope());
-			await templateRenderer.RenderAsync();
+			var templateRenderer = new TemplateRenderer(engineMock.Object, HtmlEncoder.Default, new MemoryPoolViewBufferScope());
+			await templateRenderer.RenderAsync(page);
 
 			//Assert
 			Assert.True(triggered1);
@@ -84,8 +84,8 @@ namespace RazorLight.Tests
 			using (var writer = new StringWriter())
 			{
 				page.PageContext.Writer = writer;
-				var renderer = new TemplateRenderer(page, engineMock.Object, encoder, new MemoryPoolViewBufferScope());
-				await renderer.RenderAsync();
+				var renderer = new TemplateRenderer(engineMock.Object, encoder, new MemoryPoolViewBufferScope());
+				await renderer.RenderAsync(page);
 
 				output = writer.ToString();
 			}
