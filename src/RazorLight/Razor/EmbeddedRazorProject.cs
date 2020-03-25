@@ -17,7 +17,8 @@ namespace RazorLight.Razor
 				throw new ArgumentNullException(nameof(rootType));
 			}
 
-			this.Assembly = rootType.Assembly;
+			Assembly = rootType.Assembly;
+			RootNamespace = rootType.Namespace;
 		}
 
 		public EmbeddedRazorProject(Assembly assembly, string rootNamespace = "")
@@ -31,7 +32,7 @@ namespace RazorLight.Razor
 
 		public string RootNamespace { get; set; }
 
-		public virtual string Extension { get; set; } = ".cshtml";
+		public string Extension { get; set; } = ".cshtml";
 
 		public override Task<RazorLightProjectItem> GetItemAsync(string templateKey)
 		{
@@ -42,7 +43,7 @@ namespace RazorLight.Razor
 
 			if (!templateKey.EndsWith(Extension))
 			{
-				templateKey = templateKey + Extension;
+				templateKey += Extension;
 			}
 
 			var item = new EmbeddedRazorProjectItem(Assembly, RootNamespace, templateKey);

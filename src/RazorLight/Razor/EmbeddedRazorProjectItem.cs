@@ -19,8 +19,10 @@ namespace RazorLight.Razor
 				rootNamespace = "";
 			}
 
-			RootNamespace = rootNamespace;
-			fullTemplateKey = assembly.GetName().Name + (!string.IsNullOrEmpty(RootNamespace) ? $".{RootNamespace}" : "") + $".{key}";
+			if (!string.IsNullOrEmpty(rootNamespace) && !rootNamespace.EndsWith("."))
+				rootNamespace += ".";
+
+			this.fullTemplateKey = rootNamespace + key;
 		}
 
 		public EmbeddedRazorProjectItem(Type rootType, string key)
@@ -38,12 +40,10 @@ namespace RazorLight.Razor
 			Key = key;
 			Assembly = rootType.GetTypeInfo().Assembly;
 
-			fullTemplateKey = rootType.Namespace + "." + Key;
+			this.fullTemplateKey = $"{rootType.Namespace}.{Key}";
 		}
 
 		public Assembly Assembly { get; set; }
-
-		public string RootNamespace { get; set; }
 
 		public override string Key { get; }
 
@@ -51,13 +51,13 @@ namespace RazorLight.Razor
 		{
 			get
 			{
-				return Assembly.GetManifestResourceNames().Any(f => f == fullTemplateKey);
+				return Assembly.GetManifestResourceNames().Any(f => f == this.fullTemplateKey);
 			}
 		}
 
 		public override Stream Read()
 		{
-			return Assembly.GetManifestResourceStream(fullTemplateKey);
+			return Assembly.GetManifestResourceStream(this.fullTemplateKey);
 		}
 	}
 }
