@@ -10,6 +10,7 @@ packages/
 artifacts/
 PublishProfiles/
 .vs/
+.idea/
 bower_components/
 node_modules/
 debugSettings.json
