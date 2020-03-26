@@ -70,6 +70,9 @@ var engine = new RazorLightEngineBuilder()
                 .UseEmbeddedResourcesProject(typeof(Program))
                 .UseMemoryCachingProvider()
                 .Build();
+
+var model = new SchoolForAnts();
+string result = await engine.CompileRenderAsync<object>("Views.Subfolder.SchoolForAnts", model, null);
 ````
 
 ## Custom source
