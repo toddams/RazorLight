@@ -100,7 +100,7 @@ var engine = new RazorLightEngineBuilder()
 	.Build();
 
 var model = new SchoolForAnts();
-string result = await engine.CompileRenderAsync<object>("Views.Subfolder.SchoolForAnts", model, null);
+string result = await engine.CompileRenderAsync<object>("Views.Subfolder.SchoolForAnts", model);
 ```
 <sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L62-L71' title='File snippet `embeddedresourcesource` was extracted from'>snippet source</a> | <a href='#snippet-embeddedresourcesource' title='Navigate to start of snippet `embeddedresourcesource`'>anchor</a></sup>
 <!-- endsnippet -->
