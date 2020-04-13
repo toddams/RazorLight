@@ -1,0 +1,11 @@
+<layout>
+    
+
+We are rendering this with RazorLight
+</layout>
+
+<section>
+    
+	The content of the section
+
+</section>
