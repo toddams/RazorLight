@@ -31,7 +31,7 @@ public class Snippets
 		Assert.NotNull(result);
 	}
 
-	public async Task RenderCompiledTemplate(RazorLightEngine engine, object model)
+	async Task RenderCompiledTemplate(RazorLightEngine engine, object model)
 	{
 		#region RenderCompiledTemplate
 		var cacheResult = engine.Handler.Cache.RetrieveTemplate("templateKey");
