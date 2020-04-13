@@ -38,7 +38,7 @@ namespace RazorLight.Tests.Extensions
 		}
 
 		[Fact]
-		public void Returns_True_For_Anynymous_Objects()
+		public void Returns_True_For_Anonymous_Objects()
 		{
 			var obj = new { Name = "Test" };
 

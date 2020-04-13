@@ -8,7 +8,7 @@ namespace RazorLight.Tests.Caching
 	public class DefaultCachingProviderTest
 	{
 		[Fact]
-		public void Throws_WhenCahingWithEmptyParams()
+		public void Throws_WhenCachingWithEmptyParams()
 		{
 			var cache = new MemoryCachingProvider();
 

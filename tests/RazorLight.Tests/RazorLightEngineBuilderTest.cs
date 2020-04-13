@@ -18,7 +18,7 @@ namespace RazorLight.Tests
 		}
 
 		[Fact]
-		public void Throws_On_Null_RootType_ForEmdeddedProject()
+		public void Throws_On_Null_RootType_ForEmbeddedProject()
 		{
 			Action action = () => new RazorLightEngineBuilder().UseEmbeddedResourcesProject(null);
 

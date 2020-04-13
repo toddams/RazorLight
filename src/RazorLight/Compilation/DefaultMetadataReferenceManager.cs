@@ -61,7 +61,7 @@ namespace RazorLight.Compilation
 				}
 			}
 
-			var metadataRerefences = new List<MetadataReference>();
+			var metadataReferences = new List<MetadataReference>();
 
 			foreach (var reference in references)
 			{
@@ -72,17 +72,17 @@ namespace RazorLight.Compilation
 						var moduleMetadata = ModuleMetadata.CreateFromStream(stream, PEStreamOptions.PrefetchMetadata);
 						var assemblyMetadata = AssemblyMetadata.Create(moduleMetadata);
 
-						metadataRerefences.Add(assemblyMetadata.GetReference(filePath: reference));
+						metadataReferences.Add(assemblyMetadata.GetReference(filePath: reference));
 					}
 				}
 			}
 
 			if (AdditionalMetadataReferences.Any())
 			{
-				metadataRerefences.AddRange(AdditionalMetadataReferences);
+				metadataReferences.AddRange(AdditionalMetadataReferences);
 			}
 
-			return metadataRerefences;
+			return metadataReferences;
 		}
 
 		private static IEnumerable<Assembly> GetReferencedAssemblies(Assembly a, IEnumerable<string> excludedAssemblies, HashSet<string> visitedAssemblies = null)

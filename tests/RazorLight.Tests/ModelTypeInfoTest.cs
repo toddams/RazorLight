@@ -57,7 +57,7 @@ namespace RazorLight.Tests
 		}
 
 		[Fact]
-		public void Return_Corrent_FriendlyName()
+		public void Return_Current_FriendlyName()
 		{
 			var info = new ModelTypeInfo(typeof(TestViewModel));
 
