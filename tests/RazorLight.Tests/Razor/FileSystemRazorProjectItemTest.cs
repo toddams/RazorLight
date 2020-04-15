@@ -8,7 +8,7 @@ namespace RazorLight.Tests.Razor
 	public class FileSystemRazorProjectItemTest
 	{
 		[Fact]
-		public void Thows_OnConstructor_NullParams()
+		public void Throws_OnConstructor_NullParams()
 		{
 			Assert.Throws<ArgumentNullException>(() => new FileSystemRazorProjectItem(null, new FileInfo("C:/")));
 			Assert.Throws<ArgumentNullException>(() => new FileSystemRazorProjectItem("key", null));

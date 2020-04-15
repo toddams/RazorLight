@@ -54,7 +54,7 @@ namespace RazorLight
 		/// Disables encoding of HTML entities in variables.
 		/// </summary>
 		/// <example>
-		/// The model contais a property with value "&gt;hello&lt;".
+		/// The model contains a property with value "&gt;hello&lt;".
 		/// 
 		/// In the rendered template this will be:
 		/// 
@@ -73,7 +73,7 @@ namespace RazorLight
 		/// Enables encoding of HTML entities in variables.
 		/// </summary>
 		/// <example>
-		/// The model contais a property with value "&gt;hello&lt;".
+		/// The model contains a property with value "&gt;hello&lt;".
 		/// 
 		/// In the rendered template this will be:
 		/// 

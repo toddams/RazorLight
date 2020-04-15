@@ -17,7 +17,7 @@ namespace RazorLight.Tests
 		}
 
 		[Fact]
-		public void Ensure_Passed_Viewbag_Is_Applied()
+		public void Ensure_Passed_ViewBag_Is_Applied()
 		{
 			dynamic viewBag = new ExpandoObject();
 			viewBag.Test = "test";

@@ -32,7 +32,7 @@ namespace Samples.EntityFrameworkProject
 #endif
 			string result = engine.CompileRenderAsync(templateKey, model).Result;
 
-			//Identation will be a bit fuzzy, as we formatted a string for readability
+			//Indentation will be a bit fuzzy, as we formatted a string for readability
 			Console.WriteLine(result);
 			db.Dispose();
 		}

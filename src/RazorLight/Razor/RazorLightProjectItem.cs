@@ -8,7 +8,7 @@ namespace RazorLight.Razor
 		public IChangeToken ExpirationToken { get; set; }
 
 		/// <summary>
-		/// Unique key of the template that was seached
+		/// Unique key of the template that was searched
 		/// </summary>
 		public abstract string Key { get; }
 

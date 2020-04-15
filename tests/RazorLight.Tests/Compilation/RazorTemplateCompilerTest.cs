@@ -155,10 +155,10 @@ namespace RazorLight.Tests.Compilation
 			public static TestRazorTemplateCompiler Create(RazorLightOptions options = null, RazorLightProject project = null)
 			{
 				var razorOptions = options ?? new RazorLightOptions();
-				var metatadaManager = new DefaultMetadataReferenceManager();
+				var metadataManager = new DefaultMetadataReferenceManager();
 				var assembly = Assembly.GetCallingAssembly();
 				var razorProject = project ?? new EmbeddedRazorProject(assembly);
-				var compilerService = new RoslynCompilationService(metatadaManager, assembly);
+				var compilerService = new RoslynCompilationService(metadataManager, assembly);
 				var generator = new RazorSourceGenerator(DefaultRazorEngine.Instance, razorProject);
 
 				return new TestRazorTemplateCompiler(generator, compilerService, razorProject, razorOptions);

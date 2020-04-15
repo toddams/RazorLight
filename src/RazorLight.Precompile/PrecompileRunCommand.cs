@@ -14,7 +14,7 @@ namespace RazorLight.Precompile
 {
 	public class PrecompileRunCommand
 	{
-		private static readonly ParallelOptions ParalellOptions = new ParallelOptions
+		private static readonly ParallelOptions ParallelOptions = new ParallelOptions
 		{
 			MaxDegreeOfParallelism = 4
 		};
@@ -128,12 +128,12 @@ namespace RazorLight.Precompile
 			return emitResult;
 		}
 
-		private CSharpCompilation CompileViews(ViewCompilationInfo[] results, string assemblyname)
+		private CSharpCompilation CompileViews(ViewCompilationInfo[] results, string assemblyName)
 		{
-			var compilation = compiler.CreateCompilation(assemblyname);
+			var compilation = compiler.CreateCompilation(assemblyName);
 			var syntaxTrees = new SyntaxTree[results.Length];
 
-			Parallel.For(0, results.Length, ParalellOptions, i =>
+			Parallel.For(0, results.Length, ParallelOptions, i =>
 			{
 				ViewCompilationInfo result = results[i];
 				SourceText sourceText = SourceText.From(result.CSharpDocument.GeneratedCode, Encoding.UTF8);
@@ -159,7 +159,7 @@ namespace RazorLight.Precompile
 			var files = GetFiles();
 			var results = new ViewCompilationInfo[files.Count];
 			//TODO: finish
-			//Parallel.For(0, results.Length, ParalellOptions, i =>
+			//Parallel.For(0, results.Length, ParallelOptions, i =>
 			//{
 			//    TemplateFileInfo fileInfo = files[i];
 			//    ViewCompilationInfo compilationInfo;
