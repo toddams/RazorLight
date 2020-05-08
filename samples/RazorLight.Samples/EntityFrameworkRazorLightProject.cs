@@ -22,7 +22,7 @@ namespace Samples.EntityFrameworkProject
 			// But you can use GUID, as an example and parse it here
 			int templateId = int.Parse(templateKey);
 
-			TemplateEntity template = await dbContext.Templates.FindAsync(templateId);
+			TemplateEntity template = await dbContext.Templates.FindAsync(templateId).ConfigureAwait(false);
 
 			var projectItem = new EntityFrameworkRazorProjectItem(templateKey, template?.Content);
 
