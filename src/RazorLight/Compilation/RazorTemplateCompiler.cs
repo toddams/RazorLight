@@ -177,7 +177,7 @@ namespace RazorLight.Compilation
 			else
 			{
 				string normalizedKey = GetNormalizedKey(templateKey);
-				projectItem = await _razorProject.GetItemAsync(normalizedKey);
+				projectItem = await _razorProject.GetItemAsync(normalizedKey).ConfigureAwait(false);
 			}
 
 			if (!projectItem.Exists)
