@@ -287,6 +287,14 @@ For more information, see https://github.com/aspnet/AspNetCore/issues/14418#issu
 
 Serverless solutions are not supported yet. However, for Azure Functions, some users have reported success on Azure Functions 3.0.3.  As of 6/3/2020, Azure Functions SDK team has acknowledged a [bug in Azure Functions `RemoveRuntimeDependencies` task](https://github.com/toddams/RazorLight/issues/306#issuecomment-636374491), affecting Azure Functions 3.0.4-3.0.6 releases.
 
+For Azure Functions 3.0.4-3.0.5, the known workaround is to disable "Azure Functions dependency trimming".  To disable dependency trimming, add the following to your root / entrypoint project:
+
+```xml
+<PropertyGroup>
+  <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
+</PropertyGroup>
+```
+
 ## Unsupported Scenarios
 
 ### RazorLight does not work with ASP.NET Core Integration Testing
