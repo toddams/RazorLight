@@ -1,0 +1,19 @@
+<layout>
+    
+
+
+
+We are rendering this with RazorLight
+</layout>
+
+<section>
+	
+	Header of a RazorLight page
+
+</section>
+
+<section>
+	
+	await IncludeAsync("Partial", Model)
+
+</section>
