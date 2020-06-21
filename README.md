@@ -238,6 +238,13 @@ var metadataReference = MetadataReference.CreateFromFile("path-to-your-assembly"
                 .Build();
 ````
 
+### I'm getting errors after upgrading to ASP.NET Core 3.0 when using runtime compilation
+
+Please see: https://docs.microsoft.com/en-us/aspnet/core/razor-pages/sdk?view=aspnetcore-3.1#use-the-razor-sdk
+
+> Starting with ASP.NET Core 3.0, MVC Views or Razor Pages aren't served by default if the `RazorCompileOnBuild` or `RazorCompileOnPublish` MSBuild properties in the project file are disabled. Applications must add an explicit reference to the `Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation` package if the app relies on runtime compilation to process .cshtml files.
+
+
 ### I'm getting a Null Reference Exception after upgrading to RazorLight-2.0.0-beta2 or later.
 
 The most common scenario is that some people were using RazorLight's ability to render raw strings as templates.  While this is still somewhat supported (you can't use advanced features like partial views), what is not supported (right now) is using the caching provider with raw strings.  A workaround is to use a dummy class.
@@ -285,7 +292,15 @@ For more information, see https://github.com/aspnet/AspNetCore/issues/14418#issu
 
 ### RazorLight does not work properly on AWS Lambda or Azure Functions
 
-Serverless solutions are not supported yet.
+Serverless solutions are not supported yet. However, for Azure Functions, some users have reported success on Azure Functions 3.0.3.  As of 6/3/2020, Azure Functions SDK team has acknowledged a [bug in Azure Functions `RemoveRuntimeDependencies` task](https://github.com/toddams/RazorLight/issues/306#issuecomment-636374491), affecting Azure Functions 3.0.4-3.0.6 releases.
+
+For Azure Functions 3.0.4-3.0.5, the known workaround is to disable "Azure Functions dependency trimming".  To disable dependency trimming, add the following to your root / entrypoint project:
+
+```xml
+<PropertyGroup>
+  <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
+</PropertyGroup>
+```
 
 ## Unsupported Scenarios
 
