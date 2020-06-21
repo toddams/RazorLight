@@ -22,4 +22,4 @@ branches:
 script: 
   - dotnet --info
   - dotnet restore
-  - dotnet test tests/RazorLight.Tests/RazorLight.Tests.csproj
+  - dotnet test
