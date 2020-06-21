@@ -6,7 +6,11 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <DefineConstants>$(DefineConstants);SOME_TEST_DEFINE</DefineConstants>
   </PropertyGroup>
-  
+
+  <PropertyGroup>
+    <MdTargetDir>$(SolutionDir)</MdTargetDir>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -28,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MarkdownSnippets.MsBuild" Version="18.0.0" />
+    <PackageReference Include="MarkdownSnippets.MsBuild" Version="19.0.0" />
     <PackageReference Include="Moq" Version="4.7.99" />
     <PackageReference Include="Pose" Version="1.2.1" />
     <PackageReference Include="Verify.Xunit" Version="5.0.2" />
