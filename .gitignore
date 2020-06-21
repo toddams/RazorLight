@@ -39,3 +39,5 @@ node_modules
 *.orig
 nuget
 RazorLight.Sandbox/
+
+*.received.*

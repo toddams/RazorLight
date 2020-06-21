@@ -1,0 +1,5 @@
+
+We are rendering this with RazorLight
+
+
+This included partial template is used to render data of the passed view model: RazorLight

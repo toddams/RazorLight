@@ -25,8 +25,9 @@ namespace RazorLight
 					   NamespaceDirective.Register(builder);
 					   FunctionsDirective.Register(builder);
 					   InheritsDirective.Register(builder);
-					   SectionDirective.Register(builder);
+					   
 				   }
+				   SectionDirective.Register(builder);
 
 				   builder.Features.Add(new ModelExpressionPass());
 				   builder.Features.Add(new RazorLightTemplateDocumentClassifierPass());
