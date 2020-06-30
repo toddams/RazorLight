@@ -66,7 +66,7 @@ int templateKey = 322;
 string result = await engine.CompileRenderAsync(templateKey.ToString(), new { Name = "John Doe" });
 ````
 
-You can find a full sample [here](https://github.com/toddams/RazorLight/tree/dev-2.0/samples/RazorLight.Samples)
+You can find a full sample [here](https://github.com/toddams/RazorLight/tree/master/samples/RazorLight.Samples)
 
 
 # Includes (aka Partial views)
