@@ -30,6 +30,13 @@ namespace RazorLight
 
 		private bool disableEncoding = false;
 
+		private RazorLightOptions options;
+
+		/// <summary>
+		/// Configures RazorLight to use a project.  Use UseEmbeddedResourcesProject 
+		/// </summary>
+		/// <param name="project"></param>
+		/// <returns></returns>
 		public virtual RazorLightEngineBuilder UseProject(RazorLightProject project)
 		{
 			if (project == null)
@@ -42,6 +49,36 @@ namespace RazorLight
 			return this;
 		}
 
+		/// <summary>
+		/// Configures RazorLight to use a project whose persistent store is the file system.
+		/// </summary>
+		/// <param name="root"></param>
+		/// <returns></returns>
+		public RazorLightEngineBuilder UseFileSystemProject(string root)
+		{
+			project = new FileSystemRazorProject(root);
+
+			return this;
+		}
+
+		/// <summary>
+		/// Configures RazorLight to use a project whose persistent store is the file system.
+		/// </summary>
+		/// <param name="root">Directory path to the root folder containing your Razor markup files.</param>
+		/// <param name="extension">If you wish, you can use a different extension than .cshtml.</param>
+		/// <returns><see cref="RazorLightEngineBuilder"/></returns>
+		public RazorLightEngineBuilder UseFileSystemProject(string root, string extension)
+		{
+			project = new FileSystemRazorProject(root, extension);
+
+			return this;
+		}
+
+		/// <summary>
+		/// Configures RazorLight to use a project whose persistent store an assembly manifest resource stream.
+		/// </summary>
+		/// <param name="rootType">Any type in the root namespace (prefix) for your assembly manifest resource stream.</param>
+		/// <returns><see cref="EmbeddedRazorProject"/></returns>
 		public RazorLightEngineBuilder UseEmbeddedResourcesProject(Type rootType)
 		{
 			project = new EmbeddedRazorProject(rootType);
@@ -49,6 +86,25 @@ namespace RazorLight
 			return this;
 		}
 
+		/// <summary>
+		/// Configures RazorLight to use a project whose persistent store an assembly manifest resource stream.
+		/// </summary>
+		/// <param name="assembly">Assembly containing embedded resources</param>
+		/// <param name="rootNamespace">The root namespace (prefix) for your assembly manifest resource stream.</param>
+		/// <returns></returns>
+		public RazorLightEngineBuilder UseEmbeddedResourcesProject(Assembly assembly, string rootNamespace = null)
+		{
+			project = new EmbeddedRazorProject(assembly, rootNamespace);
+
+			return this;
+		}
+
+		public RazorLightEngineBuilder UseOptions(RazorLightOptions razorLightOptions)
+		{
+			options = razorLightOptions;
+
+			return this;
+		}
 
 		/// <summary>
 		/// Disables encoding of HTML entities in variables.
@@ -85,28 +141,6 @@ namespace RazorLight
 		public RazorLightEngineBuilder EnableEncoding()
 		{
 			disableEncoding = false;
-			return this;
-		}
-
-		public RazorLightEngineBuilder UseEmbeddedResourcesProject(Assembly assembly, string rootNamespace = null)
-		{
-			project = new EmbeddedRazorProject(assembly, rootNamespace);
-
-			return this;
-		}
-
-
-		public RazorLightEngineBuilder UseFileSystemProject(string root)
-		{
-			project = new FileSystemRazorProject(root);
-
-			return this;
-		}
-
-		public RazorLightEngineBuilder UseFileSystemProject(string root, string extension)
-		{
-			project = new FileSystemRazorProject(root, extension);
-
 			return this;
 		}
 
@@ -218,6 +252,7 @@ namespace RazorLight
 
 		public virtual RazorLightEngine Build()
 		{
+			//options = options ?? new RazorLightOptions();
 			var options = new RazorLightOptions();
 
 			if (namespaces != null)

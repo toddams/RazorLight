@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <PackageReference Include="MarkdownSnippets.MsBuild" Version="19.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.5" />
     <PackageReference Include="Moq" Version="4.7.99" />
     <PackageReference Include="Pose" Version="1.2.1" />
     <PackageReference Include="Verify.Xunit" Version="5.0.2" />
