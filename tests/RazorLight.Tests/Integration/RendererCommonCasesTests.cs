@@ -127,5 +127,23 @@ namespace RazorLight.Tests.IntegrationTests
 			var renderedResult = await engine.CompileRenderAsync("template8.cshtml", model);
 			await Verifier.Verify(renderedResult);
 		}
+
+		[Fact()]
+		public async Task Should_Render_RequiredSections()
+		{
+			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+			var engine = new RazorLightEngineBuilder()
+				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
+				.Build();
+
+			var model = new TestViewModel
+			{
+				Name = "RazorLight",
+				NumberOfItems = 400
+			};
+			var renderedResult = await engine.CompileRenderAsync("Bug240.cshtml", model);
+			await Verifier.Verify(renderedResult);
+		}
 	}
 }

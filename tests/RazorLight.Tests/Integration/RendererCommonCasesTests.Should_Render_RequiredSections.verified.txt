@@ -1,0 +1,24 @@
+<layout>
+    
+
+
+
+<p>
+	Hello there,
+</p>
+<p>
+	BLA BLA BLAH
+</p>
+<p>
+	Best regards,<br><br>
+	from us.
+</p>
+</layout>
+
+<section>
+    
+	<div>
+		TEST <i>HEADER</i>
+	</div>
+
+</section>
