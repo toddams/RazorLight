@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using RazorLight.DependencyInjection;
 
 namespace RazorLight.Extensions
@@ -19,8 +20,8 @@ namespace RazorLight.Extensions
 			}
 
 			services.AddSingleton<PropertyInjector>();
-			services.AddSingleton<IEngineHandler, EngineHandler>();
-			services.AddSingleton<IRazorLightEngine>(p =>
+			services.TryAddSingleton<IEngineHandler, EngineHandler>();
+			services.TryAddSingleton<IRazorLightEngine>(p =>
 			{
 				var engine = engineFactoryProvider();
 				AddEngineRenderCallbacks(engine, p);
