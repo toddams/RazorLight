@@ -4,7 +4,7 @@ using System.IO;
 namespace RazorLight.Text
 {
 	/// <summary>
-	/// Defines the required contract for implementing an encoded string.
+	/// Defines the required contract for implementing an unencoded string.
 	/// </summary>
 	public interface IRawString
 	{
