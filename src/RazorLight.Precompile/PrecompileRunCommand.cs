@@ -12,220 +12,220 @@ using System.Threading.Tasks;
 
 namespace RazorLight.Precompile
 {
-    public class PrecompileRunCommand
-    {
-        private static readonly ParallelOptions ParalellOptions = new ParallelOptions
-        {
-            MaxDegreeOfParallelism = 4
-        };
+	public class PrecompileRunCommand
+	{
+		private static readonly ParallelOptions ParallelOptions = new ParallelOptions
+		{
+			MaxDegreeOfParallelism = 4
+		};
 
-        private TemplateFactoryProvider factoryProvider;
-        private RoslynCompilationService compiler;
+		private TemplateFactoryProvider factoryProvider;
+		private RoslynCompilationService compiler;
 
-        private CommandLineApplication Application { get; set; }
-        private CompilationOptions Options { get; set; }
-        private string Extension { get; set; }
+		private CommandLineApplication Application { get; set; }
+		private CompilationOptions Options { get; set; }
+		private string Extension { get; set; }
 
-        public void Configure(CommandLineApplication app)
-        {
-            Application = app;
-            Options = new CompilationOptions(app);
+		public void Configure(CommandLineApplication app)
+		{
+			Application = app;
+			Options = new CompilationOptions(app);
 
-            app.OnExecute(() => Execute());
-        }
+			app.OnExecute(() => Execute());
+		}
 
-        private int Execute()
-        {
-   //         if (!ParseArguments())
-   //         {
-   //             return 1;
-   //         }
+		private int Execute()
+		{
+			//         if (!ParseArguments())
+			//         {
+			//             return 1;
+			//         }
 
 			//var engine = new RazorLightEngineBuilder()
 			//	.UseFileSystemProject(Options.ContentRootOption.Value())
 			//	.Build();
 
-   //         factoryProvider = (TemplateFactoryProvider)engine.TemplateFactoryProvider;
+			//         factoryProvider = (TemplateFactoryProvider)engine.TemplateFactoryProvider;
 			//compiler = engine.TemplateCompiler;
-   //         ViewCompilationInfo[] results = GenerateCode();
-   //         bool success = true;
+			//         ViewCompilationInfo[] results = GenerateCode();
+			//         bool success = true;
 
-   //         foreach (var result in results)
-   //         {
-   //             if (result.CSharpDocument.Diagnostics.Count > 0)
-   //             {
-   //                 success = false;
-   //                 foreach (var error in result.CSharpDocument.Diagnostics)
-   //                 {
-   //                     Application.Error.WriteLine($"{result.TemplateFileInfo.FullPath} ({error.Span.LineIndex}): {error.GetMessage()}");
-   //                 }
-   //             }
-   //         }
+			//         foreach (var result in results)
+			//         {
+			//             if (result.CSharpDocument.Diagnostics.Count > 0)
+			//             {
+			//                 success = false;
+			//                 foreach (var error in result.CSharpDocument.Diagnostics)
+			//                 {
+			//                     Application.Error.WriteLine($"{result.TemplateFileInfo.FullPath} ({error.Span.LineIndex}): {error.GetMessage()}");
+			//                 }
+			//             }
+			//         }
 
-   //         if (!success)
-   //         {
-   //             return 1;
-   //         }
+			//         if (!success)
+			//         {
+			//             return 1;
+			//         }
 
-   //         string precompileAssemblyName = $"{Options.ApplicationName}_Precompiled";
-   //         CSharpCompilation compilation = CompileViews(results, precompileAssemblyName);
+			//         string precompileAssemblyName = $"{Options.ApplicationName}_Precompiled";
+			//         CSharpCompilation compilation = CompileViews(results, precompileAssemblyName);
 
-   //         string assemblyPath = Path.Combine(Options.OutputPath, precompileAssemblyName + ".dll");
-   //         EmitResult emitResult = EmitAssembly(
-   //             compilation,
-   //             compiler.EmitOptions,
-   //             assemblyPath);
+			//         string assemblyPath = Path.Combine(Options.OutputPath, precompileAssemblyName + ".dll");
+			//         EmitResult emitResult = EmitAssembly(
+			//             compilation,
+			//             compiler.EmitOptions,
+			//             assemblyPath);
 
-   //         if (!emitResult.Success)
-   //         {
-   //             foreach (var diagnostic in emitResult.Diagnostics)
-   //             {
-   //                 Application.Error.WriteLine(CSharpDiagnosticFormatter.Instance.Format(diagnostic));
-   //             }
+			//         if (!emitResult.Success)
+			//         {
+			//             foreach (var diagnostic in emitResult.Diagnostics)
+			//             {
+			//                 Application.Error.WriteLine(CSharpDiagnosticFormatter.Instance.Format(diagnostic));
+			//             }
 
-   //             return 1;
-   //         }
+			//             return 1;
+			//         }
 
-            return 0;
-        }
+			return 0;
+		}
 
-        public EmitResult EmitAssembly(
-            CSharpCompilation compilation,
-            EmitOptions emitOptions,
-            string assemblyPath)
-        {
-            EmitResult emitResult;
-            using (var assemblyStream = new MemoryStream())
-            {
-                using (var pdbStream = new MemoryStream())
-                {
-                    emitResult = compilation.Emit(
-                        assemblyStream,
-                        pdbStream,
-                        options: emitOptions);
+		public EmitResult EmitAssembly(
+			CSharpCompilation compilation,
+			EmitOptions emitOptions,
+			string assemblyPath)
+		{
+			EmitResult emitResult;
+			using (var assemblyStream = new MemoryStream())
+			{
+				using (var pdbStream = new MemoryStream())
+				{
+					emitResult = compilation.Emit(
+						assemblyStream,
+						pdbStream,
+						options: emitOptions);
 
-                    if (emitResult.Success)
-                    {
-                        Directory.CreateDirectory(Path.GetDirectoryName(assemblyPath));
-                        var pdbPath = Path.ChangeExtension(assemblyPath, ".pdb");
-                        assemblyStream.Position = 0;
-                        pdbStream.Position = 0;
+					if (emitResult.Success)
+					{
+						Directory.CreateDirectory(Path.GetDirectoryName(assemblyPath));
+						var pdbPath = Path.ChangeExtension(assemblyPath, ".pdb");
+						assemblyStream.Position = 0;
+						pdbStream.Position = 0;
 
-                        // Avoid writing to disk unless the compilation is successful.
-                        using (var assemblyFileStream = File.OpenWrite(assemblyPath))
-                        {
-                            assemblyStream.CopyTo(assemblyFileStream);
-                        }
+						// Avoid writing to disk unless the compilation is successful.
+						using (var assemblyFileStream = File.OpenWrite(assemblyPath))
+						{
+							assemblyStream.CopyTo(assemblyFileStream);
+						}
 
-                        using (var pdbFileStream = File.OpenWrite(pdbPath))
-                        {
-                            pdbStream.CopyTo(pdbFileStream);
-                        }
-                    }
-                }
-            }
+						using (var pdbFileStream = File.OpenWrite(pdbPath))
+						{
+							pdbStream.CopyTo(pdbFileStream);
+						}
+					}
+				}
+			}
 
-            return emitResult;
-        }
+			return emitResult;
+		}
 
-        private CSharpCompilation CompileViews(ViewCompilationInfo[] results, string assemblyname)
-        {
-            var compilation = compiler.CreateCompilation(assemblyname);
-            var syntaxTrees = new SyntaxTree[results.Length];
+		private CSharpCompilation CompileViews(ViewCompilationInfo[] results, string assemblyName)
+		{
+			var compilation = compiler.CreateCompilation(assemblyName);
+			var syntaxTrees = new SyntaxTree[results.Length];
 
-            Parallel.For(0, results.Length, ParalellOptions, i =>
-            {
-                ViewCompilationInfo result = results[i];
-                SourceText sourceText = SourceText.From(result.CSharpDocument.GeneratedCode, Encoding.UTF8);
+			Parallel.For(0, results.Length, ParallelOptions, i =>
+			{
+				ViewCompilationInfo result = results[i];
+				SourceText sourceText = SourceText.From(result.CSharpDocument.GeneratedCode, Encoding.UTF8);
 
-                TemplateFileInfo fileInfo = result.TemplateFileInfo;
-                SyntaxTree syntaxTree = compiler.CreateSyntaxTree(sourceText).WithFilePath(fileInfo.FullPath ?? fileInfo.ViewEnginePath);
-                syntaxTrees[i] = syntaxTree;
-            });
+				TemplateFileInfo fileInfo = result.TemplateFileInfo;
+				SyntaxTree syntaxTree = compiler.CreateSyntaxTree(sourceText).WithFilePath(fileInfo.FullPath ?? fileInfo.ViewEnginePath);
+				syntaxTrees[i] = syntaxTree;
+			});
 
-            compilation = compilation.AddSyntaxTrees(syntaxTrees);
-            compilation = ExpressionRewriter.Rewrite(compilation);
+			compilation = compilation.AddSyntaxTrees(syntaxTrees);
+			compilation = ExpressionRewriter.Rewrite(compilation);
 
-            compilation = AssemblyMetadataGenerator.AddAssemblyMetadata(
-                compiler,
-                compilation,
-                Options);
+			compilation = AssemblyMetadataGenerator.AddAssemblyMetadata(
+				compiler,
+				compilation,
+				Options);
 
-            return compilation;
-        }
+			return compilation;
+		}
 
-        private ViewCompilationInfo[] GenerateCode()
-        {
-            var files = GetFiles();
-            var results = new ViewCompilationInfo[files.Count];
+		private ViewCompilationInfo[] GenerateCode()
+		{
+			var files = GetFiles();
+			var results = new ViewCompilationInfo[files.Count];
 			//TODO: finish
-            //Parallel.For(0, results.Length, ParalellOptions, i =>
-            //{
-            //    TemplateFileInfo fileInfo = files[i];
-            //    ViewCompilationInfo compilationInfo;
-            //    using (var fileStream = fileInfo.CreateReadStream())
-            //    {
-            //        var razorTemplate = factoryProvider.SourceGenerator.GenerateCodeAsync(fileInfo.ViewEnginePath).Result;
-            //        compilationInfo = new ViewCompilationInfo(fileInfo, razorTemplate.CSharpDocument);
-            //    }
+			//Parallel.For(0, results.Length, ParallelOptions, i =>
+			//{
+			//    TemplateFileInfo fileInfo = files[i];
+			//    ViewCompilationInfo compilationInfo;
+			//    using (var fileStream = fileInfo.CreateReadStream())
+			//    {
+			//        var razorTemplate = factoryProvider.SourceGenerator.GenerateCodeAsync(fileInfo.ViewEnginePath).Result;
+			//        compilationInfo = new ViewCompilationInfo(fileInfo, razorTemplate.CSharpDocument);
+			//    }
 
-            //    results[i] = compilationInfo;
-            //});
+			//    results[i] = compilationInfo;
+			//});
 
-            return results;
-        }
+			return results;
+		}
 
-        private List<TemplateFileInfo> GetFiles()
-        {
-            string contentRoot = Options.ContentRootOption.Value();
-            int trimLength = contentRoot.EndsWith("/") ? contentRoot.Length - 1 : contentRoot.Length;
+		private List<TemplateFileInfo> GetFiles()
+		{
+			string contentRoot = Options.ContentRootOption.Value();
+			int trimLength = contentRoot.EndsWith("/") ? contentRoot.Length - 1 : contentRoot.Length;
 
-            var files = new List<TemplateFileInfo>();
-            foreach(string file in Directory.EnumerateFiles(contentRoot, "*", SearchOption.AllDirectories))
-            {
-                if(file.EndsWith(Extension))
-                {
-                    var viewEnginePath = file.Substring(trimLength).Replace('\\', '/');
-                    files.Add(new TemplateFileInfo(file, viewEnginePath));
-                }
-            }
+			var files = new List<TemplateFileInfo>();
+			foreach (string file in Directory.EnumerateFiles(contentRoot, "*", SearchOption.AllDirectories))
+			{
+				if (file.EndsWith(Extension))
+				{
+					var viewEnginePath = file.Substring(trimLength).Replace('\\', '/');
+					files.Add(new TemplateFileInfo(file, viewEnginePath));
+				}
+			}
 
-            return files;
-        }
+			return files;
+		}
 
-        private bool ParseArguments()
-        {
-            Extension = Options.TemplatesExtension.Value();
-            if(string.IsNullOrEmpty(Extension))
-            {
-                Extension = ".cshtml";
-            }
+		private bool ParseArguments()
+		{
+			Extension = Options.TemplatesExtension.Value();
+			if (string.IsNullOrEmpty(Extension))
+			{
+				Extension = ".cshtml";
+			}
 
-            //if (!Options.ProjectArgument))
-            //{
-            //    Application.Error.WriteLine("Project path not specified.");
-            //    return false;
-            //}
+			//if (!Options.ProjectArgument))
+			//{
+			//    Application.Error.WriteLine("Project path not specified.");
+			//    return false;
+			//}
 
-            if (!Options.OutputPathOption.HasValue())
-            {
-                Application.Error.WriteLine($"Option {CompilationOptions.OutputPathTemplate} does not specify a value.");
-                return false;
-            }
+			if (!Options.OutputPathOption.HasValue())
+			{
+				Application.Error.WriteLine($"Option {CompilationOptions.OutputPathTemplate} does not specify a value.");
+				return false;
+			}
 
-            if (!Options.ApplicationNameOption.HasValue())
-            {
-                Application.Error.WriteLine($"Option {CompilationOptions.ApplicationNameTemplate} does not specify a value.");
-                return false;
-            }
+			if (!Options.ApplicationNameOption.HasValue())
+			{
+				Application.Error.WriteLine($"Option {CompilationOptions.ApplicationNameTemplate} does not specify a value.");
+				return false;
+			}
 
-            if (!Options.ContentRootOption.HasValue())
-            {
-                Application.Error.WriteLine($"Option {CompilationOptions.ContentRootTemplate} does not specify a value.");
-                return false;
-            }
+			if (!Options.ContentRootOption.HasValue())
+			{
+				Application.Error.WriteLine($"Option {CompilationOptions.ContentRootTemplate} does not specify a value.");
+				return false;
+			}
 
-            return true;
-        }
-    }
+			return true;
+		}
+	}
 }

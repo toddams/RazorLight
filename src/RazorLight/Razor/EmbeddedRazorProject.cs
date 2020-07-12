@@ -8,17 +8,18 @@ using System.Threading.Tasks;
 
 namespace RazorLight.Razor
 {
-    public class EmbeddedRazorProject : RazorLightProject
-    {
-        public EmbeddedRazorProject(Type rootType)
-        {
-            if (rootType == null)
-            {
-                throw new ArgumentNullException(nameof(rootType));
-            }
+	public class EmbeddedRazorProject : RazorLightProject
+	{
+		public EmbeddedRazorProject(Type rootType)
+		{
+			if (rootType == null)
+			{
+				throw new ArgumentNullException(nameof(rootType));
+			}
 
-			this.Assembly = rootType.Assembly;
-        }
+			Assembly = rootType.Assembly;
+			RootNamespace = rootType.Namespace;
+		}
 
 		public EmbeddedRazorProject(Assembly assembly, string rootNamespace = "")
 		{
@@ -31,7 +32,7 @@ namespace RazorLight.Razor
 
 		public string RootNamespace { get; set; }
 
-		public virtual string Extension { get; set; } = ".cshtml";
+		public string Extension { get; set; } = ".cshtml";
 
 		public override Task<RazorLightProjectItem> GetItemAsync(string templateKey)
 		{
@@ -42,17 +43,17 @@ namespace RazorLight.Razor
 
 			if (!templateKey.EndsWith(Extension))
 			{
-				templateKey = templateKey + Extension;
+				templateKey += Extension;
 			}
 
-            var item = new EmbeddedRazorProjectItem(Assembly, RootNamespace, templateKey);
+			var item = new EmbeddedRazorProjectItem(Assembly, RootNamespace, templateKey);
 
-            return Task.FromResult((RazorLightProjectItem)item);
-        }
+			return Task.FromResult((RazorLightProjectItem)item);
+		}
 
-        public override Task<IEnumerable<RazorLightProjectItem>> GetImportsAsync(string templateKey)
-        {
-            return Task.FromResult(Enumerable.Empty<RazorLightProjectItem>());
-        }
-    }
+		public override Task<IEnumerable<RazorLightProjectItem>> GetImportsAsync(string templateKey)
+		{
+			return Task.FromResult(Enumerable.Empty<RazorLightProjectItem>());
+		}
+	}
 }

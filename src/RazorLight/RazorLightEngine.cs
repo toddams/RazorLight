@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 namespace RazorLight
 {
 	public class RazorLightEngine : IRazorLightEngine
-    {
+	{
 		private readonly IEngineHandler _handler;
 
 		public RazorLightEngine(IEngineHandler handler)
-        {
+		{
 			_handler = handler ?? throw new ArgumentNullException(nameof(handler));
-        }
+		}
 
 		public RazorLightOptions Options => Handler.Options;
 
@@ -49,9 +49,9 @@ namespace RazorLight
 
 		/// <inheritdoc cref="IRazorLightEngine"/>
 		public Task<string> CompileRenderAsync<T>(string key, T model, ExpandoObject viewBag = null)
-        {
+		{
 			return _handler.CompileRenderAsync(key, model, viewBag);
-        }
+		}
 
 		/// <inheritdoc cref="IRazorLightEngine"/>
 		public Task<string> CompileRenderStringAsync<T>(
@@ -65,31 +65,31 @@ namespace RazorLight
 
 		/// <inheritdoc cref="IRazorLightEngine"/>
 		public Task<ITemplatePage> CompileTemplateAsync(string key)
-        {
+		{
 			return _handler.CompileTemplateAsync(key);
-        }
+		}
 
-        /// <inheritdoc cref="IRazorLightEngine"/>
-        public Task<string> RenderTemplateAsync<T>(ITemplatePage templatePage, T model, ExpandoObject viewBag = null)
-        {
-            return _handler.RenderTemplateAsync(templatePage, model, viewBag);
-        }
+		/// <inheritdoc cref="IRazorLightEngine"/>
+		public Task<string> RenderTemplateAsync<T>(ITemplatePage templatePage, T model, ExpandoObject viewBag = null)
+		{
+			return _handler.RenderTemplateAsync(templatePage, model, viewBag);
+		}
 
-        /// <summary>
-        /// Renders a template to the specified <paramref name="textWriter"/>
-        /// </summary>
-        /// <param name="templatePage">Instance of a template</param>
-        /// <param name="model">Template model</param>
-        /// <param name="modelType">Type of the model</param>
-        /// <param name="viewBag">Dynamic viewBag of the page</param>
-        /// <param name="textWriter">Output</param>
-        public Task RenderTemplateAsync<T>(
-            ITemplatePage templatePage,
-            T model, 
-            TextWriter textWriter,
-            ExpandoObject viewBag = null)
-        {
+		/// <summary>
+		/// Renders a template to the specified <paramref name="textWriter"/>
+		/// </summary>
+		/// <param name="templatePage">Instance of a template</param>
+		/// <param name="model">Template model</param>
+		/// <param name="modelType">Type of the model</param>
+		/// <param name="viewBag">Dynamic viewBag of the page</param>
+		/// <param name="textWriter">Output</param>
+		public Task RenderTemplateAsync<T>(
+			ITemplatePage templatePage,
+			T model,
+			TextWriter textWriter,
+			ExpandoObject viewBag = null)
+		{
 			return _handler.RenderTemplateAsync(templatePage, model, textWriter, viewBag);
-        }
+		}
 	}
 }

@@ -3,15 +3,15 @@ using System;
 
 namespace RazorLight
 {
-    [Obsolete("Use RazorLightEngineBuilder instead", true)]
-    public interface IEngineFactory
-    {
-        /// <summary>
-        /// Creates RazorLightEngine with a filesystem razor project
-        /// </summary>
-        /// <param name="root">Root folder where views are stored</param>
-        /// <returns></returns>
-        RazorLightEngine ForFileSystem(string root);
+	[Obsolete("Use RazorLightEngineBuilder instead", true)]
+	public interface IEngineFactory
+	{
+		/// <summary>
+		/// Creates RazorLightEngine with a filesystem razor project
+		/// </summary>
+		/// <param name="root">Root folder where views are stored</param>
+		/// <returns></returns>
+		RazorLightEngine ForFileSystem(string root);
 
 		/// <summary>
 		/// Creates RazorLightEngine with a filesystem razor project
@@ -44,5 +44,5 @@ namespace RazorLight
 		/// <param name="project">The project</param>
 		/// <returns>Instance of RazorLightEngine</returns>
 		RazorLightEngine Create(RazorLightProject project, RazorLightOptions options);
-    }
+	}
 }

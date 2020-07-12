@@ -2,5 +2,5 @@
 
 namespace RazorLight.Internal
 {
-    public delegate Task RenderAsyncDelegate();
+	public delegate Task RenderAsyncDelegate();
 }

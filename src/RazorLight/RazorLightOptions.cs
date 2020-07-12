@@ -32,7 +32,7 @@ namespace RazorLight
 
 		/// <summary>
 		/// Settings this to <c>true</c> will disable HTML encoding in all templates.
-		/// It can be reenabled by setting <c>DisableEncoding = false</c> in the
+		/// It can be re-enabled by setting <c>DisableEncoding = false</c> in the
 		/// template.
 		/// </summary>
 		public bool DisableEncoding { get; set; }

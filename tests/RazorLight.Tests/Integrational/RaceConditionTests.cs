@@ -11,7 +11,7 @@ namespace RazorLight.Tests.Integrational
 	public class RaceConditionTests
 	{
 		[Fact]
-		public async Task Multiple_Simuntaneous_Compilations_RaceCondition_Test()
+		public async Task Multiple_Simultaneous_Compilations_RaceCondition_Test()
 		{
 			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 

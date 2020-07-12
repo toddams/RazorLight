@@ -31,8 +31,8 @@ namespace RazorLight.Tests
 			engineMock.SetupGet(e => e.Options).Returns(options);
 
 			//Act
-			var templateRenderer = new TemplateRenderer(page, engineMock.Object, HtmlEncoder.Default, new MemoryPoolViewBufferScope());
-			await templateRenderer.RenderAsync();
+			var templateRenderer = new TemplateRenderer(engineMock.Object, HtmlEncoder.Default, new MemoryPoolViewBufferScope());
+			await templateRenderer.RenderAsync(page);
 
 			//Assert
 			Assert.True(triggered1);
@@ -84,8 +84,8 @@ namespace RazorLight.Tests
 			using (var writer = new StringWriter())
 			{
 				page.PageContext.Writer = writer;
-				var renderer = new TemplateRenderer(page, engineMock.Object, encoder, new MemoryPoolViewBufferScope());
-				await renderer.RenderAsync();
+				var renderer = new TemplateRenderer(engineMock.Object, encoder, new MemoryPoolViewBufferScope());
+				await renderer.RenderAsync(page);
 
 				output = writer.ToString();
 			}
@@ -97,7 +97,7 @@ namespace RazorLight.Tests
 		public async Task Template_Shares_Model_With_Layout()
 		{
 			var engine = new RazorLightEngineBuilder()
-				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "Assets.Embedded")
+				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded")
 				.Build();
 
 			var model = new TestModel()
@@ -119,7 +119,7 @@ namespace RazorLight.Tests
 			// See https://github.com/aspnet/Razor/issues/715
 
 			var engine = new RazorLightEngineBuilder()
-				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "Assets.Embedded")
+				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded")
 				.Build();
 
 			string expected = "<strong>LocalFunction</strong>";
@@ -136,7 +136,7 @@ namespace RazorLight.Tests
 			// See https://github.com/aspnet/Razor/issues/715
 
 			var engine = new RazorLightEngineBuilder()
-				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "Assets.Embedded")
+				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded")
 				.Build();
 
 			string expected = "<strong>LocalFunctionUsingHelper</strong>";
@@ -152,12 +152,12 @@ namespace RazorLight.Tests
 		{
 			// https://github.com/aspnet/AspNetCore/issues/5076
 			var engine = new RazorLightEngineBuilder()
-				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "Assets.Embedded")
+				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded")
 				.Build();
 
 			string expected = "<strong attr=\"class=\"Conditional Attribute\"\"></strong>";
 
-			var result = await engine.CompileRenderAsync("ConditionalAttributeRendering",true);
+			var result = await engine.CompileRenderAsync("ConditionalAttributeRendering", true);
 
 			Assert.Contains(expected, result);
 		}
