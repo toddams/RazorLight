@@ -100,8 +100,8 @@ namespace RazorLight
 
 			using (var scope = new MemoryPoolViewBufferScope())
 			{
-				var renderer = new TemplateRenderer(templatePage, this, HtmlEncoder.Default, scope);
-				await renderer.RenderAsync().ConfigureAwait(false);
+				var renderer = new TemplateRenderer(this, HtmlEncoder.Default, scope);
+				await renderer.RenderAsync(templatePage).ConfigureAwait(false);
 			}
 		}
 
@@ -113,9 +113,7 @@ namespace RazorLight
 			TemplateRenderer templateRenderer)
 		{
 			SetModelContext(templatePage, textWriter, model, viewBag);
-
-			templateRenderer.RazorPage = templatePage;
-			await templateRenderer.RenderAsync().ConfigureAwait(false);
+			await templateRenderer.RenderAsync(templatePage).ConfigureAwait(false);
 		}
 
 		/// <summary>

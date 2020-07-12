@@ -1,0 +1,6 @@
+@using RazorLight
+@model RazorLight.Tests.IntegrationTests.TestViewModel
+
+@{
+	await IncludeAsync("NestedPartial", Model);
+}

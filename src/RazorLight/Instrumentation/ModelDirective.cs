@@ -6,17 +6,17 @@ using System.Linq;
 
 namespace RazorLight.Instrumentation
 {
-    public static class ModelDirective
-    {
-        public static readonly DirectiveDescriptor Directive = DirectiveDescriptor.CreateDirective(
-            "model",
-            DirectiveKind.SingleLine,
-            builder =>
-            {
-                builder.AddTypeToken();
-                builder.Usage = DirectiveUsage.FileScopedSinglyOccurring;
-                builder.Description = "azaza";
-            });
+	public static class ModelDirective
+	{
+		public static readonly DirectiveDescriptor Directive = DirectiveDescriptor.CreateDirective(
+			"model",
+			DirectiveKind.SingleLine,
+			builder =>
+			{
+				builder.AddTypeToken();
+				builder.Usage = DirectiveUsage.FileScopedSinglyOccurring;
+				builder.Description = "azaza";
+			});
 
 		public static RazorProjectEngineBuilder Register(RazorProjectEngineBuilder builder)
 		{
@@ -31,33 +31,33 @@ namespace RazorLight.Instrumentation
 		}
 
 		public static string GetModelType(DocumentIntermediateNode document)
-        {
-            if (document == null)
-            {
-                throw new ArgumentNullException(nameof(document));
-            }
+		{
+			if (document == null)
+			{
+				throw new ArgumentNullException(nameof(document));
+			}
 
-            var visitor = new Visitor();
-            return GetModelType(document, visitor);
-        }
+			var visitor = new Visitor();
+			return GetModelType(document, visitor);
+		}
 
-        private static string GetModelType(DocumentIntermediateNode document, Visitor visitor)
-        {
-            visitor.Visit(document);
+		private static string GetModelType(DocumentIntermediateNode document, Visitor visitor)
+		{
+			visitor.Visit(document);
 
-            for (var i = visitor.ModelDirectives.Count - 1; i >= 0; i--)
-            {
-                var directive = visitor.ModelDirectives[i];
+			for (var i = visitor.ModelDirectives.Count - 1; i >= 0; i--)
+			{
+				var directive = visitor.ModelDirectives[i];
 
-                var tokens = directive.Tokens.ToArray();
-                if (tokens.Length >= 1)
-                {
-                    return tokens[0].Content;
-                }
-            }
+				var tokens = directive.Tokens.ToArray();
+				if (tokens.Length >= 1)
+				{
+					return tokens[0].Content;
+				}
+			}
 
-            return "dynamic";
-        }
+			return "dynamic";
+		}
 
 		internal class Pass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
 		{
@@ -88,40 +88,40 @@ namespace RazorLight.Instrumentation
 		}
 
 		private class Visitor : IntermediateNodeWalker
-        {
-            public NamespaceDeclarationIntermediateNode Namespace { get; private set; }
+		{
+			public NamespaceDeclarationIntermediateNode Namespace { get; private set; }
 
-            public ClassDeclarationIntermediateNode Class { get; private set; }
+			public ClassDeclarationIntermediateNode Class { get; private set; }
 
-            public IList<DirectiveIntermediateNode> ModelDirectives { get; } = new List<DirectiveIntermediateNode>();
+			public IList<DirectiveIntermediateNode> ModelDirectives { get; } = new List<DirectiveIntermediateNode>();
 
-            public override void VisitNamespaceDeclaration(NamespaceDeclarationIntermediateNode node)
-            {
-                if (Namespace == null)
-                {
-                    Namespace = node;
-                }
+			public override void VisitNamespaceDeclaration(NamespaceDeclarationIntermediateNode node)
+			{
+				if (Namespace == null)
+				{
+					Namespace = node;
+				}
 
-                base.VisitNamespaceDeclaration(node);
-            }
+				base.VisitNamespaceDeclaration(node);
+			}
 
-            public override void VisitClassDeclaration(ClassDeclarationIntermediateNode node)
-            {
-                if (Class == null)
-                {
-                    Class = node;
-                }
+			public override void VisitClassDeclaration(ClassDeclarationIntermediateNode node)
+			{
+				if (Class == null)
+				{
+					Class = node;
+				}
 
-                base.VisitClassDeclaration(node);
-            }
+				base.VisitClassDeclaration(node);
+			}
 
-            public override void VisitDirective(DirectiveIntermediateNode node)
-            {
-                if (node.Directive == Directive)
-                {
-                    ModelDirectives.Add(node);
-                }
-            }
-        }
-    }
+			public override void VisitDirective(DirectiveIntermediateNode node)
+			{
+				if (node.Directive == Directive)
+				{
+					ModelDirectives.Add(node);
+				}
+			}
+		}
+	}
 }

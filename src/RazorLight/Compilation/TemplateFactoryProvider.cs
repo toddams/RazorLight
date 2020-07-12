@@ -5,10 +5,10 @@ using System.Reflection;
 
 namespace RazorLight.Compilation
 {
-    public class TemplateFactoryProvider : ITemplateFactoryProvider
-    {
-        public Func<ITemplatePage> CreateFactory(CompiledTemplateDescriptor templateDescriptor)
-        {
+	public class TemplateFactoryProvider : ITemplateFactoryProvider
+	{
+		public Func<ITemplatePage> CreateFactory(CompiledTemplateDescriptor templateDescriptor)
+		{
 			string templateKey = templateDescriptor.TemplateKey;
 
 			if (templateDescriptor.TemplateAttribute != null)
@@ -31,5 +31,5 @@ namespace RazorLight.Compilation
 				throw new RazorLightException($"Template {templateKey} is corrupted or invalid");
 			}
 		}
-    }
+	}
 }

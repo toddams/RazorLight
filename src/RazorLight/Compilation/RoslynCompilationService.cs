@@ -78,7 +78,7 @@ namespace RazorLight.Compilation
 		private bool _optionsInitialized;
 		private void EnsureOptions()
 		{
-			lock(locker)
+			lock (locker)
 			{
 				if (!_optionsInitialized)
 				{

@@ -4,10 +4,10 @@ using System.Text;
 
 namespace RazorLight.Internal
 {
-    public interface ICharBufferSource
-    {
-        char[] Rent(int bufferSize);
+	public interface ICharBufferSource
+	{
+		char[] Rent(int bufferSize);
 
-        void Return(char[] buffer);
-    }
+		void Return(char[] buffer);
+	}
 }

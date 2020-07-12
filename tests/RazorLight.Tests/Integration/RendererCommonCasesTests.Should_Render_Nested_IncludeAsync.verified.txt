@@ -1,0 +1,6 @@
+
+
+This is a nested partial which attempts to render Partial.cshtml
+
+
+This included partial template is used to render data of the passed view model: RazorLight

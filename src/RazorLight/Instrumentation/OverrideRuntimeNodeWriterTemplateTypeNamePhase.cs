@@ -9,7 +9,14 @@ namespace RazorLight.Instrumentation
 	{
 		public static void Register(RazorProjectEngineBuilder builder)
 		{
-			var defaultRazorCSharpLoweringPhase = builder.Phases.SingleOrDefault(x => x.GetType() == Type.GetType("Microsoft.AspNetCore.Razor.Language.DefaultRazorCSharpLoweringPhase, Microsoft.AspNetCore.Razor.Language"));
+			var defaultRazorCSharpLoweringPhase = builder.Phases.SingleOrDefault(x => {
+				var type = x.GetType();
+				// This type is not public, so we can't use typeof() operator to match to x.GetType() value.
+				// Additionally, we can't use Type.GetType("Microsoft.AspNetCore.Razor.Language.DefaultRazorCSharpLoweringPhase, Microsoft.AspNetCore.Razor.Language")
+				// because apparently it can fail during Azure Functions rolling upgrades? Per user report: https://github.com/toddams/RazorLight/issues/322
+				var assemblyQualifiedNameOfTypeWeCareAbout = "Microsoft.AspNetCore.Razor.Language.DefaultRazorCSharpLoweringPhase, Microsoft.AspNetCore.Razor.Language, ";
+				return type.AssemblyQualifiedName.Substring(0, assemblyQualifiedNameOfTypeWeCareAbout.Length) == assemblyQualifiedNameOfTypeWeCareAbout;
+			});
 
 			if (defaultRazorCSharpLoweringPhase == null)
 			{

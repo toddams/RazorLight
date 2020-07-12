@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,9 +33,9 @@ namespace RazorLight.Tests.DependencyInjection
 
 			var engine = new RazorLightEngineBuilder()
 				.UseEmbeddedResourcesProject(typeof(Root))
+				.AddDynamicTemplates(new Dictionary<string, string>() { { templateKey, builder.ToString() } })
 				.Build();
 
-			engine.Options.DynamicTemplates.Add(templateKey, builder.ToString());
 			ITemplatePage templatePage = await engine.CompileTemplateAsync(templateKey);
 
 			//Act
