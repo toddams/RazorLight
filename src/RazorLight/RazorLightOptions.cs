@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System;
 using RazorLight.Caching;
+using System.Reflection;
 
 namespace RazorLight
 {
@@ -29,6 +30,8 @@ namespace RazorLight
 		public virtual IList<Action<ITemplatePage>> PreRenderCallbacks { get; set; }
 
 		public ICachingProvider CachingProvider { get; set; }
+
+		public Assembly OperatingAssemlby { get; set; }
 
 		/// <summary>
 		/// Settings this to <c>true</c> will disable HTML encoding in all templates.

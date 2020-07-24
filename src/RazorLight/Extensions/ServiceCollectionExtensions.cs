@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Reflection;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using RazorLight.Caching;
+using RazorLight.Compilation;
 using RazorLight.DependencyInjection;
+using RazorLight.Generation;
+using RazorLight.Razor;
 
 namespace RazorLight.Extensions
 {
@@ -29,6 +35,79 @@ namespace RazorLight.Extensions
 				return engine;
 			});
 		}
+
+		public static RazorLightDependencyBuilder AddRazorLight(this IServiceCollection services)
+		{
+			services = services ?? throw new ArgumentNullException(nameof(services));
+
+			services.TryAddSingleton<PropertyInjector>();
+			services.TryAddSingleton<ICachingProvider, MemoryCachingProvider>();
+			services.TryAddSingleton<RazorSourceGenerator>();
+			services.TryAddSingleton<IRazorTemplateCompiler, RazorTemplateCompiler>();
+			services.TryAddSingleton<ITemplateFactoryProvider, TemplateFactoryProvider>();			
+			services.TryAddSingleton<IMetadataReferenceManager, DefaultMetadataReferenceManager>();
+			services.TryAddSingleton<ICompilationService, RoslynCompilationService>();
+
+
+			services.TryAddSingleton<IEngineHandler, EngineHandler>();
+			services.TryAddSingleton<IRazorLightEngine, RazorLightEngine>();
+
+			RazorLightDependencyBuilder builder = new RazorLightDependencyBuilder(services);
+
+			return builder;
+		}
+
+
+
+
+		///// <summary>
+		///// Adds required RazorLightProject
+		///// </summary>
+		///// <param name="services"></param>
+		///// <param name="root">Directory path to the root folder containing your Razor markup files.</param>
+		///// <param name="extension">If you wish, you can use a different extension than .cshtml.</param>
+		//public static void AddRazorLightFileSystemProject(this IServiceCollection services,string root, string extension = null)
+		//{
+		//	services.RemoveAll<RazorLightProject>();
+		//	RazorLightProject project;
+		//	if (String.IsNullOrEmpty(extension))
+		//	{
+		//		project = new FileSystemRazorProject(root);
+		//	}
+		//	else
+		//	{
+		//		project = new FileSystemRazorProject(root, extension);
+		//	}
+
+
+		//	services.AddSingleton<RazorLightProject>(project);
+		//}
+
+		///// <summary>
+		///// Adds required RazorLightProject
+		///// </summary>
+		///// <param name="services"></param>		
+		//public static void AddRazorLightEmbeddedResourcesProject(this IServiceCollection services, Type rootType)
+		//{
+		//	services.RemoveAll<RazorLightProject>();
+		//	RazorLightProject project = null;
+		//	project = new EmbeddedRazorProject(rootType);
+		//	services.AddSingleton<RazorLightProject>(project);
+		//}
+
+		///// <summary>
+		///// Adds required RazorLightProject
+		///// </summary>
+		///// <param name="services"></param>		
+		//public static void AddRazorLightEmbeddedResourcesProject(this IServiceCollection services, Assembly assembly, string rootNamespace = null)
+		//{
+		//	services.RemoveAll<RazorLightProject>();
+		//	RazorLightProject project = null;
+		//	project = new EmbeddedRazorProject(assembly, rootNamespace);
+		//	services.AddSingleton<RazorLightProject>(project);
+		//}
+
+
 
 		private static void AddEngineRenderCallbacks(IRazorLightEngine engine, IServiceProvider services)
 		{

@@ -19,7 +19,7 @@ namespace RazorLight.Compilation
 		private readonly object _cacheLock = new object();
 
 		private RazorSourceGenerator _razorSourceGenerator;
-		private RoslynCompilationService _compiler;
+		private ICompilationService _compiler;
 
 		private readonly RazorLightOptions _razorLightOptions;
 		private readonly RazorLightProject _razorProject;
@@ -29,12 +29,12 @@ namespace RazorLight.Compilation
 
 		public RazorTemplateCompiler(
 			RazorSourceGenerator sourceGenerator,
-			RoslynCompilationService roslynCompilationService,
+			ICompilationService compilationService,
 			RazorLightProject razorLightProject,
 			RazorLightOptions razorLightOptions)
 		{
 			_razorSourceGenerator = sourceGenerator ?? throw new ArgumentNullException(nameof(sourceGenerator));
-			_compiler = roslynCompilationService ?? throw new ArgumentNullException(nameof(roslynCompilationService));
+			_compiler = compilationService ?? throw new ArgumentNullException(nameof(compilationService));
 			_razorProject = razorLightProject ?? throw new ArgumentNullException(nameof(razorLightProject));
 			_razorLightOptions = razorLightOptions ?? throw new ArgumentNullException(nameof(razorLightOptions));
 
@@ -52,6 +52,15 @@ namespace RazorLight.Compilation
 			_precompiledViews = new Dictionary<string, CompiledTemplateDescriptor>(
 				5, //Change capacity when precompiled views are arrived
 				StringComparer.OrdinalIgnoreCase);
+		}
+
+		public RazorTemplateCompiler(
+			RazorSourceGenerator sourceGenerator,
+			ICompilationService compilationService,
+			RazorLightProject razorLightProject,
+			IOptions<RazorLightOptions> options) : this(sourceGenerator, compilationService, razorLightProject, options.Value)
+		{
+
 		}
 
 		public ICompilationService CompilationService => _compiler;

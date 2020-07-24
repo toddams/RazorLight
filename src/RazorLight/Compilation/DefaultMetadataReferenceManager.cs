@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyModel;
 using System.Linq;
 using System.IO;
 using System.Reflection.PortableExecutable;
+using Microsoft.Extensions.Options;
 
 namespace RazorLight.Compilation
 {
@@ -19,6 +20,11 @@ namespace RazorLight.Compilation
 		{
 			AdditionalMetadataReferences = new HashSet<MetadataReference>();
 			ExcludedAssemblies = new HashSet<string>();
+		}
+
+		public DefaultMetadataReferenceManager(IOptions<RazorLightOptions> options) : this(options.Value.AdditionalMetadataReferences, options.Value.ExcludedAssemblies)
+		{
+			
 		}
 
 		public DefaultMetadataReferenceManager(HashSet<MetadataReference> metadataReferences)

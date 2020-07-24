@@ -6,6 +6,11 @@ using RazorLight.Extensions;
 using System;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
+using RazorLight.Compilation;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
+using System.Reflection;
 
 namespace RazorLight.Tests.Extensions
 {
@@ -108,6 +113,53 @@ namespace RazorLight.Tests.Extensions
 			Assert.NotNull(engine);
 			Assert.IsType<RazorLightEngine>(engine);
 			Assert.True(called);
+		}
+
+		[Fact]
+		public void Ensure_AddRazorLight_DI_Extension_works()
+		{
+			var services = GetServices();
+			bool newMetadataCalled = false;
+
+			services.AddRazorLight()
+				.UseMemoryCachingProvider()
+				.UseFileSystemProject("");
+
+			services.RemoveAll<IMetadataReferenceManager>();
+			services.AddSingleton<IMetadataReferenceManager>(new TestMetadataReferenceManager(()=> 
+			{
+				newMetadataCalled = true;				
+			}));
+
+			var provider = services.BuildServiceProvider();
+			var engine = provider.GetService<IRazorLightEngine>();			
+
+			Assert.NotNull(engine);
+			Assert.IsType<RazorLightEngine>(engine);
+			Assert.IsType<TestMetadataReferenceManager>(provider.GetService<IMetadataReferenceManager>());
+			Assert.True(newMetadataCalled);
+		}
+
+		public class TestMetadataReferenceManager : IMetadataReferenceManager
+		{
+
+			private Action _resolveAction = null;
+			public TestMetadataReferenceManager(Action resolveAction)
+			{
+				_resolveAction = resolveAction;
+			}
+
+			public HashSet<MetadataReference> AdditionalMetadataReferences {
+				get 
+				{
+					return new HashSet<MetadataReference>();
+				} 
+			}
+
+			public IReadOnlyList<MetadataReference> Resolve(Assembly assembly)
+			{
+				return new List<MetadataReference>();
+			}
 		}
 	}
 }
