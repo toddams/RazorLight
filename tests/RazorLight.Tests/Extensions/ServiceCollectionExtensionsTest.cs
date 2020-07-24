@@ -120,7 +120,7 @@ namespace RazorLight.Tests.Extensions
 		}
 
 		[Fact]
-		public void Ensure_AddRazorLight_DI_Extension_works()
+		public void Ensure_DI_Extension_Can_Inject()
 		{
 			var services = GetServices();			
 			bool newRazorLightEngineCalled = false;
@@ -235,6 +235,25 @@ namespace RazorLight.Tests.Extensions
 			{
 				throw new NotImplementedException();
 			}
+		}
+
+		[Fact]
+		public void Try_Render_With_DI_Extension()
+		{
+			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);		
+
+			var services = GetServices();
+			services.AddRazorLight()
+				.UseMemoryCachingProvider()
+				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"));
+
+			var provider = services.BuildServiceProvider();
+			var engine = provider.GetService<IRazorLightEngine>();
+			var result = engine.CompileRenderAsync<object>("template1.cshtml", null).GetAwaiter().GetResult();
+
+
+
+
 		}
 	}
 }
