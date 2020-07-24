@@ -31,7 +31,7 @@ namespace RazorLight
 
 		public ICachingProvider CachingProvider { get; set; }
 
-		public Assembly OperatingAssemlby { get; set; }
+		public Assembly OperatingAssembly { get; set; }
 
 		/// <summary>
 		/// Settings this to <c>true</c> will disable HTML encoding in all templates.

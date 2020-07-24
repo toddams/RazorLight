@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -39,9 +40,13 @@ namespace RazorLight.Extensions
 		public static RazorLightDependencyBuilder AddRazorLight(this IServiceCollection services)
 		{
 			services = services ?? throw new ArgumentNullException(nameof(services));
-
+			services.AddOptions().Configure<RazorLightOptions>((options) => 
+			{
+				options.OperatingAssembly = options.OperatingAssembly ?? Assembly.GetEntryAssembly();
+			});
 			services.TryAddSingleton<PropertyInjector>();
 			services.TryAddSingleton<ICachingProvider, MemoryCachingProvider>();
+			services.TryAddSingleton<RazorEngine>(DefaultRazorEngine.Instance);
 			services.TryAddSingleton<RazorSourceGenerator>();
 			services.TryAddSingleton<IRazorTemplateCompiler, RazorTemplateCompiler>();
 			services.TryAddSingleton<ITemplateFactoryProvider, TemplateFactoryProvider>();			

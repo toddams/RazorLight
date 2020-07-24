@@ -13,14 +13,13 @@ namespace RazorLight.Tests.Compilation
 		[Fact]
 		public void Throws_OnEmptyManager_InConstructor()
 		{
-			Assert.Throws<ArgumentNullException>(() => { new DefaultMetadataReferenceManager(null, null); });
+			Assert.Throws<ArgumentNullException>(() => { new DefaultMetadataReferenceManager(null as HashSet<MetadataReference>, null); });
 		}
 
 		[Fact]
 		public void Ensure_AdditionalMetadata_IsApplied()
 		{
 			var metadata = new HashSet<MetadataReference>();
-
 			var manager = new DefaultMetadataReferenceManager(metadata);
 
 			Assert.NotNull(manager.AdditionalMetadataReferences);

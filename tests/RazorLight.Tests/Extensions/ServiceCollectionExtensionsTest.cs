@@ -11,6 +11,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using System.Reflection;
+using System.Threading.Tasks;
+using System.Dynamic;
+using System.IO;
+using RazorLight.Razor;
 
 namespace RazorLight.Tests.Extensions
 {
@@ -118,26 +122,45 @@ namespace RazorLight.Tests.Extensions
 		[Fact]
 		public void Ensure_AddRazorLight_DI_Extension_works()
 		{
-			var services = GetServices();
-			bool newMetadataCalled = false;
+			var services = GetServices();			
+			bool newRazorLightEngineCalled = false;
+			var root = "C:";
 
 			services.AddRazorLight()
 				.UseMemoryCachingProvider()
-				.UseFileSystemProject("");
+				.UseFileSystemProject(root)
+				.UseNetFrameworkLegacyFix();
+			
+
 
 			services.RemoveAll<IMetadataReferenceManager>();
-			services.AddSingleton<IMetadataReferenceManager>(new TestMetadataReferenceManager(()=> 
+			services.AddSingleton<IMetadataReferenceManager>(new TestMetadataReferenceManager(() =>
 			{
-				newMetadataCalled = true;				
+				
+			}));
+
+			services.RemoveAll<IRazorLightEngine>();
+			services.AddSingleton<IRazorLightEngine>(new TestRazorLightEngine(() =>
+			{
+				newRazorLightEngineCalled = true;
 			}));
 
 			var provider = services.BuildServiceProvider();
-			var engine = provider.GetService<IRazorLightEngine>();			
+			var directoryFormatter = provider.GetService<IAssemblyDirectoryFormatter>();
+			Assert.IsType<LegacyFixAssemblyDirectoryFormatter>(directoryFormatter);
 
+			var project = provider.GetService<RazorLightProject>();
+			Assert.IsType<FileSystemRazorProject>(project);
+			var fileSystemProject = project as FileSystemRazorProject;
+			Assert.Equal(fileSystemProject.Root, root);
+
+			var engine = provider.GetService<IRazorLightEngine>();
 			Assert.NotNull(engine);
-			Assert.IsType<RazorLightEngine>(engine);
-			Assert.IsType<TestMetadataReferenceManager>(provider.GetService<IMetadataReferenceManager>());
-			Assert.True(newMetadataCalled);
+			Assert.IsType<TestRazorLightEngine>(engine);			
+			engine.CompileRenderStringAsync("","","").GetAwaiter().GetResult();
+			Assert.True(newRazorLightEngineCalled); 
+		
+			Assert.IsType<TestMetadataReferenceManager>(provider.GetService<IMetadataReferenceManager>());				
 		}
 
 		public class TestMetadataReferenceManager : IMetadataReferenceManager
@@ -158,7 +181,59 @@ namespace RazorLight.Tests.Extensions
 
 			public IReadOnlyList<MetadataReference> Resolve(Assembly assembly)
 			{
+				_resolveAction();
 				return new List<MetadataReference>();
+			}
+		}
+
+		public class TestRazorLightEngine : IRazorLightEngine
+		{
+
+			private Action _compileAction = null;
+			public TestRazorLightEngine(Action compileAction)
+			{
+				_compileAction = compileAction;
+			}
+
+			public RazorLightOptions Options => new RazorLightOptions();
+
+			public IEngineHandler Handler => throw new NotImplementedException();
+
+			public Task<string> CompileRenderAsync<T>(string key, T model, ExpandoObject viewBag = null)
+			{
+				throw new NotImplementedException();
+			}
+
+			public Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag = null)
+			{
+				throw new NotImplementedException();
+			}
+
+			public Task<string> CompileRenderStringAsync<T>(string key, string content, T model, ExpandoObject viewBag = null)
+			{
+				_compileAction();
+				var result = nameof(TestRazorLightEngine);
+				return Task.FromResult(result);
+			}
+
+			public Task<ITemplatePage> CompileTemplateAsync(string key)
+			{
+				throw new NotImplementedException();
+			}
+
+			public Task<string> RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, ExpandoObject viewBag = null)
+			{
+				throw new NotImplementedException();
+			}
+
+			public Task<string> RenderTemplateAsync<T>(ITemplatePage templatePage, T model, ExpandoObject viewBag = null)
+			{
+				throw new NotImplementedException();
+			}
+
+			public Task RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, TextWriter textWriter, ExpandoObject viewBag = null)
+			{
+				throw new NotImplementedException();
 			}
 		}
 	}

@@ -41,7 +41,7 @@ namespace RazorLight.Compilation
 			EmitOptions = new EmitOptions(debugInformationFormat: pdbFormat);
 		}
 
-		public RoslynCompilationService(IMetadataReferenceManager referenceManager, IOptions<RazorLightOptions> options) :this(referenceManager,options.Value.OperatingAssemlby)
+		public RoslynCompilationService(IMetadataReferenceManager referenceManager, IOptions<RazorLightOptions> options) :this(referenceManager,options.Value.OperatingAssembly)
 		{
 			
 		}
