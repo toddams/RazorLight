@@ -6,7 +6,7 @@
   <PropertyGroup>
     <PackageId>RazorLight</PackageId>
     <Title>RazorLight</Title>
-    <Version>2.0.0-beta9</Version>
+    <Version>2.0.0-beta10</Version>
     <Description>Use Razor to build your templates from strings / files / EmbeddedResources outside of ASP.NET MVC for .NET Core</Description>
     <Authors>toddams</Authors>
     <PackageTags>RazorLight, razor, render, dotnet-core, dotnet, core, template-engine, email, emails</PackageTags>
@@ -19,31 +19,31 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Runtime" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Primitives" Version="2.1.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="[2.1.0,3)" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="[2.1.0,3)" />
+    <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="[2.1.0,3)" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="[2.1.0,3)" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="[2.1.0,3)" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Runtime" Version="[2.1.0,3)" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="[2.1.0,3)" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[2.1.0,3)" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="[2.1.0,3)" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="[2.1.0,3)" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="[2.1.0,3)" />
+    <PackageReference Include="Microsoft.Extensions.Primitives" Version="[2.1.0,3)" />
     <PackageReference Include="System.Buffers" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="3.0.3" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="3.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.0.3" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.3" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.0.3" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Primitives" Version="3.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="[3.0.3,3.1)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="[3.0.3,3.1)" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="[3.0.3,3.1)" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[3.0.3,3.1)" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="[3.0.3,3.1)" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="[3.0.3,3.1)" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="[3.0.3,3.1)" />
+    <PackageReference Include="Microsoft.Extensions.Primitives" Version="[3.0.3,3.1)" />
     <PackageReference Include="System.Buffers" Version="4.5.0" />
   </ItemGroup>
 
