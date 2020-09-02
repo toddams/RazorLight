@@ -3,6 +3,7 @@ using System.Dynamic;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using RazorLight.Caching;
 using RazorLight.Compilation;
 using RazorLight.Internal;
@@ -22,6 +23,16 @@ namespace RazorLight
 			FactoryProvider = factoryProvider ?? throw new ArgumentNullException(nameof(factoryProvider));
 
 			Cache = cache;
+		}
+
+		public EngineHandler(
+			IOptions<RazorLightOptions> options,
+			IRazorTemplateCompiler compiler,
+			ITemplateFactoryProvider factoryProvider,
+			ICachingProvider cache) : this(options.Value, compiler, factoryProvider, cache)
+		{
+			
+
 		}
 
 		public RazorLightOptions Options { get; }
