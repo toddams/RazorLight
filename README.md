@@ -302,6 +302,8 @@ For Azure Functions 3.0.4-3.0.5, the known workaround is to disable "Azure Funct
 </PropertyGroup>
 ```
 
+In addition, Azure Functions has an open pull request outstanding to update `runtimeAssemblies.json`: https://github.com/Azure/azure-functions-vs-build-sdk/issues/422
+
 ## Unsupported Scenarios
 
 ### RazorLight does not work with ASP.NET Core Integration Testing
