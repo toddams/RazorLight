@@ -59,7 +59,7 @@ namespace RazorLight.Compilation
 			}
 			else
 			{
-				references = dependencyContext.CompileLibraries.SelectMany(library => library.ResolveReferencePaths());
+				references = dependencyContext.CompileLibraries.Where(x => !ExcludedAssemblies.Contains(x.Name)).SelectMany(library => library.ResolveReferencePaths());
 
 				if (!references.Any())
 				{
