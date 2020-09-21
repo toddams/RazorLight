@@ -75,7 +75,7 @@ namespace RazorLight
 				templatePage = templateFactory();
 			}
 
-			templatePage.DisableEncoding = Options.DisableEncoding;
+			templatePage.DisableEncoding = Options.DisableEncoding ?? false;
 			return templatePage;
 		}
 

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Microsoft.CodeAnalysis;
+using RazorLight.Caching;
+using RazorLight.Razor;
 using Xunit;
 
 namespace RazorLight.Tests
@@ -82,6 +85,74 @@ namespace RazorLight.Tests
 			Assert.Throws<ArgumentNullException>(action);
 		}
 
+		[Fact]
+		public void Respects_Options_Passed_In()
+		{
+
+		}
+
+		[Fact]
+		public void Throws_On_Conflicting_Options_Configurations()
+		{
+			Func<RazorLightEngineBuilder> GetEngine = () => new RazorLightEngineBuilder().UseEmbeddedResourcesProject(typeof(Root));
+
+			var engine = GetEngine().AddDefaultNamespaces("123")
+				.UseOptions(new RazorLightOptions{Namespaces = new HashSet<string>{"123"}});
+			Assert.Throws<RazorLightException>(() => engine.Build());
+
+			engine = GetEngine().AddDynamicTemplates(new Dictionary<string, string>{ {"abc", "123"} })
+				.UseOptions(new RazorLightOptions {DynamicTemplates = new Dictionary<string, string> { { "abc", "123" } } });
+			Assert.Throws<RazorLightException>(() => engine.Build());
+
+			engine = GetEngine().AddMetadataReferences(MetadataReference.CreateFromStream(new MemoryStream()))
+				.UseOptions(new RazorLightOptions {AdditionalMetadataReferences = new HashSet<MetadataReference>{ MetadataReference.CreateFromStream(new MemoryStream()) } });
+			Assert.Throws<RazorLightException>(() => engine.Build());
+
+			engine = GetEngine().ExcludeAssemblies("123")
+                .UseOptions(new RazorLightOptions{ ExcludedAssemblies = new HashSet<string>{ "123"}});
+			Assert.Throws<RazorLightException>(() => engine.Build());
+
+			engine = GetEngine().AddPrerenderCallbacks(x => x.Layout = "123")
+				.UseOptions(new RazorLightOptions {PreRenderCallbacks = new List<Action<ITemplatePage>> {x => x.Layout = "123"}});
+			Assert.Throws<RazorLightException>(() => engine.Build());
+
+			engine = GetEngine().UseMemoryCachingProvider()
+				.UseOptions(new RazorLightOptions{CachingProvider = new MemoryCachingProvider()});
+			Assert.Throws<RazorLightException>(() => engine.Build());
+
+			engine = GetEngine().DisableEncoding()
+				.UseOptions(new RazorLightOptions { DisableEncoding = true});
+			Assert.Throws<RazorLightException>(() => engine.Build());
+
+			engine = GetEngine().EnableEncoding()
+				.UseOptions(new RazorLightOptions { DisableEncoding = false });
+			Assert.Throws<RazorLightException>(() => engine.Build());
+		}
+
+		[Fact]
+		public void EngineBuilder_Can_Set_EncodingOption_Only_Once()
+		{
+			var engine = new RazorLightEngineBuilder().DisableEncoding();
+			Assert.NotNull(engine);
+
+			Assert.Throws<RazorLightException>(() => new RazorLightEngineBuilder().DisableEncoding().EnableEncoding());
+			Assert.Throws<RazorLightException>(() => new RazorLightEngineBuilder().DisableEncoding().DisableEncoding());
+			Assert.Throws<RazorLightException>(() => new RazorLightEngineBuilder().EnableEncoding().DisableEncoding());
+			Assert.Throws<RazorLightException>(() => new RazorLightEngineBuilder().EnableEncoding().EnableEncoding());
+		}
+
+		[Fact]
+		public void DisableEncoding_Defaults_To_False()
+		{
+			string templateKey = "Assets.Embedded.Empty.cshtml";
+
+			var engine = new RazorLightEngineBuilder()
+				.UseMemoryCachingProvider()
+				.UseEmbeddedResourcesProject(typeof(Root))
+				.Build();
+			
+			Assert.False(engine.Options.DisableEncoding);
+		}
 		//[Fact]
 		//public void Compiler_OperatingAssembly_IsSetTo_EntryAssembly_If_Not_Specified()
 		//{
