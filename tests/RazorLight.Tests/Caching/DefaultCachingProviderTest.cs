@@ -1,6 +1,7 @@
 ﻿using Moq;
 using RazorLight.Caching;
 using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RazorLight.Tests.Caching
@@ -67,6 +68,27 @@ namespace RazorLight.Tests.Caching
 			Assert.NotNull(templateResult);
 			Assert.Null(templateResult.Template.TemplatePageFactory);
 			Assert.False(templateResult.Success);
+		}
+
+		[Fact]
+		public void Respects_DisabledEncoding_On_CachedTemplates()
+		{
+			string templateKey = "Assets.Embedded.Empty.cshtml";
+		
+			var engine = new RazorLightEngineBuilder()
+				.DisableEncoding()
+				.UseMemoryCachingProvider()
+				.UseEmbeddedResourcesProject(typeof(Root))
+				
+				.Build();
+			var testCompileToCache = engine.CompileTemplateAsync(templateKey).Result;
+		
+			Assert.True(testCompileToCache.DisableEncoding);
+		
+			var cachedCompile = engine.CompileTemplateAsync(templateKey).Result;
+		
+			Assert.True(cachedCompile.DisableEncoding);
+		
 		}
 
 		private Func<ITemplatePage> GetTestFactory(string key = "key")

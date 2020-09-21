@@ -16,7 +16,6 @@ namespace RazorLight
 			AdditionalMetadataReferences = new HashSet<MetadataReference>();
 			ExcludedAssemblies = new HashSet<string>();
 			PreRenderCallbacks = new List<Action<ITemplatePage>>();
-			DisableEncoding = false;
 		}
 
 		public ISet<string> Namespaces { get; set; }
@@ -38,6 +37,6 @@ namespace RazorLight
 		/// It can be re-enabled by setting <c>DisableEncoding = false</c> in the
 		/// template.
 		/// </summary>
-		public bool DisableEncoding { get; set; }
+		public bool? DisableEncoding { get; set; }
 	}
 }

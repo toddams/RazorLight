@@ -28,9 +28,10 @@ namespace RazorLight
 
 		protected ICachingProvider cachingProvider;
 
-		private bool disableEncoding = false;
+		private bool? disableEncoding;
 
 		private RazorLightOptions options;
+
 
 		/// <summary>
 		/// Configures RazorLight to use a project.  Use UseEmbeddedResourcesProject 
@@ -102,7 +103,6 @@ namespace RazorLight
 		public RazorLightEngineBuilder UseOptions(RazorLightOptions razorLightOptions)
 		{
 			options = razorLightOptions;
-
 			return this;
 		}
 
@@ -121,6 +121,9 @@ namespace RazorLight
 		/// <returns>A <see cref="RazorLightEngineBuilder"/></returns>
 		public RazorLightEngineBuilder DisableEncoding()
 		{
+			if (disableEncoding.HasValue)
+				throw new RazorLightException($"{nameof(disableEncoding)} has already been set");
+
 			disableEncoding = true;
 			return this;
 		}
@@ -140,6 +143,8 @@ namespace RazorLight
 		/// <returns>A <see cref="RazorLightEngineBuilder"/></returns>
 		public RazorLightEngineBuilder EnableEncoding()
 		{
+			if (disableEncoding.HasValue)
+				throw new RazorLightException($"{nameof(disableEncoding)} has already been set");
 			disableEncoding = false;
 			return this;
 		}
@@ -252,40 +257,69 @@ namespace RazorLight
 
 		public virtual RazorLightEngine Build()
 		{
-			//options = options ?? new RazorLightOptions();
-			var options = new RazorLightOptions();
+			options = options ?? new RazorLightOptions();
 
 			if (namespaces != null)
 			{
+				if(namespaces.Count > 0)
+					ThrowIfHasBeenSetExplicitly(nameof(namespaces));
+				
 				options.Namespaces = namespaces;
 			}
 
 			if (dynamicTemplates != null)
 			{
+				if(dynamicTemplates.Count > 0 && options.DynamicTemplates.Count > 0)
+					ThrowIfHasBeenSetExplicitly(nameof(dynamicTemplates));
+
 				options.DynamicTemplates = dynamicTemplates;
 			}
 
 			if (metadataReferences != null)
 			{
+				if (metadataReferences.Count > 0 && options.AdditionalMetadataReferences.Count > 0)
+					ThrowIfHasBeenSetExplicitly(nameof(metadataReferences));
+				
 				options.AdditionalMetadataReferences = metadataReferences;
 			}
 
 			if (excludedAssemblies != null)
 			{
+				if(excludedAssemblies.Count > 0 && options.ExcludedAssemblies.Count > 0)
+					ThrowIfHasBeenSetExplicitly(nameof(excludedAssemblies));
+
+				
 				options.ExcludedAssemblies = excludedAssemblies;
 			}
 
 			if (prerenderCallbacks != null)
 			{
+				if(prerenderCallbacks.Count > 0 && options.PreRenderCallbacks.Count > 0)
+					ThrowIfHasBeenSetExplicitly(nameof(prerenderCallbacks));
+				
 				options.PreRenderCallbacks = prerenderCallbacks;
 			}
 
 			if (cachingProvider != null)
 			{
+				if(options.CachingProvider != null)
+					ThrowIfHasBeenSetExplicitly(nameof(cachingProvider));
+				
 				options.CachingProvider = cachingProvider;
 			}
 
-			options.DisableEncoding = disableEncoding;
+			if (disableEncoding.HasValue)
+			{
+				if(options.DisableEncoding != null)
+					ThrowIfHasBeenSetExplicitly(nameof(disableEncoding));
+			
+				options.DisableEncoding = options.DisableEncoding ?? disableEncoding ?? false;
+			}
+			else
+			{
+				if (!options.DisableEncoding.HasValue)
+					options.DisableEncoding = false;
+			}
 
 
 			var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences, options.ExcludedAssemblies);
@@ -299,6 +333,11 @@ namespace RazorLight
 			var engineHandler = new EngineHandler(options, templateCompiler, templateFactoryProvider, cachingProvider);
 
 			return new RazorLightEngine(engineHandler);
+		}
+
+		private void ThrowIfHasBeenSetExplicitly(string option)
+		{
+			throw new RazorLightException($"{option} has conflicting settings, configure using either fluent configuration or setting an Options object.");
 		}
 	}
 }

@@ -50,28 +50,32 @@ namespace RazorLight
 		/// <returns>An instance of a template</returns>
 		public async Task<ITemplatePage> CompileTemplateAsync(string key)
 		{
+			ITemplatePage templatePage = null;
 			if (IsCachingEnabled)
 			{
 				var cacheLookupResult = Cache.RetrieveTemplate(key);
 				if (cacheLookupResult.Success)
 				{
-					return cacheLookupResult.Template.TemplatePageFactory();
+					templatePage = cacheLookupResult.Template.TemplatePageFactory();
 				}
 			}
 
-			CompiledTemplateDescriptor templateDescriptor = await Compiler.CompileAsync(key);
-			Func<ITemplatePage> templateFactory = FactoryProvider.CreateFactory(templateDescriptor);
-
-			if (IsCachingEnabled)
+			if(templatePage == null)
 			{
-				Cache.CacheTemplate(
-				key,
-				templateFactory,
-				templateDescriptor.ExpirationToken);
+				CompiledTemplateDescriptor templateDescriptor = await Compiler.CompileAsync(key);
+				Func<ITemplatePage> templateFactory = FactoryProvider.CreateFactory(templateDescriptor);
+
+				if(IsCachingEnabled) {
+					Cache.CacheTemplate(
+					key,
+					templateFactory,
+					templateDescriptor.ExpirationToken);
+				}
+
+				templatePage = templateFactory();
 			}
 
-			ITemplatePage templatePage = templateFactory();
-			templatePage.DisableEncoding = Options.DisableEncoding;
+			templatePage.DisableEncoding = Options.DisableEncoding ?? false;
 			return templatePage;
 		}
 
