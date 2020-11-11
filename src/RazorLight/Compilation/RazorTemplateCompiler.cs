@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Hosting;
 using Microsoft.Extensions.Caching.Memory;
@@ -269,7 +270,7 @@ namespace RazorLight.Compilation
 				length++;
 			}
 
-			var builder = new InplaceStringBuilder(length);
+			var builder = new StringBuilder(length);
 			if (addLeadingSlash)
 			{
 				builder.Append('/');
