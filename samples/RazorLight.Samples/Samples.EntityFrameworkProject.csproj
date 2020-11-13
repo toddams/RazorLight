@@ -2,14 +2,14 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>netcoreapp3.0;netcoreapp3.1;net5.0</TargetFrameworks>
+        <TargetFrameworks>netcoreapp2.1;netcoreapp3.1;net5.0</TargetFrameworks>
         <PreserveCompilationContext>true</PreserveCompilationContext>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.3" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.0.3" />
+    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.14" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.1.14" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
