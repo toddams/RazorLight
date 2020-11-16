@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+      <TargetFrameworks>net5.0</TargetFrameworks>
     <PreserveCompilationContext>true</PreserveCompilationContext>
 	<IsPackable>false</IsPackable>
   </PropertyGroup>
