@@ -130,6 +130,17 @@ namespace RazorLight.Tests
 		}
 
 		[Fact]
+		public async Task GenerateCode_ByProjectItem_Throws_On_Null_ProjectItem()
+		{
+			var generator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project: null);
+
+			Func<Task> action = () => generator.GenerateCodeAsync((RazorLightProjectItem)null);
+
+			var exception = await Assert.ThrowsAsync<ArgumentNullException>(action);
+			Assert.Equal("projectItem", exception.ParamName);
+		}
+
+		[Fact]
 		public async Task GenerateCode_ByProjectItem_Throws_On_ProjectItem_Not_Exists()
 		{
 			var generator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project: null);
@@ -143,7 +154,18 @@ namespace RazorLight.Tests
 			Func<Task> action = () => generator.GenerateCodeAsync(projectItem);
 
 			var exception = await Assert.ThrowsAsync<InvalidOperationException>(action);
-			Assert.Equal($"RazorLightProjectItem with key {projectItem.Key} must exist", exception.Message);
+			Assert.Equal($"{ nameof(RazorLightProjectItem)} of type {projectItem.GetType().FullName} with key {projectItem.Key} does not exist.", exception.Message);
+		}
+
+		[Fact]
+		public async Task CreateCodeDocumentAsync_Throws_On_Null_ProjectItem()
+		{
+			var generator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project: null);
+
+			Func<Task> action = () => generator.CreateCodeDocumentAsync(null);
+
+			var exception = await Assert.ThrowsAsync<ArgumentNullException>(action);
+			Assert.Equal("projectItem", exception.ParamName);
 		}
 
 		[Fact]
@@ -160,7 +182,7 @@ namespace RazorLight.Tests
 			Func<Task> action = () => generator.CreateCodeDocumentAsync(projectItem);
 
 			var exception = await Assert.ThrowsAsync<InvalidOperationException>(action);
-			Assert.Equal($"RazorLightProjectItem with key {projectItem.Key} must exist", exception.Message);
+			Assert.Equal($"{ nameof(RazorLightProjectItem)} of type {projectItem.GetType().FullName} with key {projectItem.Key} does not exist.", exception.Message);
 		}
 	}
 }
