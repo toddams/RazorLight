@@ -118,7 +118,6 @@ namespace RazorLight.Tests
 			Assert.Empty(result);
 		}
 
-
 		[Fact]
 		public async Task GenerateCode_ByKey_Throws_OnEmpty_Project()
 		{
@@ -128,6 +127,62 @@ namespace RazorLight.Tests
 
 			var exception = await Assert.ThrowsAsync<InvalidOperationException>(action);
 			Assert.Equal("Can not resolve a content for the template \"key\" as there is no project set. You can only render a template by passing it's content directly via string using corresponding function overload", exception.Message);
+		}
+
+		[Fact]
+		public async Task GenerateCode_ByProjectItem_Throws_On_Null_ProjectItem()
+		{
+			var generator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project: null);
+
+			Func<Task> action = () => generator.GenerateCodeAsync((RazorLightProjectItem)null);
+
+			var exception = await Assert.ThrowsAsync<ArgumentNullException>(action);
+			Assert.Equal("projectItem", exception.ParamName);
+		}
+
+		[Fact]
+		public async Task GenerateCode_ByProjectItem_Throws_On_ProjectItem_Not_Exists()
+		{
+			var generator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project: null);
+
+			string templateKey = "Assets.Embedded.IDoNotExist.cshtml";
+
+			var projectItem = new EmbeddedRazorProjectItem(typeof(Root), templateKey);
+
+			Assert.False(projectItem.Exists);
+
+			Func<Task> action = () => generator.GenerateCodeAsync(projectItem);
+
+			var exception = await Assert.ThrowsAsync<InvalidOperationException>(action);
+			Assert.Equal($"{ nameof(RazorLightProjectItem)} of type {projectItem.GetType().FullName} with key {projectItem.Key} does not exist.", exception.Message);
+		}
+
+		[Fact]
+		public async Task CreateCodeDocumentAsync_Throws_On_Null_ProjectItem()
+		{
+			var generator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project: null);
+
+			Func<Task> action = () => generator.CreateCodeDocumentAsync(null);
+
+			var exception = await Assert.ThrowsAsync<ArgumentNullException>(action);
+			Assert.Equal("projectItem", exception.ParamName);
+		}
+
+		[Fact]
+		public async Task CreateCodeDocumentAsync_Throws_On_ProjectItem_Not_Exists()
+		{
+			var generator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project: null);
+
+			string templateKey = "Assets.Embedded.IDoNotExist.cshtml";
+
+			var projectItem = new EmbeddedRazorProjectItem(typeof(Root), templateKey);
+
+			Assert.False(projectItem.Exists);
+
+			Func<Task> action = () => generator.CreateCodeDocumentAsync(projectItem);
+
+			var exception = await Assert.ThrowsAsync<InvalidOperationException>(action);
+			Assert.Equal($"{ nameof(RazorLightProjectItem)} of type {projectItem.GetType().FullName} with key {projectItem.Key} does not exist.", exception.Message);
 		}
 	}
 }
