@@ -19,15 +19,15 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="2.1.0)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Runtime" Version="2.1.0)" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.1.0)" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Runtime" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.0)" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Primitives" Version="2.1.0" />
