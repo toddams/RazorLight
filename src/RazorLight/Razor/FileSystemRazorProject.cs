@@ -90,5 +90,15 @@ namespace RazorLight.Razor
 		{
 			return Task.FromResult(Enumerable.Empty<RazorLightProjectItem>());
 		}
+		public override Task<IEnumerable<string>> GetKnownKeysAsync()
+		{
+			var files = Directory.EnumerateFiles(Root, $"*{Extension}", SearchOption.AllDirectories)
+				.Where(x => x.StartsWith(Root))
+				.Select(x => x.Substring(Root.Length, x.Length - Root.Length))
+				.Select(x => x.StartsWith("\\") || x.StartsWith("/") ? x.Substring(1) : x)
+				.Select(x => x.Replace('\\', '/'));
+
+			return Task.FromResult(files);
+		}
 	}
 }

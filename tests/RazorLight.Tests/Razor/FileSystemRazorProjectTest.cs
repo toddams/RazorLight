@@ -67,5 +67,42 @@ namespace RazorLight.Tests.Razor
 			Assert.NotNull(item);
 			Assert.EndsWith(templateKey + project.Extension, item.Key);
 		}
+
+		[Fact]
+		public async Task Ensure_GetKnownKeysAsync_Returns_Existing_Keys()
+		{
+			var project = new FileSystemRazorProject(DirectoryUtils.RootDirectory.ToLowerInvariant());
+
+			var knownKeys = await project.GetKnownKeysAsync();
+			Assert.NotNull(knownKeys);
+			Assert.NotEmpty(knownKeys);
+
+			foreach (var key in knownKeys)
+			{
+				var projectItem = await project.GetItemAsync(key);
+				Assert.True(projectItem.Exists);
+			}
+		}
+
+		[Fact]
+		public async Task Ensure_GetKnownKeysAsync_Returns_Expected_Keys()
+		{
+			var subsetToCheck = new[]
+			{
+				"Assets/Files/Empty.cshtml",
+				"Assets/Files/Layout.cshtml"
+			};
+
+			var project = new FileSystemRazorProject(DirectoryUtils.RootDirectory.ToLowerInvariant());
+
+			var knownKeys = await project.GetKnownKeysAsync();
+			Assert.NotNull(knownKeys);
+			Assert.NotEmpty(knownKeys);
+
+			foreach (var key in subsetToCheck)
+			{
+				Assert.Contains(key, knownKeys);
+			}
+		}
 	}
 }
