@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -153,6 +154,29 @@ namespace RazorLight.Tests
 			
 			Assert.False(engine.Options.DisableEncoding);
 		}
+
+		[Fact]
+		public void Namespace_Setting_Is_Set_Correctly()
+		{
+			Func<RazorLightEngineBuilder> GetEngine = () => new RazorLightEngineBuilder().UseEmbeddedResourcesProject(typeof(Root));
+
+			var namespaces = new [] { "abc", "def" };
+
+			// Set namespaces with AddDefaultNamespaces
+			var engine = GetEngine()
+				.AddDefaultNamespaces(namespaces.ToArray())
+				.Build();
+
+			Assert.Equal(namespaces, engine.Options.Namespaces);
+
+			// Set namespaces with UseOptions
+			engine = GetEngine()
+				.UseOptions(new RazorLightOptions { Namespaces = namespaces.ToHashSet()})
+				.Build();
+
+			Assert.Equal(namespaces, engine.Options.Namespaces);
+		}
+
 		//[Fact]
 		//public void Compiler_OperatingAssembly_IsSetTo_EntryAssembly_If_Not_Specified()
 		//{
