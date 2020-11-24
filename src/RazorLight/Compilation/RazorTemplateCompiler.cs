@@ -192,7 +192,8 @@ namespace RazorLight.Compilation
 
 			if (!projectItem.Exists)
 			{
-				throw new TemplateNotFoundException($"Project can not find template with key {projectItem.Key}");
+				var templateNotFoundException = await CreateTemplateNotFoundException(projectItem);
+				throw templateNotFoundException;
 			}
 
 			return new ViewCompilerWorkItem()
@@ -287,6 +288,33 @@ namespace RazorLight.Compilation
 			}
 
 			return builder.ToString();
+		}
+
+		internal async Task<TemplateNotFoundException> CreateTemplateNotFoundException(RazorLightProjectItem projectItem)
+		{
+			var msg = $"{nameof(RazorLightProjectItem)} of type {projectItem.GetType().FullName} with key {projectItem.Key} could not be found by the " +
+				$"{ nameof(RazorLightProject)} of type { _razorProject.GetType().FullName} and does not exist in dynamic templates.";
+
+			var propNames = $"\"{nameof(TemplateNotFoundException.KnownDynamicTemplateKeys)}\" and \"{nameof(TemplateNotFoundException.KnownDynamicTemplateKeys)}\"";
+
+			if (_razorLightOptions.EnableDebugMode ?? false)
+			{
+				msg += $"See the {propNames} properties for known template keys.";
+
+				var dynamicKeys = _razorLightOptions.DynamicTemplates.Keys.ToList();
+
+				var projectKeys = await _razorProject.GetKnownKeysAsync();
+				projectKeys = projectKeys == null ? Enumerable.Empty<string>() : projectKeys.ToList();
+
+				return new TemplateNotFoundException(msg, dynamicKeys, projectKeys);
+			}
+			else
+			{
+				msg += $"Set {nameof(RazorLightOptions)}.{nameof(RazorLightOptions.EnableDebugMode)} to true to allow " +
+					$"the {propNames} properties on this exception to be set.";
+
+				return new TemplateNotFoundException(msg);
+			}
 		}
 
 		private class ViewCompilerWorkItem
