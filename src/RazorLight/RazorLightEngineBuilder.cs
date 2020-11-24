@@ -30,6 +30,8 @@ namespace RazorLight
 
 		private bool? disableEncoding;
 
+		private bool? enableDebugMode;
+
 		private RazorLightOptions options;
 
 
@@ -255,6 +257,12 @@ namespace RazorLight
 			return this;
 		}
 
+		public virtual RazorLightEngineBuilder EnableDebugMode(bool enableDebugMode = true)
+		{
+			this.enableDebugMode = enableDebugMode;
+			return this;
+		}
+
 		public virtual RazorLightEngine Build()
 		{
 			options = options ?? new RazorLightOptions();
@@ -319,6 +327,15 @@ namespace RazorLight
 			{
 				if (!options.DisableEncoding.HasValue)
 					options.DisableEncoding = false;
+			}
+
+			if (enableDebugMode.HasValue && options.EnableDebugMode.HasValue)
+			{
+				ThrowIfHasBeenSetExplicitly(nameof(enableDebugMode));
+			}
+			else
+			{
+				options.EnableDebugMode = options.EnableDebugMode ?? enableDebugMode ?? false;
 			}
 
 
