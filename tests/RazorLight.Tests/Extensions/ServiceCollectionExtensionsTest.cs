@@ -99,6 +99,29 @@ namespace RazorLight.Tests.Extensions
 			host.Services.GetService<IRazorLightEngine>();
 		}
 
+		[Fact]
+		public void Ensure_Works_With_Generic_Host_When_Resolving_IEngineHandler_Before_IRazorLightEngine()
+		{
+			static IHostBuilder CreateHostBuilder(string[] args)
+			{
+				return Host.CreateDefaultBuilder(args)
+					.ConfigureWebHostDefaults(webBuilder =>
+					{
+
+						webBuilder.UseStartup<EmbeddedEngineStartup>();
+					});
+			}
+
+			var hostBuilder = CreateHostBuilder(null);
+
+			Assert.NotNull(hostBuilder);
+			var host = hostBuilder.Build();
+			Assert.NotNull(host);
+			var exception = Assert.Throws<InvalidOperationException>(() => host.Services.GetService<IEngineHandler>());
+			Assert.Equal("This exception can only occur if you inject IEngineHandler directly using ServiceCollectionExtensions.AddRazorLight", exception.Message);
+			host.Services.GetService<IRazorLightEngine>();
+		}
+
 		[Fact()]
 		public void Ensure_Works_With_Generic_Host_and_DefaultServiceProvider()
 		{
@@ -125,7 +148,7 @@ namespace RazorLight.Tests.Extensions
 			host.Services.GetService<IRazorLightEngine>();
 		}
 
-		[Fact(Skip = "Fails because ValidateOnBuild is true")]
+		[Fact()]
 		public void Ensure_Works_With_Generic_Host_and_DefaultServiceProvider_ValidateScopes_ValidateOnBuild()
 		{
 			static IHostBuilder CreateHostBuilder(string[] args)
@@ -151,7 +174,7 @@ namespace RazorLight.Tests.Extensions
 			host.Services.GetService<IRazorLightEngine>();
 		}
 
-		[Fact(Skip = "Fails because ValidateOnBuild is true")]
+		[Fact()]
 		public void Ensure_Works_With_Generic_Host_and_DefaultServiceProvider_ValidateOnBuild()
 		{
 			static IHostBuilder CreateHostBuilder(string[] args)

@@ -27,7 +27,8 @@ namespace RazorLight.Extensions
 			}
 
 			services.AddSingleton<PropertyInjector>();
-			services.TryAddSingleton<IEngineHandler, EngineHandler>();
+			services.TryAddSingleton<IEngineHandler>(p =>
+				throw new InvalidOperationException($"This exception can only occur if you inject {nameof(IEngineHandler)} directly using {nameof(ServiceCollectionExtensions)}.{nameof(AddRazorLight)}"));
 			services.TryAddSingleton<IRazorLightEngine>(p =>
 			{
 				var engine = engineFactoryProvider();
@@ -35,6 +36,7 @@ namespace RazorLight.Extensions
 
 				return engine;
 			});
+			
 		}
 
 		public static RazorLightDependencyBuilder AddRazorLight(this IServiceCollection services)
@@ -49,7 +51,7 @@ namespace RazorLight.Extensions
 			services.TryAddSingleton<RazorEngine>(DefaultRazorEngine.Instance);
 			services.TryAddSingleton<RazorSourceGenerator>();
 			services.TryAddSingleton<IRazorTemplateCompiler, RazorTemplateCompiler>();
-			services.TryAddSingleton<ITemplateFactoryProvider, TemplateFactoryProvider>();			
+			services.TryAddSingleton<ITemplateFactoryProvider, TemplateFactoryProvider>();
 			services.TryAddSingleton<IMetadataReferenceManager, DefaultMetadataReferenceManager>();
 			services.TryAddSingleton<ICompilationService, RoslynCompilationService>();
 
