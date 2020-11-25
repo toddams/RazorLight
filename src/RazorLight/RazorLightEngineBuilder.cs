@@ -261,7 +261,7 @@ namespace RazorLight
 
 			if (namespaces != null)
 			{
-				if(namespaces.Count > 0)
+				if(namespaces.Count > 0 && options.Namespaces.Count > 0)
 					ThrowIfHasBeenSetExplicitly(nameof(namespaces));
 				
 				options.Namespaces = namespaces;
