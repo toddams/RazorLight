@@ -293,9 +293,9 @@ namespace RazorLight.Compilation
 		internal async Task<TemplateNotFoundException> CreateTemplateNotFoundException(RazorLightProjectItem projectItem)
 		{
 			var msg = $"{nameof(RazorLightProjectItem)} of type {projectItem.GetType().FullName} with key {projectItem.Key} could not be found by the " +
-				$"{ nameof(RazorLightProject)} of type { _razorProject.GetType().FullName} and does not exist in dynamic templates.";
+				$"{ nameof(RazorLightProject)} of type { _razorProject.GetType().FullName} and does not exist in dynamic templates. ";
 
-			var propNames = $"\"{nameof(TemplateNotFoundException.KnownDynamicTemplateKeys)}\" and \"{nameof(TemplateNotFoundException.KnownDynamicTemplateKeys)}\"";
+			var propNames = $"\"{nameof(TemplateNotFoundException.KnownDynamicTemplateKeys)}\" and \"{nameof(TemplateNotFoundException.KnownProjectTemplateKeys)}\"";
 
 			if (_razorLightOptions.EnableDebugMode ?? false)
 			{
