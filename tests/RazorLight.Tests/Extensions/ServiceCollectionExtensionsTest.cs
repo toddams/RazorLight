@@ -86,6 +86,111 @@ namespace RazorLight.Tests.Extensions
 				return Host.CreateDefaultBuilder(args)
 					.ConfigureWebHostDefaults(webBuilder =>
 					{
+
+						webBuilder.UseStartup<EmbeddedEngineStartup>();
+					});
+			}
+
+			var hostBuilder = CreateHostBuilder(null);
+
+			Assert.NotNull(hostBuilder);
+			var host = hostBuilder.Build();
+			Assert.NotNull(host);
+			host.Services.GetService<IRazorLightEngine>();
+		}
+
+		[Fact()]
+		public void Ensure_Works_With_Generic_Host_and_DefaultServiceProvider()
+		{
+			static IHostBuilder CreateHostBuilder(string[] args)
+			{
+				return Host.CreateDefaultBuilder(args)
+					.UseDefaultServiceProvider((context, options) =>
+					{
+						options.ValidateScopes = false;
+						options.ValidateOnBuild = false;
+					})
+					.ConfigureWebHostDefaults(webBuilder =>
+					{
+
+						webBuilder.UseStartup<EmbeddedEngineStartup>();
+					});
+			}
+
+			var hostBuilder = CreateHostBuilder(null);
+
+			Assert.NotNull(hostBuilder);
+			var host = hostBuilder.Build();
+			Assert.NotNull(host);
+			host.Services.GetService<IRazorLightEngine>();
+		}
+
+		[Fact(Skip = "Fails because ValidateOnBuild is true")]
+		public void Ensure_Works_With_Generic_Host_and_DefaultServiceProvider_ValidateScopes_ValidateOnBuild()
+		{
+			static IHostBuilder CreateHostBuilder(string[] args)
+			{
+				return Host.CreateDefaultBuilder(args)
+					.UseDefaultServiceProvider((context, options) =>
+					{
+						options.ValidateScopes = true;
+						options.ValidateOnBuild = true;
+					})
+					.ConfigureWebHostDefaults(webBuilder =>
+					{
+
+						webBuilder.UseStartup<EmbeddedEngineStartup>();
+					});
+			}
+
+			var hostBuilder = CreateHostBuilder(null);
+
+			Assert.NotNull(hostBuilder);
+			var host = hostBuilder.Build();
+			Assert.NotNull(host);
+			host.Services.GetService<IRazorLightEngine>();
+		}
+
+		[Fact(Skip = "Fails because ValidateOnBuild is true")]
+		public void Ensure_Works_With_Generic_Host_and_DefaultServiceProvider_ValidateOnBuild()
+		{
+			static IHostBuilder CreateHostBuilder(string[] args)
+			{
+				return Host.CreateDefaultBuilder(args)
+					.UseDefaultServiceProvider((context, options) =>
+					{
+						options.ValidateScopes = false;
+						options.ValidateOnBuild = true;
+					})
+					.ConfigureWebHostDefaults(webBuilder =>
+					{
+
+						webBuilder.UseStartup<EmbeddedEngineStartup>();
+					});
+			}
+
+			var hostBuilder = CreateHostBuilder(null);
+
+			Assert.NotNull(hostBuilder);
+			var host = hostBuilder.Build();
+			Assert.NotNull(host);
+			host.Services.GetService<IRazorLightEngine>();
+		}
+
+		[Fact()]
+		public void Ensure_Works_With_Generic_Host_and_DefaultServiceProvider_ValidateScopes()
+		{
+			static IHostBuilder CreateHostBuilder(string[] args)
+			{
+				return Host.CreateDefaultBuilder(args)
+					.UseDefaultServiceProvider((context, options) =>
+					{
+						options.ValidateScopes = true;
+						options.ValidateOnBuild = false;
+					})
+					.ConfigureWebHostDefaults(webBuilder =>
+					{
+
 						webBuilder.UseStartup<EmbeddedEngineStartup>();
 					});
 			}
