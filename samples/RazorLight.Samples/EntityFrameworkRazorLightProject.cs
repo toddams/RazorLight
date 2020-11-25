@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Samples.EntityFrameworkProject
 {
@@ -32,6 +33,12 @@ namespace Samples.EntityFrameworkProject
 		public override Task<IEnumerable<RazorLightProjectItem>> GetImportsAsync(string templateKey)
 		{
 			return Task.FromResult(Enumerable.Empty<RazorLightProjectItem>());
+		}
+
+		public override async Task<IEnumerable<string>> GetKnownKeysAsync()
+		{
+			var ids = await dbContext.Templates.Select(x => x.Id).ToListAsync();
+			return ids.Select(x => x.ToString());
 		}
 	}
 }

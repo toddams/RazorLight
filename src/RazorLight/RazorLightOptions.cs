@@ -38,5 +38,10 @@ namespace RazorLight
 		/// template.
 		/// </summary>
 		public bool? DisableEncoding { get; set; }
+
+		/// <summary>
+		/// Setting this to <c>true</c> provides more information in exceptions.
+		/// </summary>
+		public bool? EnableDebugMode { get; set; }
 	}
 }

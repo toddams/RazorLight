@@ -128,6 +128,14 @@ namespace RazorLight.Tests
 			engine = GetEngine().EnableEncoding()
 				.UseOptions(new RazorLightOptions { DisableEncoding = false });
 			Assert.Throws<RazorLightException>(() => engine.Build());
+
+			engine = GetEngine().EnableDebugMode()
+				.UseOptions(new RazorLightOptions() { EnableDebugMode = false });
+			Assert.Throws<RazorLightException>(() => engine.Build());
+
+			engine = GetEngine().EnableDebugMode(false)
+				.UseOptions(new RazorLightOptions() { EnableDebugMode = true });
+			Assert.Throws<RazorLightException>(() => engine.Build());
 		}
 
 		[Fact]
@@ -153,6 +161,49 @@ namespace RazorLight.Tests
 				.Build();
 			
 			Assert.False(engine.Options.DisableEncoding);
+		}
+
+		[Fact]
+		public void EnableDebug_Setting_Is_Set_Correctly()
+		{
+			Func<RazorLightEngineBuilder> GetEngine = () => new RazorLightEngineBuilder().UseEmbeddedResourcesProject(typeof(Root));
+
+			// Default
+			var engine = GetEngine()
+				.Build();
+			Assert.False(engine.Options.EnableDebugMode);
+
+			// Set with EnableDebugMode
+			engine = GetEngine()
+				.EnableDebugMode()
+				.Build();
+			Assert.True(engine.Options.EnableDebugMode);
+
+			engine = GetEngine()
+				.EnableDebugMode(true)
+				.Build();
+			Assert.True(engine.Options.EnableDebugMode);
+
+			engine = GetEngine()
+				.EnableDebugMode(false)
+				.Build();
+			Assert.False(engine.Options.EnableDebugMode);
+
+			// Set with UseOptions
+			engine = GetEngine()
+				.UseOptions(new RazorLightOptions { EnableDebugMode = true })
+				.Build();
+			Assert.True(engine.Options.EnableDebugMode);
+
+			engine = GetEngine()
+				.UseOptions(new RazorLightOptions { EnableDebugMode = false })
+				.Build();
+			Assert.False(engine.Options.EnableDebugMode);
+
+			engine = GetEngine()
+				.UseOptions(new RazorLightOptions())
+				.Build();
+			Assert.False(engine.Options.EnableDebugMode);
 		}
 
 		[Fact]

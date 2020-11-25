@@ -55,5 +55,20 @@ namespace RazorLight.Razor
 		{
 			return Task.FromResult(Enumerable.Empty<RazorLightProjectItem>());
 		}
+
+		public override Task<IEnumerable<string>> GetKnownKeysAsync()
+		{
+			var ignoredPrefix = string.IsNullOrEmpty(RootNamespace) ? Assembly.GetName().FullName : RootNamespace;
+			if (!ignoredPrefix.EndsWith(".")) ignoredPrefix += ".";
+
+			var fullResourceNames = this.Assembly.GetManifestResourceNames()
+				.Where(x => x.StartsWith(ignoredPrefix) && x.EndsWith(Extension));
+
+			var keys = fullResourceNames
+				.Select(x => x.Remove(0, ignoredPrefix.Length)) // Remove prefix
+				.Select(x => x.Remove(x.Length - Extension.Length, Extension.Length)); // Remove extension
+
+			return Task.FromResult(keys);
+		}
 	}
 }

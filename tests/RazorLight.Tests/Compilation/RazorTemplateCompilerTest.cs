@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
@@ -124,6 +125,51 @@ namespace RazorLight.Tests.Compilation
 			Func<Task> task = new Func<Task>(() => compiler.CompileAsync("Not.Existing.Key"));
 
 			Assert.ThrowsAsync<TemplateNotFoundException>(task);
+		}
+
+		[Fact]
+		public async Task Ensure_TemplateNotFoundException_KnownKeys_NotNull_When_EnableDebugMode_True()
+		{
+			var options = new RazorLightOptions { EnableDebugMode = true };
+			var project = new EmbeddedRazorProject(typeof(Root));
+			var compiler = TestRazorTemplateCompiler.Create(options, project);
+			var item = new EmbeddedRazorProjectItem(typeof(Root), "Any.Key");
+
+			var exception = await compiler.CreateTemplateNotFoundException(item);
+			
+			Assert.NotNull(exception.KnownDynamicTemplateKeys);
+			Assert.NotNull(exception.KnownProjectTemplateKeys);
+		}
+
+		[Fact]
+		public async Task Ensure_TemplateNotFoundException_KnownKeys_Null_When_EnableDebugMode_False()
+		{
+			var options = new RazorLightOptions { EnableDebugMode = false };
+			var project = new EmbeddedRazorProject(typeof(Root));
+			var compiler = TestRazorTemplateCompiler.Create(options, project);
+			var item = new EmbeddedRazorProjectItem(typeof(Root), "Any.Key");
+
+			var exception = await compiler.CreateTemplateNotFoundException(item);
+
+			Assert.Null(exception.KnownDynamicTemplateKeys);
+			Assert.Null(exception.KnownProjectTemplateKeys);
+		}
+
+		[Fact]
+		public async Task Ensure_TemplateNotFoundException_KnownDynamicTemplateKeys_Exist_When_EnableDebugMode_True()
+		{
+			var dynamicTemplateKeys = new[] { "dynamicKey1", "dynamicKey2" };
+
+			var project = new EmbeddedRazorProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded");
+			var options = new RazorLightOptions { EnableDebugMode = true };
+			foreach (var dynamicKey in dynamicTemplateKeys) options.DynamicTemplates.Add(dynamicKey, "Content");
+			var compiler = TestRazorTemplateCompiler.Create(options, project);
+			var item = new EmbeddedRazorProjectItem(typeof(Root), "Any.Key");
+
+			var exception = await compiler.CreateTemplateNotFoundException(item);
+
+			Assert.NotNull(exception.KnownDynamicTemplateKeys);
+			Assert.Equal(dynamicTemplateKeys.OrderBy(x => x), exception.KnownDynamicTemplateKeys.OrderBy(x => x));
 		}
 
 		[Fact]
