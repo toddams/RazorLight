@@ -14,7 +14,7 @@ namespace RazorLight.Extensions
 {
 	public static class ServiceCollectionExtensions
 	{
-		public static void AddRazorLight(this IServiceCollection services, Func<IRazorLightEngine> engineFactoryProvider)
+		public static IServiceCollection AddRazorLight(this IServiceCollection services, Func<IRazorLightEngine> engineFactoryProvider)
 		{
 			if (services == null)
 			{
@@ -36,6 +36,8 @@ namespace RazorLight.Extensions
 
 				return engine;
 			});
+
+			return services;
 			
 		}
 
