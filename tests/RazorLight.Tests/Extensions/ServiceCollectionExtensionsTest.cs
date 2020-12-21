@@ -20,13 +20,14 @@ namespace RazorLight.Tests.Extensions
 {
 	public class ServiceCollectionExtensionsTest
 	{
-		private string rootPath = PathUtility.GetViewsPath();
+		private readonly string _rootPath = DirectoryUtils.RootDirectory.ToLowerInvariant();
+		private readonly string _contentRootPath = PathUtility.GetViewsPath();
 
 		private IServiceCollection GetServices()
 		{
 			var services = new ServiceCollection();
 			var envMock = new Mock<Microsoft.AspNetCore.Hosting.IHostingEnvironment>();
-			envMock.Setup(m => m.ContentRootPath).Returns(rootPath);
+			envMock.Setup(m => m.ContentRootPath).Returns(_contentRootPath);
 			services.AddSingleton<Microsoft.AspNetCore.Hosting.IHostingEnvironment>(envMock.Object);
 
 			return services;
@@ -250,21 +251,17 @@ namespace RazorLight.Tests.Extensions
 		[Fact]
 		public void Ensure_DI_Extension_Can_Inject()
 		{
-			var services = GetServices();			
+			var services = GetServices();
 			bool newRazorLightEngineCalled = false;
-			var root = "C:";
 
 			services.AddRazorLight()
 				.UseMemoryCachingProvider()
-				.UseFileSystemProject(root)
+				.UseFileSystemProject(_rootPath)
 				.UseNetFrameworkLegacyFix();
-			
-
 
 			services.RemoveAll<IMetadataReferenceManager>();
 			services.AddSingleton<IMetadataReferenceManager>(new TestMetadataReferenceManager(() =>
 			{
-				
 			}));
 
 			services.RemoveAll<IRazorLightEngine>();
@@ -280,15 +277,15 @@ namespace RazorLight.Tests.Extensions
 			var project = provider.GetService<RazorLightProject>();
 			Assert.IsType<FileSystemRazorProject>(project);
 			var fileSystemProject = project as FileSystemRazorProject;
-			Assert.Equal(fileSystemProject.Root, root);
+			Assert.Equal(fileSystemProject.Root, _rootPath);
 
 			var engine = provider.GetService<IRazorLightEngine>();
 			Assert.NotNull(engine);
-			Assert.IsType<TestRazorLightEngine>(engine);			
+			Assert.IsType<TestRazorLightEngine>(engine);
 			engine.CompileRenderStringAsync("","","").GetAwaiter().GetResult();
 			Assert.True(newRazorLightEngineCalled); 
 		
-			Assert.IsType<TestMetadataReferenceManager>(provider.GetService<IMetadataReferenceManager>());				
+			Assert.IsType<TestMetadataReferenceManager>(provider.GetService<IMetadataReferenceManager>());
 		}
 
 		public class TestMetadataReferenceManager : IMetadataReferenceManager
@@ -301,10 +298,10 @@ namespace RazorLight.Tests.Extensions
 			}
 
 			public HashSet<MetadataReference> AdditionalMetadataReferences {
-				get 
+				get
 				{
 					return new HashSet<MetadataReference>();
-				} 
+				}
 			}
 
 			public IReadOnlyList<MetadataReference> Resolve(Assembly assembly)
@@ -368,7 +365,7 @@ namespace RazorLight.Tests.Extensions
 		[Fact]
 		public void Try_Render_With_DI_Extension()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);		
+			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 			var services = GetServices();
 			services.AddRazorLight()
@@ -378,10 +375,6 @@ namespace RazorLight.Tests.Extensions
 			var provider = services.BuildServiceProvider();
 			var engine = provider.GetService<IRazorLightEngine>();
 			var result = engine.CompileRenderAsync<object>("template1.cshtml", null).GetAwaiter().GetResult();
-
-
-
-
 		}
 	}
 }
