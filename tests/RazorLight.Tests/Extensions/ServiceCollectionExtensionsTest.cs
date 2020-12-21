@@ -20,7 +20,7 @@ namespace RazorLight.Tests.Extensions
 {
 	public class ServiceCollectionExtensionsTest
 	{
-		private readonly string _rootPath = DirectoryUtils.RootDirectory.ToLowerInvariant();
+		private readonly string _rootPath = DirectoryUtils.RootDirectory;
 		private readonly string _contentRootPath = PathUtility.GetViewsPath();
 
 		private IServiceCollection GetServices()

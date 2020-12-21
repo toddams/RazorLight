@@ -71,7 +71,7 @@ namespace RazorLight.Tests.Razor
 		[Fact]
 		public async Task Ensure_GetKnownKeysAsync_Returns_Existing_Keys()
 		{
-			var project = new FileSystemRazorProject(DirectoryUtils.RootDirectory.ToLowerInvariant());
+			var project = new FileSystemRazorProject(DirectoryUtils.RootDirectory);
 
 			var knownKeys = await project.GetKnownKeysAsync();
 			Assert.NotNull(knownKeys);
@@ -93,7 +93,7 @@ namespace RazorLight.Tests.Razor
 				"Assets/Files/Layout.cshtml"
 			};
 
-			var project = new FileSystemRazorProject(DirectoryUtils.RootDirectory.ToLowerInvariant());
+			var project = new FileSystemRazorProject(DirectoryUtils.RootDirectory);
 
 			var knownKeys = await project.GetKnownKeysAsync();
 			Assert.NotNull(knownKeys);
