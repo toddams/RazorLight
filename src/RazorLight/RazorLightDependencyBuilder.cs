@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RazorLight.Caching;
@@ -8,7 +7,6 @@ using RazorLight.Razor;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace RazorLight
 {

@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Moq;
-using RazorLight.Internal;
 using RazorLight.Internal.Buffering;
 using Xunit;
 

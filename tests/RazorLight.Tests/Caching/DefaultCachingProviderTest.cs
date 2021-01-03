@@ -1,7 +1,6 @@
 ﻿using Moq;
 using RazorLight.Caching;
 using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace RazorLight.Tests.Caching

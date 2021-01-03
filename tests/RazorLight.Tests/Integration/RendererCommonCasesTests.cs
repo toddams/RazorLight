@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using RazorLight.Compilation;
 using VerifyXunit;
 using Xunit;
 

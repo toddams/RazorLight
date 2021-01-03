@@ -1,7 +1,4 @@
-﻿using System.Dynamic;
-using RazorLight.Razor;
-using RazorLight.Tests.Razor;
-using RazorLight.Tests.Utils;
+﻿using RazorLight.Tests.Utils;
 
 namespace RazorLight.Tests
 {

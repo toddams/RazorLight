@@ -1,5 +1,4 @@
-﻿using RazorLight.Compilation;
-using System;
+﻿using System;
 
 namespace RazorLight.Compilation
 {

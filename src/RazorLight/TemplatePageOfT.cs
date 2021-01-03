@@ -1,6 +1,4 @@
-﻿using RazorLight.Internal;
-
-namespace RazorLight
+﻿namespace RazorLight
 {
 	/// <summary>
 	/// Represents the properties and methods that are needed in order to render a template that uses Razor syntax.

@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using RazorLight.Caching;
-using RazorLight.Razor;
 using Xunit;
 
 namespace RazorLight.Tests
