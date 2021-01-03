@@ -78,7 +78,7 @@ namespace RazorLight.Tests.Extensions
 			}
 		}
 
-#if !(NETCOREAPP2_0)
+#if !(NETCOREAPP2_0 || NETFRAMEWORK)
 		[Fact]
 		public void Ensure_Works_With_Generic_Host()
 		{
