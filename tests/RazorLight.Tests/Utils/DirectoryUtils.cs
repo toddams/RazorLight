@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace RazorLight.Tests
+namespace RazorLight.Tests.Utils
 {
 	public static class DirectoryUtils
 	{

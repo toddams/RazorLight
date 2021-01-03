@@ -40,7 +40,12 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net472'">
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.1.0" />

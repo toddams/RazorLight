@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using RazorLight.Caching;
 using RazorLight.Compilation;
 using RazorLight.Internal;
+using RazorLight.Internal.Buffering;
 
 namespace RazorLight
 {

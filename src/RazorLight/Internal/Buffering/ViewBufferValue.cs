@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Html;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Html;
 
-namespace RazorLight.Internal
+namespace RazorLight.Internal.Buffering
 {
 	/// <summary>
 	/// Encapsulates a string or <see cref="IHtmlContent"/> value.

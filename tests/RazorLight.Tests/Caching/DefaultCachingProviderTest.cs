@@ -78,6 +78,7 @@ namespace RazorLight.Tests.Caching
 			var engine = new RazorLightEngineBuilder()
 				.DisableEncoding()
 				.UseMemoryCachingProvider()
+				.SetOperatingAssembly(typeof(Root).Assembly)
 				.UseEmbeddedResourcesProject(typeof(Root))
 				
 				.Build();

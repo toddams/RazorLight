@@ -25,15 +25,14 @@ namespace RazorLight.Compilation
 	{
 		private readonly IMetadataReferenceManager metadataReferenceManager;
 		private readonly bool isDevelopment;
-		private readonly Assembly operatingAssembly;
 		private readonly List<MetadataReference> metadataReferences = new List<MetadataReference>();
 
 		public RoslynCompilationService(IMetadataReferenceManager referenceManager, Assembly operatingAssembly)
 		{
 			this.metadataReferenceManager = referenceManager ?? throw new ArgumentNullException(nameof(referenceManager));
-			this.operatingAssembly = operatingAssembly ?? throw new ArgumentNullException(nameof(operatingAssembly));
+			this.OperatingAssembly = operatingAssembly ?? throw new ArgumentNullException(nameof(operatingAssembly));
 
-			isDevelopment = IsAssemblyDebugBuild(OperatingAssembly);
+			isDevelopment = AssemblyDebugModeUtility.IsAssemblyDebugBuild(OperatingAssembly);
 			var pdbFormat = SymbolsUtility.SupportsFullPdbGeneration() ?
 				DebugInformationFormat.Pdb :
 				DebugInformationFormat.PortablePdb;
@@ -41,20 +40,15 @@ namespace RazorLight.Compilation
 			EmitOptions = new EmitOptions(debugInformationFormat: pdbFormat);
 		}
 
-		public RoslynCompilationService(IMetadataReferenceManager referenceManager, IOptions<RazorLightOptions> options) :this(referenceManager,options.Value.OperatingAssembly)
+		public RoslynCompilationService(IMetadataReferenceManager referenceManager, IOptions<RazorLightOptions> options) :this(referenceManager, options.Value.OperatingAssembly)
 		{
 			
 		}
 
 		#region Options
 
-		public virtual Assembly OperatingAssembly
-		{
-			get
-			{
-				return operatingAssembly;
-			}
-		}
+		public virtual Assembly OperatingAssembly { get; }
+
 		public virtual EmitOptions EmitOptions { get; }
 		public virtual CSharpCompilationOptions CSharpCompilationOptions
 		{
@@ -200,7 +194,7 @@ namespace RazorLight.Compilation
 				new Dictionary<string, ReportDiagnostic>
 				{
 					{"CS1701", ReportDiagnostic.Suppress}, // Binding redirects
-                    {"CS1702", ReportDiagnostic.Suppress},
+					{"CS1702", ReportDiagnostic.Suppress},
 					{"CS1705", ReportDiagnostic.Suppress}
 				});
 
@@ -256,11 +250,6 @@ namespace RazorLight.Compilation
 			}
 
 			return parseOptions;
-		}
-
-		private bool IsAssemblyDebugBuild(Assembly assembly)
-		{
-			return assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Select(da => da.IsJITTrackingEnabled).FirstOrDefault();
 		}
 	}
 }

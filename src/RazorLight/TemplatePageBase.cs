@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Runtime.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using RazorLight.TagHelpers;
 using System.Buffers;
+using RazorLight.Internal.Buffering;
 using RazorLight.Text;
 
 namespace RazorLight

@@ -157,6 +157,9 @@ namespace RazorLight.Tests
 
 			var engine = new RazorLightEngineBuilder()
 				.UseMemoryCachingProvider()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseEmbeddedResourcesProject(typeof(Root))
 				.Build();
 			
@@ -166,7 +169,11 @@ namespace RazorLight.Tests
 		[Fact]
 		public void EnableDebug_Setting_Is_Set_Correctly()
 		{
-			Func<RazorLightEngineBuilder> GetEngine = () => new RazorLightEngineBuilder().UseEmbeddedResourcesProject(typeof(Root));
+			Func<RazorLightEngineBuilder> GetEngine = () => new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
+				.UseEmbeddedResourcesProject(typeof(Root));
 
 			// Default
 			var engine = GetEngine()
@@ -209,7 +216,11 @@ namespace RazorLight.Tests
 		[Fact]
 		public void Namespace_Setting_Is_Set_Correctly()
 		{
-			Func<RazorLightEngineBuilder> GetEngine = () => new RazorLightEngineBuilder().UseEmbeddedResourcesProject(typeof(Root));
+			Func<RazorLightEngineBuilder> GetEngine = () => new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
+				.UseEmbeddedResourcesProject(typeof(Root));
 
 			var namespaces = new [] { "abc", "def" };
 

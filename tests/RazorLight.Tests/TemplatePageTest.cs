@@ -8,6 +8,8 @@ using System.IO;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using RazorLight.Internal.Buffering;
+using RazorLight.Tests.Utils;
 using Xunit;
 
 namespace RazorLight.Tests

@@ -7,7 +7,7 @@ using RazorLight.Compilation;
 using VerifyXunit;
 using Xunit;
 
-namespace RazorLight.Tests.IntegrationTests
+namespace RazorLight.Tests.Integration
 {
 	public class TestViewModel
 	{
@@ -26,6 +26,9 @@ namespace RazorLight.Tests.IntegrationTests
 			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+					.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 					.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 					.Build();
 
@@ -44,6 +47,9 @@ namespace RazorLight.Tests.IntegrationTests
 			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 				.Build();
 
@@ -62,6 +68,9 @@ namespace RazorLight.Tests.IntegrationTests
 			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 				.Build();
 
@@ -80,6 +89,9 @@ namespace RazorLight.Tests.IntegrationTests
 			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 				.Build();
 
@@ -98,6 +110,9 @@ namespace RazorLight.Tests.IntegrationTests
 			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 				.Build();
 
@@ -116,6 +131,9 @@ namespace RazorLight.Tests.IntegrationTests
 			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 				.Build();
 

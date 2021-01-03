@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Dynamic;
 using System.IO;
 using RazorLight.Razor;
+using RazorLight.Tests.Utils;
 
 namespace RazorLight.Tests.Extensions
 {
@@ -50,7 +51,11 @@ namespace RazorLight.Tests.Extensions
 			services.AddRazorLight(() =>
 			{
 				called = true;
-				return new RazorLightEngineBuilder().UseEmbeddedResourcesProject(typeof(Root).Assembly).Build();
+				return new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+					.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
+					.UseEmbeddedResourcesProject(typeof(Root).Assembly).Build();
 			});
 
 			var provider = services.BuildServiceProvider();
@@ -370,6 +375,9 @@ namespace RazorLight.Tests.Extensions
 			var services = GetServices();
 			services.AddRazorLight()
 				.UseMemoryCachingProvider()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"));
 
 			var provider = services.BuildServiceProvider();

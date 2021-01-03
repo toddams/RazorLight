@@ -19,6 +19,9 @@ namespace RazorLight.Tests.Integrational
 			for (int i = 0; i < 1000; i++)
 			{
 				var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+					.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 					.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 					.Build();
 
