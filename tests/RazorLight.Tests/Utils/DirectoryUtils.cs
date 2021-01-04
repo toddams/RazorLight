@@ -9,8 +9,9 @@ namespace RazorLight.Tests.Utils
 			get
 			{
 				var location = typeof(DirectoryUtils).Assembly.Location;
+				
 				if (!Directory.Exists(location)) throw new DirectoryNotFoundException($"Could not find location [{location}].");
-				return location;
+				return Directory.GetParent(location).FullName;
 			}
 		}
 	}
