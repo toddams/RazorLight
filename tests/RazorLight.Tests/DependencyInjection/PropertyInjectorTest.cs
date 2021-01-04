@@ -33,6 +33,7 @@ namespace RazorLight.Tests.DependencyInjection
 
 			var engine = new RazorLightEngineBuilder()
 				.UseEmbeddedResourcesProject(typeof(Root))
+				.SetOperatingAssembly(typeof(Root).Assembly)
 				.AddDynamicTemplates(new Dictionary<string, string>() { { templateKey, builder.ToString() } })
 				.Build();
 

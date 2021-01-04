@@ -38,7 +38,8 @@ The simplest scenario is to create a template from string. Each template must ha
 var engine = new RazorLightEngineBuilder()
 	// required to have a default RazorLightProject type,
 	// but not required to create a template from string.
-	.UseEmbeddedResourcesProject(typeof(Program))
+	.UseEmbeddedResourcesProject(typeof(ViewModel))
+	.SetOperatingAssembly(typeof(ViewModel).Assembly)
 	.UseMemoryCachingProvider()
 	.Build();
 
@@ -47,7 +48,7 @@ ViewModel model = new ViewModel {Name = "John Doe"};
 
 string result = await engine.CompileRenderStringAsync("templateKey", template, model);
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L16-L29' title='File snippet `simple` was extracted from'>snippet source</a> | <a href='#snippet-simple' title='Navigate to start of snippet `simple`'>anchor</a></sup>
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L16-L30' title='File snippet `simple` was extracted from'>snippet source</a> | <a href='#snippet-simple' title='Navigate to start of snippet `simple`'>anchor</a></sup>
 <!-- endsnippet -->
 
 To render a compiled template:
@@ -62,7 +63,7 @@ if(cacheResult.Success)
 	string result = await engine.RenderTemplateAsync(templatePage, model);
 }
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L36-L43' title='File snippet `rendercompiledtemplate` was extracted from'>snippet source</a> | <a href='#snippet-rendercompiledtemplate' title='Navigate to start of snippet `rendercompiledtemplate`'>anchor</a></sup>
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L37-L44' title='File snippet `rendercompiledtemplate` was extracted from'>snippet source</a> | <a href='#snippet-rendercompiledtemplate' title='Navigate to start of snippet `rendercompiledtemplate`'>anchor</a></sup>
 <!-- endsnippet -->
 
 # Template sources
@@ -84,7 +85,7 @@ var engine = new RazorLightEngineBuilder()
 var model = new {Name = "John Doe"};
 string result = await engine.CompileRenderAsync("Subfolder/View.cshtml", model);
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L48-L57' title='File snippet `filesource` was extracted from'>snippet source</a> | <a href='#snippet-filesource' title='Navigate to start of snippet `filesource`'>anchor</a></sup>
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L49-L58' title='File snippet `filesource` was extracted from'>snippet source</a> | <a href='#snippet-filesource' title='Navigate to start of snippet `filesource`'>anchor</a></sup>
 <!-- endsnippet -->
 
 ## EmbeddedResource source
@@ -95,14 +96,14 @@ For embedded resource, key - is a namespace and key of the embedded resource rel
 <a id='snippet-embeddedresourcesource'/></a>
 ```cs
 var engine = new RazorLightEngineBuilder()
-	.UseEmbeddedResourcesProject(typeof(Program))
+	.UseEmbeddedResourcesProject(System.Reflection.Assembly.GetEntryAssembly())
 	.UseMemoryCachingProvider()
 	.Build();
 
 var model = new SchoolForAnts();
 string result = await engine.CompileRenderAsync<object>("Views.Subfolder.SchoolForAnts", model);
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L62-L71' title='File snippet `embeddedresourcesource` was extracted from'>snippet source</a> | <a href='#snippet-embeddedresourcesource' title='Navigate to start of snippet `embeddedresourcesource`'>anchor</a></sup>
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L63-L72' title='File snippet `embeddedresourcesource` was extracted from'>snippet source</a> | <a href='#snippet-embeddedresourcesource' title='Navigate to start of snippet `embeddedresourcesource`'>anchor</a></sup>
 <!-- endsnippet -->
 
 ## Custom source

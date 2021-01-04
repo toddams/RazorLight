@@ -1,9 +1,19 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
-namespace RazorLight.Tests
+namespace RazorLight.Tests.Utils
 {
 	public static class DirectoryUtils
 	{
-		public static string RootDirectory => Directory.GetCurrentDirectory();
+		public static string RootDirectory
+		{
+			get
+			{
+				var location = AppContext.BaseDirectory;
+
+				if (!Directory.Exists(location)) throw new DirectoryNotFoundException($"Could not find location [{location}].");
+				return location;
+			}
+		}
 	}
 }

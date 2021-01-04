@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Razor.Language;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
+using RazorLight.Generation;
 using RazorLight.Razor;
 using Xunit;
-using System.Linq;
-using System.Collections.Generic;
-using RazorLight.Generation;
-using System.Threading.Tasks;
-using System;
 
-namespace RazorLight.Tests
+namespace RazorLight.Tests.Generation
 {
 	public class RazorSourceGeneratorTest
 	{

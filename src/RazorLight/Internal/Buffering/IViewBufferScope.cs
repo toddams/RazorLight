@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 
-namespace RazorLight.Internal
+namespace RazorLight.Internal.Buffering
 {
 	/// <summary>
 	/// Creates and manages the lifetime of <see cref="T:ViewBufferValue[]"/> instances.

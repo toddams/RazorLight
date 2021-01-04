@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 
-namespace RazorLight.Tests
+namespace RazorLight.Tests.Utils
 {
 	public class PathUtility
 	{

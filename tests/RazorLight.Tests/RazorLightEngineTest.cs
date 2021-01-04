@@ -1,6 +1,4 @@
-﻿using System.Dynamic;
-using RazorLight.Razor;
-using RazorLight.Tests.Razor;
+﻿using RazorLight.Tests.Utils;
 
 namespace RazorLight.Tests
 {
@@ -16,6 +14,9 @@ namespace RazorLight.Tests
 			//Arrange
 			var engine = new RazorLightEngineBuilder()
 				.UseMemoryCachingProvider()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseFileSystemProject(DirectoryUtils.RootDirectory)
 				.DisableEncoding()
 				.Build();
@@ -36,6 +37,9 @@ namespace RazorLight.Tests
 		public async Task Ensure_QuickStart_Demo_Code_Works()
 		{
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseEmbeddedResourcesProject(typeof(Root))
 				.UseMemoryCachingProvider()
 				.Build();

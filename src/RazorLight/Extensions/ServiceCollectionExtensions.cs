@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Reflection;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RazorLight.Caching;
 using RazorLight.Compilation;
 using RazorLight.DependencyInjection;
 using RazorLight.Generation;
-using RazorLight.Razor;
 
 namespace RazorLight.Extensions
 {

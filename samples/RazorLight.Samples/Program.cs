@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RazorLight;
 using System;
+using Samples.EntityFrameworkProject.EntityFramework;
 
 namespace Samples.EntityFrameworkProject
 {

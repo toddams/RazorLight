@@ -1,5 +1,4 @@
-﻿using System;
-namespace RazorLight.Caching
+﻿namespace RazorLight.Caching
 {
 	public class TemplateCacheLookupResult
 	{

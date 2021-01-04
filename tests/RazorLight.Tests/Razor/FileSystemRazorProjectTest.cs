@@ -1,7 +1,9 @@
 ﻿using RazorLight.Razor;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using RazorLight.Tests.Utils;
 using Xunit;
 
 namespace RazorLight.Tests.Razor
@@ -11,9 +13,9 @@ namespace RazorLight.Tests.Razor
 		[Fact]
 		public void NotExiting_RootDirectory_Throws()
 		{
-			Action action = () => new FileSystemRazorProject(@"C:/Not/Existing/Folder/Here");
+			void Action() => _ = new FileSystemRazorProject(@"C:/Not/Existing/Folder/Here");
 
-			Assert.Throws<DirectoryNotFoundException>(action);
+			Assert.Throws<DirectoryNotFoundException>(Action);
 		}
 
 		[Fact]
@@ -73,7 +75,7 @@ namespace RazorLight.Tests.Razor
 		{
 			var project = new FileSystemRazorProject(DirectoryUtils.RootDirectory);
 
-			var knownKeys = await project.GetKnownKeysAsync();
+			var knownKeys = (await project.GetKnownKeysAsync()).ToList();
 			Assert.NotNull(knownKeys);
 			Assert.NotEmpty(knownKeys);
 
@@ -95,7 +97,7 @@ namespace RazorLight.Tests.Razor
 
 			var project = new FileSystemRazorProject(DirectoryUtils.RootDirectory);
 
-			var knownKeys = await project.GetKnownKeysAsync();
+			var knownKeys = (await project.GetKnownKeysAsync()).ToList();
 			Assert.NotNull(knownKeys);
 			Assert.NotEmpty(knownKeys);
 

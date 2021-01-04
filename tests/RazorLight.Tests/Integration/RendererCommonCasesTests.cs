@@ -1,13 +1,11 @@
-﻿
-using System;
+﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
-using RazorLight.Compilation;
+using RazorLight.Tests.Utils;
 using VerifyXunit;
 using Xunit;
 
-namespace RazorLight.Tests.IntegrationTests
+namespace RazorLight.Tests.Integration
 {
 	public class TestViewModel
 	{
@@ -23,9 +21,12 @@ namespace RazorLight.Tests.IntegrationTests
 		[Fact()]
 		public async Task Should_Render_Section_And_ViewModel()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = DirectoryUtils.RootDirectory;
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+					.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 					.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 					.Build();
 
@@ -41,9 +42,12 @@ namespace RazorLight.Tests.IntegrationTests
 		[Fact()]
 		public async Task Should_Render_Sections_With_IncludeAsync()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = DirectoryUtils.RootDirectory;
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 				.Build();
 
@@ -59,9 +63,12 @@ namespace RazorLight.Tests.IntegrationTests
 		[Fact()]
 		public async Task Should_Fail_When_Required_Section_Is_Missing()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = DirectoryUtils.RootDirectory;
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 				.Build();
 
@@ -77,9 +84,12 @@ namespace RazorLight.Tests.IntegrationTests
 		[Fact]
 		public async Task Should_Render_IncludeAsync()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = DirectoryUtils.RootDirectory;
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 				.Build();
 
@@ -95,9 +105,12 @@ namespace RazorLight.Tests.IntegrationTests
 		[Fact]
 		public async Task Should_Render_Nested_IncludeAsync()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = DirectoryUtils.RootDirectory;
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 				.Build();
 
@@ -113,9 +126,12 @@ namespace RazorLight.Tests.IntegrationTests
 		[Fact()]
 		public async Task Should_Render_RequiredSections_That_Have_Nested_IncludeAsync()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = DirectoryUtils.RootDirectory;
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 				.Build();
 

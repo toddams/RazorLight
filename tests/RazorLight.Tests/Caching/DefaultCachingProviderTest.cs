@@ -1,7 +1,6 @@
 ﻿using Moq;
 using RazorLight.Caching;
 using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace RazorLight.Tests.Caching
@@ -78,6 +77,7 @@ namespace RazorLight.Tests.Caching
 			var engine = new RazorLightEngineBuilder()
 				.DisableEncoding()
 				.UseMemoryCachingProvider()
+				.SetOperatingAssembly(typeof(Root).Assembly)
 				.UseEmbeddedResourcesProject(typeof(Root))
 				
 				.Build();
