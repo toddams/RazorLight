@@ -150,8 +150,6 @@ namespace RazorLight.Tests
 		[Fact]
 		public void DisableEncoding_Defaults_To_False()
 		{
-			string templateKey = "Assets.Embedded.Empty.cshtml";
-
 			var engine = new RazorLightEngineBuilder()
 				.UseMemoryCachingProvider()
 #if NETFRAMEWORK

@@ -129,14 +129,14 @@ namespace RazorLight
 
 		/// <summary>
 		/// Invokes <see cref="TextWriter.FlushAsync"/> on <see cref="Output"/> and <see cref="m:Stream.FlushAsync"/>
-		/// on the response stream, writing out any buffered content to the <see cref="HttpResponse.Body"/>.
+		/// on the response stream, writing out any buffered content to the <see cref="Microsoft.AspNetCore.Http.HttpResponse.Body"/>.
 		/// </summary>
 		/// <returns>A <see cref="Task{HtmlString}"/> that represents the asynchronous flush operation and on
 		/// completion returns an empty <see cref="IHtmlContent"/>.</returns>
 		/// <remarks>The value returned is a token value that allows FlushAsync to work directly in an HTML
 		/// section. However the value does not represent the rendered content.
 		/// This method also writes out headers, so any modifications to headers must be done before
-		/// <see cref="FlushAsync"/> is called. For example, call <see cref="SetAntiforgeryCookieAndHeader"/> to send
+		/// <see cref="FlushAsync"/> is called. For example, call <see cref="M:Microsoft.AspNetCore.Mvc.Razor.RazorPageBase.SetAntiforgeryCookieAndHeader"/> to send
 		/// antiforgery cookie token and X-Frame-Options header to client before this method flushes headers out.
 		/// </remarks>
 		public virtual async Task<HtmlString> FlushAsync()
@@ -202,7 +202,7 @@ namespace RazorLight
 		/// non-<see cref="IHtmlContent"/> C# expressions. If <c>null</c>, does not change <see cref="HtmlEncoder"/>.
 		/// </param>
 		/// <remarks>
-		/// All writes to the <see cref="Output"/> or <see cref="ViewContext.Writer"/> after calling this method will
+		/// All writes to the <see cref="Output"/> or <see cref="M:PageContext.Writer"/> after calling this method will
 		/// be buffered until <see cref="EndTagHelperWritingScope"/> is called.
 		/// </remarks>
 		public void StartTagHelperWritingScope(HtmlEncoder encoder)
@@ -236,7 +236,7 @@ namespace RazorLight
 
 			// Get the content written during the current scope.
 			var tagHelperContent = new DefaultTagHelperContent();
-			tagHelperContent.AppendHtml(scopeInfo.Buffer);
+			_ = tagHelperContent.AppendHtml(scopeInfo.Buffer);
 
 			// Restore previous scope.
 			HtmlEncoder = scopeInfo.HtmlEncoder;
@@ -249,9 +249,9 @@ namespace RazorLight
 		/// Starts a new scope for writing <see cref="ITagHelper"/> attribute values.
 		/// </summary>
 		/// <remarks>
-		/// All writes to the <see cref="Output"/> or <see cref="ViewContext.Writer"/> after calling this method will
+		/// All writes to the <see cref="Output"/> or <see cref="M:PageContext.Writer"/> after calling this method will
 		/// be buffered until <see cref="EndWriteTagHelperAttribute"/> is called.
-		/// The content will be buffered using a shared <see cref="StringWriter"/> within this <see cref="RazorPage"/>
+		/// The content will be buffered using a shared <see cref="StringWriter"/> within this <see cref="TemplatePageBase"/>
 		/// Nesting of <see cref="BeginWriteTagHelperAttribute"/> and <see cref="EndWriteTagHelperAttribute"/> method calls
 		/// is not supported.
 		/// </remarks>
@@ -278,7 +278,7 @@ namespace RazorLight
 		/// <summary>
 		/// Ends the current writing scope that was started by calling <see cref="BeginWriteTagHelperAttribute"/>.
 		/// </summary>
-		/// <returns>The content buffered by the shared <see cref="StringWriter"/> of this <see cref="RazorPage"/>.</returns>
+		/// <returns>The content buffered by the shared <see cref="StringWriter"/> of this <see cref="TemplatePage"/>.</returns>
 		/// <remarks>
 		/// This method assumes that there will be no nesting of <see cref="BeginWriteTagHelperAttribute"/>
 		/// and <see cref="EndWriteTagHelperAttribute"/> method calls.
@@ -394,7 +394,7 @@ namespace RazorLight
 						{
 							// Perf: This is the common case for IHtmlContent, ViewBufferTextWriter is inefficient
 							// for writing character by character.
-							bufferedWriter.Buffer.AppendHtml(html);
+							_ = bufferedWriter.Buffer.AppendHtml(html);
 						}
 					}
 					break;
