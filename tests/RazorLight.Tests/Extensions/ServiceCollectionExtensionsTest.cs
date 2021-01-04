@@ -288,8 +288,8 @@ namespace RazorLight.Tests.Extensions
 			Assert.NotNull(engine);
 			Assert.IsType<TestRazorLightEngine>(engine);
 			engine.CompileRenderStringAsync("","","").GetAwaiter().GetResult();
-			Assert.True(newRazorLightEngineCalled); 
-		
+			Assert.True(newRazorLightEngineCalled);
+
 			Assert.IsType<TestMetadataReferenceManager>(provider.GetService<IMetadataReferenceManager>());
 		}
 
@@ -370,7 +370,7 @@ namespace RazorLight.Tests.Extensions
 		[Fact]
 		public void Try_Render_With_DI_Extension()
 		{
-			var path = Path.GetDirectoryName(DirectoryUtils.RootDirectory);
+			var path = DirectoryUtils.RootDirectory;
 
 			var services = GetServices();
 			services.AddRazorLight()
