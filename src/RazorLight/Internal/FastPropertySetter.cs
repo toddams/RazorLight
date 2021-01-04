@@ -60,7 +60,7 @@ namespace RazorLight.Internal
 		/// <summary>
 		/// Gets (or sets in derived types) the property name.
 		/// </summary>
-		public virtual string Name { get; protected set; }
+		public string Name { get; protected set; }
 
 		/// <summary>
 		/// Gets the property value getter.

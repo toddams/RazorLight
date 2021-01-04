@@ -23,7 +23,7 @@ namespace RazorLight
 			_services.RemoveAll<RazorLightProject>();
 
 			RazorLightProject project;
-			if (String.IsNullOrEmpty(extension))
+			if (string.IsNullOrEmpty(extension))
 			{
 				project = new FileSystemRazorProject(root);
 			}
@@ -32,6 +32,7 @@ namespace RazorLight
 				project = new FileSystemRazorProject(root, extension);
 			}
 
+			// ReSharper disable once RedundantTypeArgumentsOfMethod
 			_services.AddSingleton<RazorLightProject>(project);
 			return this;
 		}
@@ -47,6 +48,7 @@ namespace RazorLight
 		{
 			_services.RemoveAll<RazorLightProject>();
 			RazorLightProject project = new EmbeddedRazorProject(rootType);
+			// ReSharper disable once RedundantTypeArgumentsOfMethod
 			_services.AddSingleton<RazorLightProject>(project);
 			return this;
 		}
@@ -55,6 +57,7 @@ namespace RazorLight
 		{
 			_services.RemoveAll<IAssemblyDirectoryFormatter>();
 			IAssemblyDirectoryFormatter formatter = new LegacyFixAssemblyDirectoryFormatter();
+			// ReSharper disable once RedundantTypeArgumentsOfMethod
 			_services.AddSingleton<IAssemblyDirectoryFormatter>(formatter);
 			return this;
 		}

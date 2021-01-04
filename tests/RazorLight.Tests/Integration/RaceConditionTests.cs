@@ -1,9 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace RazorLight.Tests.Integrational
+namespace RazorLight.Tests.Integration
 {
 	public class RaceConditionTests
 	{

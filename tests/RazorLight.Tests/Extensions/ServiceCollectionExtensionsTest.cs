@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 using RazorLight.Extensions;
 using System;
+using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
 using RazorLight.Compilation;
 using Microsoft.Extensions.DependencyInjection.Extensions;

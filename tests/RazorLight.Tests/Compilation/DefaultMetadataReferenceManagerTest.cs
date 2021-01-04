@@ -11,7 +11,7 @@ namespace RazorLight.Tests.Compilation
 		[Fact]
 		public void Throws_OnEmptyManager_InConstructor()
 		{
-			Assert.Throws<ArgumentNullException>(() => { new DefaultMetadataReferenceManager(null as HashSet<MetadataReference>, null); });
+			Assert.Throws<ArgumentNullException>(() => { _ = new DefaultMetadataReferenceManager(null as HashSet<MetadataReference>, null); });
 		}
 
 		[Fact]
@@ -23,7 +23,5 @@ namespace RazorLight.Tests.Compilation
 			Assert.NotNull(manager.AdditionalMetadataReferences);
 			Assert.Equal(metadata, manager.AdditionalMetadataReferences);
 		}
-
-
 	}
 }
