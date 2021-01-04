@@ -370,7 +370,7 @@ namespace RazorLight.Tests.Extensions
 		[Fact]
 		public void Try_Render_With_DI_Extension()
 		{
-			var path = Path.GetDirectoryName(typeof(Root).Assembly.Location);
+			var path = Path.GetDirectoryName(DirectoryUtils.RootDirectory);
 
 			var services = GetServices();
 			services.AddRazorLight()
