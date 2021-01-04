@@ -1,10 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Condition="$(OS) == 'Windows_NT">
-
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
     <TargetFrameworks>net472;netcoreapp2.0;netcoreapp3.1;net5.0</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition="$(OS) != 'Windows_NT">
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
     <TargetFrameworks>netcoreapp2.0;netcoreapp3.1;net5.0</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
