@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <None Update="Assets\Files\*.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
@@ -78,12 +78,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\RazorLight\RazorLight.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Assets\Files\Subfolder\Empty.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 
 </Project>
