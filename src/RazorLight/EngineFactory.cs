@@ -62,9 +62,10 @@ namespace RazorLight
 		}
 
 		/// <summary>
-		///Creates RazorLightEngine with a custom RazorLightProject
+		/// Creates RazorLightEngine with a custom RazorLightProject
 		/// </summary>
 		/// <param name="project">The project</param>
+		/// <param name="options">Options for configuring the RazorLightEngine.</param>
 		/// <returns>Instance of RazorLightEngine</returns>
 		public virtual RazorLightEngine Create(RazorLightProject project, RazorLightOptions options = null)
 		{

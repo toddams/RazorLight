@@ -32,7 +32,7 @@ namespace RazorLight.TagHelpers
 			_activator = activator;
 			_injectActions = new ConcurrentDictionary<Type, PropertyActivator<PageContext>[]>();
 
-			//TODO: ViewContext attribute
+			//TODO: ViewContextAttribute or PageContextAttribute
 			//_getPropertiesToActivate = type =>
 			//    PropertyActivator<PageContext>.GetPropertiesToActivate(
 			//        type,
