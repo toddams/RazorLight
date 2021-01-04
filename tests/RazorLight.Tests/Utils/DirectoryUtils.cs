@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection;
 
 namespace RazorLight.Tests.Utils
 {
@@ -8,7 +9,7 @@ namespace RazorLight.Tests.Utils
 		{
 			get
 			{
-				var location = typeof(DirectoryUtils).Assembly.Location;
+				var location = typeof(DirectoryUtils).GetTypeInfo().Assembly.Location;
 				if (!File.Exists(location)) throw new FileNotFoundException($"Could not find file location [{location}]");
 				location = Directory.GetParent(location).FullName;
 				if (!Directory.Exists(location)) throw new DirectoryNotFoundException($"Could not find location [{location}].");
