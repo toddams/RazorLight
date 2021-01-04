@@ -80,7 +80,6 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="templatePage">Instance of a template</param>
 		/// <param name="model">Template model</param>
-		/// <param name="modelType">Type of the model</param>
 		/// <param name="viewBag">Dynamic viewBag of the page</param>
 		/// <param name="textWriter">Output</param>
 		public Task RenderTemplateAsync<T>(
