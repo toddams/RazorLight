@@ -84,7 +84,7 @@ namespace RazorLight.Tests.Integration
 		[Fact]
 		public async Task Should_Render_IncludeAsync()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = Path.GetDirectoryName(typeof(Root).Assembly.Location);
 
 			var engine = new RazorLightEngineBuilder()
 #if NETFRAMEWORK
