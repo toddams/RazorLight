@@ -21,7 +21,7 @@ namespace RazorLight.Tests.Integration
 		[Fact()]
 		public async Task Should_Render_Section_And_ViewModel()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = Path.GetDirectoryName(typeof(Root).Assembly.Location);
 
 			var engine = new RazorLightEngineBuilder()
 #if NETFRAMEWORK
@@ -42,7 +42,7 @@ namespace RazorLight.Tests.Integration
 		[Fact()]
 		public async Task Should_Render_Sections_With_IncludeAsync()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = Path.GetDirectoryName(typeof(Root).Assembly.Location);
 
 			var engine = new RazorLightEngineBuilder()
 #if NETFRAMEWORK
@@ -63,7 +63,7 @@ namespace RazorLight.Tests.Integration
 		[Fact()]
 		public async Task Should_Fail_When_Required_Section_Is_Missing()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = Path.GetDirectoryName(typeof(Root).Assembly.Location);
 
 			var engine = new RazorLightEngineBuilder()
 #if NETFRAMEWORK
@@ -105,7 +105,7 @@ namespace RazorLight.Tests.Integration
 		[Fact]
 		public async Task Should_Render_Nested_IncludeAsync()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = Path.GetDirectoryName(typeof(Root).Assembly.Location);
 
 			var engine = new RazorLightEngineBuilder()
 #if NETFRAMEWORK
@@ -126,7 +126,7 @@ namespace RazorLight.Tests.Integration
 		[Fact()]
 		public async Task Should_Render_RequiredSections_That_Have_Nested_IncludeAsync()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = Path.GetDirectoryName(typeof(Root).Assembly.Location);
 
 			var engine = new RazorLightEngineBuilder()
 #if NETFRAMEWORK

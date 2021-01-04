@@ -12,7 +12,7 @@ namespace RazorLight.Tests.Integration
 		[Fact]
 		public async Task Multiple_Simultaneous_Compilations_RaceCondition_Test()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = Path.GetDirectoryName(typeof(Root).Assembly.Location);
 
 
 			for (int i = 0; i < 1000; i++)
