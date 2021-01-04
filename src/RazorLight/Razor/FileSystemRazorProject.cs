@@ -13,7 +13,7 @@ namespace RazorLight.Razor
 	public class FileSystemRazorProject : RazorLightProject
 	{
 		public const string DefaultExtension = ".cshtml";
-		private readonly IFileProvider fileProvider;
+		private readonly IFileProvider _fileProvider;
 
 		public FileSystemRazorProject(string root)
 			: this(root, DefaultExtension)
@@ -30,10 +30,10 @@ namespace RazorLight.Razor
 			}
 
 			Root = root;
-			fileProvider = new PhysicalFileProvider(Root);
+			_fileProvider = new PhysicalFileProvider(Root);
 		}
 
-		public virtual string Extension { get; set; }
+		public string Extension { get; set; }
 
 		/// <summary>
 		/// Looks up for the template source with a given <paramref name="templateKey" />
@@ -52,7 +52,7 @@ namespace RazorLight.Razor
 
 			if (item.Exists)
 			{
-				item.ExpirationToken = fileProvider.Watch(templateKey);
+				item.ExpirationToken = _fileProvider.Watch(templateKey);
 			}
 
 			return Task.FromResult((RazorLightProjectItem)item);
