@@ -10,10 +10,10 @@ namespace RazorLight.Tests.Integration
 		[Fact]
 		public async Task Multiple_Simultaneous_Compilations_RaceCondition_Test()
 		{
-			var path = Path.GetDirectoryName(DirectoryUtils.RootDirectory);
+			var path = DirectoryUtils.RootDirectory;
 
 
-			for (int i = 0; i < 1000; i++)
+			for (int i = 0; i < 100; i++)
 			{
 				var engine = new RazorLightEngineBuilder()
 #if NETFRAMEWORK
