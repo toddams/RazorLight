@@ -31,9 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Assets\Files\*.cshtml">
+    <None Remove="Assets\Files\*.cshtml" />
+    <Content Include="Assets\Files\*.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
