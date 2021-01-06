@@ -29,7 +29,6 @@ namespace RazorLight
 		///// </summary>
 		//public IReadOnlyList<ITemplatePage> ViewStartPages { get; }
 
-		/// <inheritdoc />
 		public virtual async Task RenderAsync(ITemplatePage page)
 		{
 			var context = page.PageContext;
@@ -107,7 +106,7 @@ namespace RazorLight
 
 		private Task RenderViewStartsAsync(PageContext context)
 		{
-			return Task.FromResult(0);
+			return Task.CompletedTask;
 
 			//string layout = null;
 			//string oldPageKey = context.ExecutingPageKey;
