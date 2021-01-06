@@ -14,29 +14,29 @@ namespace RazorLight
 		private readonly IEngineHandler _engineHandler;
 		private readonly IViewBufferScope _bufferScope;
 
-        public TemplateRenderer(
+		public TemplateRenderer(
 			IEngineHandler engineHandler,
 			HtmlEncoder htmlEncoder,
 			IViewBufferScope bufferScope)
-        {
+		{
 			_engineHandler = engineHandler ?? throw new ArgumentNullException(nameof(engineHandler));
 			_bufferScope = bufferScope ?? throw new ArgumentNullException(nameof(bufferScope));
 			_htmlEncoder = htmlEncoder ?? throw new ArgumentNullException(nameof(htmlEncoder));
 		}
 
-        ///// <summary>
-        ///// Gets the sequence of _ViewStart <see cref="ITemplatePage"/> instances that are executed by this view.
-        ///// </summary>
-        //public IReadOnlyList<ITemplatePage> ViewStartPages { get; }
+		///// <summary>
+		///// Gets the sequence of _ViewStart <see cref="ITemplatePage"/> instances that are executed by this view.
+		///// </summary>
+		//public IReadOnlyList<ITemplatePage> ViewStartPages { get; }
 
-        /// <inheritdoc />
-        public virtual async Task RenderAsync(ITemplatePage page)
-        {
-            var context = page.PageContext;
+		/// <inheritdoc />
+		public virtual async Task RenderAsync(ITemplatePage page)
+		{
+			var context = page.PageContext;
 
-            var bodyWriter = await RenderPageAsync(page, context, invokeViewStarts: false).ConfigureAwait(false);
-            await RenderLayoutAsync(page, context, bodyWriter).ConfigureAwait(false);
-        }
+			var bodyWriter = await RenderPageAsync(page, context, invokeViewStarts: false).ConfigureAwait(false);
+			await RenderLayoutAsync(page, context, bodyWriter).ConfigureAwait(false);
+		}
 
 		private async Task<ViewBufferTextWriter> RenderPageAsync(
 			ITemplatePage page,
@@ -144,15 +144,15 @@ namespace RazorLight
 			//}
 		}
 
-        private async Task RenderLayoutAsync(
-	        ITemplatePage page,
+		private async Task RenderLayoutAsync(
+			ITemplatePage page,
 			PageContext context,
-            ViewBufferTextWriter bodyWriter)
-        {
-            // A layout page can specify another layout page. We'll need to continue
-            // looking for layout pages until they're no longer specified.
-            var previousPage = page;
-            var renderedLayouts = new List<ITemplatePage>();
+			ViewBufferTextWriter bodyWriter)
+		{
+			// A layout page can specify another layout page. We'll need to continue
+			// looking for layout pages until they're no longer specified.
+			var previousPage = page;
+			var renderedLayouts = new List<ITemplatePage>();
 
 			// This loop will execute Layout pages from the inside to the outside. With each
 			// iteration, bodyWriter is replaced with the aggregate of all the "body" content
