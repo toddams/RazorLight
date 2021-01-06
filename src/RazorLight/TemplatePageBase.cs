@@ -16,6 +16,62 @@ using RazorLight.Text;
 
 namespace RazorLight
 {
+	public interface IUrlHelperFactory
+	{
+		/// <summary>
+		/// Gets an <see cref="IUrlHelper"/> for the request associated with <paramref name="context"/>.
+		/// </summary>
+		/// <param name="context">The <see cref="ActionContext"/> associated with the current request.</param>
+		/// <returns>An <see cref="IUrlHelper"/> for the request associated with <paramref name="context"/></returns>
+		IUrlHelper GetUrlHelper(object context);
+	}
+
+	public interface IUrlHelper
+	{
+		/// <summary>
+		/// Converts a virtual (relative) path to an application absolute path.
+		/// </summary>
+		/// <remarks>
+		/// If the specified content path does not start with the tilde (~) character,
+		/// this method returns <paramref name="contentPath"/> unchanged.
+		/// </remarks>
+		/// <param name="contentPath">The virtual path of the content.</param>
+		/// <returns>The application absolute path.</returns>
+		string Content(string contentPath);
+	}
+
+	class UrlHelper : IUrlHelper
+	{
+		private string _rootNamespace;
+		private string _key;
+		internal UrlHelper(string rootNamespace, string key)
+		{
+			_rootNamespace = rootNamespace;
+			_key = key;
+		}
+		public string Content(string contentPath)
+		{
+			if (string.IsNullOrEmpty(contentPath))
+			{
+				return null;
+			}
+			else if (contentPath[0] == '~')
+			{
+				var value = contentPath.Substring(1);
+				if (!string.IsNullOrEmpty(value) && value[0] != '/')
+				{
+					throw new ArgumentException("A forward slash was expected in the path.", nameof(value));
+				}
+				
+				var applicationPath = _rootNamespace;
+
+				return applicationPath + '/' + value;
+			}
+
+			return contentPath;
+		}
+	}
+
 	public abstract class TemplatePageBase : ITemplatePage
 	{
 		private readonly Stack<TextWriter> _textWriterStack = new Stack<TextWriter>();
@@ -25,7 +81,8 @@ namespace RazorLight
 		private TextWriter _pageWriter;
 		private AttributeInfo _attributeInfo;
 		private TagHelperAttributeInfo _tagHelperAttributeInfo;
-		//private IUrlHelper _urlHelper;
+		private IUrlHelperFactory _urlHelperFactory;
+		private IUrlHelper _urlHelper;
 
 		public abstract void SetModel(object model);
 
@@ -302,23 +359,21 @@ namespace RazorLight
 
 		#endregion
 
-		/*
-        public virtual string Href(string contentPath)
-        {
-            if (contentPath == null)
-            {
-                throw new ArgumentNullException(nameof(contentPath));
-            }
+		
+		public virtual string Href(string contentPath)
+		{
+			if (contentPath == null)
+			{
+				throw new ArgumentNullException(nameof(contentPath));
+			}
 
-            if (_urlHelper == null)
-            {
-                var services = ViewContext?.HttpContext.RequestServices;
-                var factory = services.GetRequiredService<IUrlHelperFactory>();
-                _urlHelper = factory.GetUrlHelper(PageContext);
-            }
+			if (_urlHelper == null)
+			{
+				_urlHelper = _urlHelperFactory.GetUrlHelper(Key);
+			}
 
-            return _urlHelper.Content(contentPath);
-        }*/
+			return _urlHelper.Content(contentPath);
+		}
 
 		/// <summary>
 		/// Creates a named content section in the page that can be invoked in a Layout page using
