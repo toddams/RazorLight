@@ -1,4 +1,8 @@
-﻿using RazorLight.Tests.Utils;
+﻿using System.Collections.Generic;
+using System.Dynamic;
+using RazorLight.Razor;
+using RazorLight.Tests.Razor;
+using RazorLight.Tests.Utils;
 
 namespace RazorLight.Tests
 {
@@ -51,24 +55,57 @@ namespace RazorLight.Tests
 			Assert.Equal("Hello, John Doe. Welcome to RazorLight repository", result);
 		}
 
-		//[Fact]
-		//public async Task Ensure_Content_Added_To_DynamicTemplates()
-		//{
-		//	var options = new RazorLightOptions();
+		[Fact]
+		public async Task Ensure_Content_Added_To_DynamicTemplates()
+		{
+			var options = new RazorLightOptions();
 
-		//	string key = "key";
-		//	string content = "content";
-		//	var project = new TestRazorProject();
-		//	project.Value = new TextSourceRazorProjectItem(key, content);
+			const string key = "key";
+			const string content = "content";
+			var project = new TestRazorProject {Value = new TextSourceRazorProjectItem(key, content)};
 
-		//	var engine = new RazorLightEngineBuilder()
-		//		.UseProject(project)
-		//		.Build();
+			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
+				.UseProject(project)
+				.UseOptions(options)
+				.AddDynamicTemplates(new Dictionary<string, string>
+				{
+					[key] = content,
+				})
+				.Build();
 
-		//	await engine.CompileRenderStringAsync(key, content, new object(), new ExpandoObject());
+			var actual = await engine.CompileRenderStringAsync(key, content, new object(), new ExpandoObject());
 
-		//	Assert.NotEmpty(options.DynamicTemplates);
-		//	Assert.Contains(options.DynamicTemplates, t => t.Key == key && t.Value == content);
-		//}
+			Assert.NotEmpty(options.DynamicTemplates);
+			Assert.Contains(options.DynamicTemplates, t => t.Key == key && t.Value == content);
+			Assert.Equal(content, actual);
+		}
+
+		[Fact]
+		public async Task Ensure_Content_Added_To_DynamicTemplates_When_Options_Not_Set_Explicitly()
+		{
+			const string key = "key";
+			const string content = "content";
+			var project = new TestRazorProject { Value = new TextSourceRazorProjectItem(key, content) };
+
+			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
+				.UseProject(project)
+				.AddDynamicTemplates(new Dictionary<string, string>
+				{
+					[key] = content,
+				})
+				.Build();
+
+			var actual = await engine.CompileRenderStringAsync(key, content, new object(), new ExpandoObject());
+
+			Assert.NotEmpty(engine.Options.DynamicTemplates);
+			Assert.Contains(engine.Options.DynamicTemplates, t => t.Key == key && t.Value == content);
+			Assert.Equal(content, actual);
+		}
 	}
 }
