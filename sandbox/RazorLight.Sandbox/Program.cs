@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Zstandard.Net;
 
 namespace RazorLight.Sandbox
 {
@@ -14,6 +15,10 @@ namespace RazorLight.Sandbox
 
 			string result = await engine.CompileRenderAsync<object>("Home", null, null);
 			Console.WriteLine(result);
+
+			string dynamicTemplateResult =
+				await engine.CompileRenderStringAsync("templateKey", "hello, world", new ZstandardDictionary("loremipsum.zdict"));
+			Console.WriteLine(dynamicTemplateResult);
 
 			Console.WriteLine("Finished");
 		}

@@ -22,6 +22,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="loremipsum.zdict" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="loremipsum.zdict">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="RazorLight" Version="2.0.0-rc.3" />
     <PackageReference Include="Zstandard.Net" Version="1.1.7" />
   </ItemGroup>
