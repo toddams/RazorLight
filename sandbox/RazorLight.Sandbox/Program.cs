@@ -9,10 +9,10 @@ namespace RazorLight.Sandbox
 		{
 			var engine = new RazorLightEngineBuilder()
 				.UseMemoryCachingProvider()
-				.UseEmbeddedResourcesProject(typeof(Program))
+				.UseEmbeddedResourcesProject(typeof(Program).Assembly, rootNamespace: "RazorLight.Sandbox.Views")
 				.Build();
 
-			string result = await engine.CompileRenderAsync<object>("Views.Subfolder.A", null, null);
+			string result = await engine.CompileRenderAsync<object>("Home", null, null);
 			Console.WriteLine(result);
 
 			Console.WriteLine("Finished");

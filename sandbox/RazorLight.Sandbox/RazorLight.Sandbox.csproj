@@ -1,33 +1,29 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-      <TargetFrameworks>net5.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <PreserveCompilationContext>true</PreserveCompilationContext>
-	<IsPackable>false</IsPackable>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Views\Subfolder\**" />
-    <EmbeddedResource Remove="Views\Subfolder\**" />
+    <Compile Remove="Views\**" />
     <None Remove="*.cshtml" />
-    <None Remove="Views\Subfolder\**" />
+    <EmbeddedResource Include="Views\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\RazorLight\RazorLight.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\Shared\" />
+    <PackageReference Include="RazorLight" Version="2.0.0-rc.3" />
+    <PackageReference Include="Zstandard.Net" Version="1.1.7" />
   </ItemGroup>
 
 </Project>
