@@ -75,13 +75,7 @@ namespace RazorLight
 			return _handler.RenderTemplateAsync(templatePage, model, viewBag);
 		}
 
-		/// <summary>
-		/// Renders a template to the specified <paramref name="textWriter"/>
-		/// </summary>
-		/// <param name="templatePage">Instance of a template</param>
-		/// <param name="model">Template model</param>
-		/// <param name="viewBag">Dynamic viewBag of the page</param>
-		/// <param name="textWriter">Output</param>
+		/// <inheritdoc cref="IRazorLightEngine"/>
 		public Task RenderTemplateAsync<T>(
 			ITemplatePage templatePage,
 			T model,
