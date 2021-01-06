@@ -94,6 +94,11 @@ namespace RazorLight.Compilation
 			return cachedResult;
 		}
 
+		/// <summary>
+		/// For testing purposes only.
+		/// </summary>
+		internal Type ProjectType =>  _razorProject.GetType();
+
 		private Task<CompiledTemplateDescriptor> OnCacheMissAsync(string templateKey)
 		{
 			ViewCompilerWorkItem item;
@@ -116,6 +121,7 @@ namespace RazorLight.Compilation
 				if (_precompiledViews.TryGetValue(normalizedKey, out var precompiledView))
 				{
 					item = null;
+					// TODO: PrecompiledViews should be generatd from RazorLight.Precompile.csproj but it's a work in progress.
 					//item = CreatePrecompiledWorkItem(normalizedKey, precompiledView);
 				}
 				else
@@ -178,7 +184,7 @@ namespace RazorLight.Compilation
 
 		private async Task<ViewCompilerWorkItem> CreateRuntimeCompilationWorkItem(string templateKey)
 		{
-			RazorLightProjectItem projectItem = null;
+			RazorLightProjectItem projectItem;
 
 			if (_razorLightOptions.DynamicTemplates.TryGetValue(templateKey, out string templateContent))
 			{
@@ -241,11 +247,11 @@ namespace RazorLight.Compilation
 				return templateKey;
 			}
 
-			if (!_normalizedKeysCache.TryGetValue(templateKey, out var normalizedPath))
-			{
-				normalizedPath = NormalizeKey(templateKey);
-				_normalizedKeysCache[templateKey] = normalizedPath;
-			}
+			if (_normalizedKeysCache.TryGetValue(templateKey, out var normalizedPath))
+				return normalizedPath;
+
+			normalizedPath = NormalizeKey(templateKey);
+			_normalizedKeysCache[templateKey] = normalizedPath;
 
 			return normalizedPath;
 		}
@@ -304,7 +310,7 @@ namespace RazorLight.Compilation
 				var dynamicKeys = _razorLightOptions.DynamicTemplates.Keys.ToList();
 
 				var projectKeys = await _razorProject.GetKnownKeysAsync();
-				projectKeys = projectKeys == null ? Enumerable.Empty<string>() : projectKeys.ToList();
+				projectKeys = projectKeys?.ToList() ?? Enumerable.Empty<string>();
 
 				return new TemplateNotFoundException(msg, dynamicKeys, projectKeys);
 			}
@@ -325,6 +331,7 @@ namespace RazorLight.Compilation
 
 			public IChangeToken ExpirationToken { get; set; }
 
+			// ReSharper disable once UnusedAutoPropertyAccessor.Local
 			public CompiledTemplateDescriptor Descriptor { get; set; }
 
 			public RazorLightProjectItem ProjectItem { get; set; }

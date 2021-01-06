@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
+using RazorLight.Compilation;
 using RazorLight.Razor;
 using RazorLight.Tests.Razor;
 using RazorLight.Tests.Utils;
@@ -88,7 +89,7 @@ namespace RazorLight.Tests
 		{
 			const string key = "key";
 			const string content = "content";
-			var project = new TestRazorProject { Value = new TextSourceRazorProjectItem(key, content) };
+			var project = new NoRazorProject();
 
 			var engine = new RazorLightEngineBuilder()
 #if NETFRAMEWORK
@@ -105,6 +106,47 @@ namespace RazorLight.Tests
 
 			Assert.NotEmpty(engine.Options.DynamicTemplates);
 			Assert.Contains(engine.Options.DynamicTemplates, t => t.Key == key && t.Value == content);
+			Assert.Equal(content, actual);
+		}
+
+		[Fact]
+		public async Task Ensure_Content_Added_To_DynamicTemplates_When_Both_RazorLightProject_And_Options_Not_Set_Explicitly()
+		{
+			const string key = "key";
+			const string content = "content";
+
+			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
+				.Build();
+
+			var actual = await engine.CompileRenderStringAsync(key, content, new object(), new ExpandoObject());
+
+			Assert.NotEmpty(engine.Options.DynamicTemplates);
+			Assert.Contains(engine.Options.DynamicTemplates, t => t.Key == key && t.Value == content);
+			Assert.Equal(typeof(NoRazorProject), (engine.Handler.Compiler as RazorTemplateCompiler)?.ProjectType);
+			Assert.Equal(content, actual);
+		}
+
+		[Fact]
+		public async Task Ensure_Content_Added_To_DynamicTemplates_When_RazorLightProject_Set_Explicitly_And_Options_Not_Set_Explicitly()
+		{
+			const string key = "key";
+			const string content = "content";
+
+			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
+				.UseNoProject()
+				.Build();
+
+			var actual = await engine.CompileRenderStringAsync(key, content, new object(), new ExpandoObject());
+
+			Assert.NotEmpty(engine.Options.DynamicTemplates);
+			Assert.Contains(engine.Options.DynamicTemplates, t => t.Key == key && t.Value == content);
+			Assert.Equal(typeof(NoRazorProject), (engine.Handler.Compiler as RazorTemplateCompiler)?.ProjectType);
 			Assert.Equal(content, actual);
 		}
 	}

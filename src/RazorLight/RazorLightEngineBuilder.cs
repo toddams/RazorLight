@@ -36,18 +36,26 @@ namespace RazorLight
 
 
 		/// <summary>
-		/// Configures RazorLight to use a project.  Use UseEmbeddedResourcesProject 
+		/// Configures RazorLight to use a project.
 		/// </summary>
-		/// <param name="project"></param>
+		/// <remarks>
+		/// Use this if implementing a custom <see cref="RazorLightProject"/>.
+		/// </remarks>
+		/// <param name="razorLightProject"></param>
 		/// <returns></returns>
-		public virtual RazorLightEngineBuilder UseProject(RazorLightProject project)
+		public virtual RazorLightEngineBuilder UseProject(RazorLightProject razorLightProject)
 		{
-			if (project == null)
-			{
-				throw new ArgumentNullException(nameof(project));
-			}
+			project = razorLightProject ?? throw new ArgumentNullException(nameof(razorLightProject), $"Use {nameof(NoRazorProject)} instead of null.  See also {nameof(UseNoProject)}.");
 
-			this.project = project;
+			return this;
+		}
+
+		/// <summary>
+		/// Configures RazorLight to use a project whose persistent store is a "null device".
+		/// </summary>
+		public RazorLightEngineBuilder UseNoProject()
+		{
+			project = new NoRazorProject();
 
 			return this;
 		}
@@ -84,6 +92,8 @@ namespace RazorLight
 		/// <returns><see cref="EmbeddedRazorProject"/></returns>
 		public RazorLightEngineBuilder UseEmbeddedResourcesProject(Type rootType)
 		{
+			if (rootType == null) throw new ArgumentNullException(nameof(rootType));
+
 			project = new EmbeddedRazorProject(rootType);
 
 			return this;
@@ -266,6 +276,7 @@ namespace RazorLight
 		public virtual RazorLightEngine Build()
 		{
 			options = options ?? new RazorLightOptions();
+			project = project ?? new NoRazorProject();
 
 			if (namespaces != null)
 			{
@@ -287,7 +298,7 @@ namespace RazorLight
 			{
 				if (metadataReferences.Count > 0 && options.AdditionalMetadataReferences.Count > 0)
 					ThrowIfHasBeenSetExplicitly(nameof(metadataReferences));
-				
+
 				options.AdditionalMetadataReferences = metadataReferences;
 			}
 
@@ -296,7 +307,6 @@ namespace RazorLight
 				if(excludedAssemblies.Count > 0 && options.ExcludedAssemblies.Count > 0)
 					ThrowIfHasBeenSetExplicitly(nameof(excludedAssemblies));
 
-				
 				options.ExcludedAssemblies = excludedAssemblies;
 			}
 
@@ -304,7 +314,7 @@ namespace RazorLight
 			{
 				if(prerenderCallbacks.Count > 0 && options.PreRenderCallbacks.Count > 0)
 					ThrowIfHasBeenSetExplicitly(nameof(prerenderCallbacks));
-				
+
 				options.PreRenderCallbacks = prerenderCallbacks;
 			}
 
@@ -312,7 +322,7 @@ namespace RazorLight
 			{
 				if(options.CachingProvider != null)
 					ThrowIfHasBeenSetExplicitly(nameof(cachingProvider));
-				
+
 				options.CachingProvider = cachingProvider;
 			}
 
@@ -320,7 +330,7 @@ namespace RazorLight
 			{
 				if(options.DisableEncoding != null)
 					ThrowIfHasBeenSetExplicitly(nameof(disableEncoding));
-			
+
 				options.DisableEncoding = options.DisableEncoding ?? disableEncoding ?? false;
 			}
 			else
@@ -337,7 +347,6 @@ namespace RazorLight
 			{
 				options.EnableDebugMode = options.EnableDebugMode ?? enableDebugMode ?? false;
 			}
-
 
 			var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences, options.ExcludedAssemblies);
 			var assembly = operatingAssembly ?? Assembly.GetEntryAssembly();

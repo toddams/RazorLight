@@ -365,6 +365,11 @@ namespace RazorLight.Tests.Extensions
 			{
 				throw new NotImplementedException();
 			}
+
+			public Task RenderTemplateAsync<T>(ITemplatePage templatePage, T model, TextWriter textWriter, ExpandoObject viewBag = null)
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		[Fact]
