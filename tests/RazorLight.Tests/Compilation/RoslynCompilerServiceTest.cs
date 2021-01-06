@@ -273,19 +273,7 @@ namespace RazorLight.Tests.Compilation
 
 			var template = new TestGeneratedRazorTemplate("key", "public class Test { error }");
 
-			TemplateCompilationException ex = null;
-
-			try
-			{
-				compiler.CompileAndEmit(template);
-			}
-			catch (TemplateCompilationException e)
-			{
-				ex = e;
-			}
-
-
-			Assert.NotNull(ex);
+			var ex = Assert.Throws<TemplateCompilationException>(() => compiler.CompileAndEmit(template));
 			Assert.NotEmpty(ex.CompilationErrors);
 			Assert.Equal(1, ex.CompilationErrors.Count);
 		}
