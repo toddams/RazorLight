@@ -74,7 +74,7 @@ namespace RazorLight.Instrumentation
 					// Alias the TModel token to a known type.
 					// This allows design time compilation to succeed for Razor files where the token isn't replaced.
 					var typeName = $"global::{typeof(object).FullName}";
-					var usingNode = new UsingDirectiveIntermediateNode()
+					var usingNode = new UsingDirectiveIntermediateNode
 					{
 						Content = $"TModel = {typeName}"
 					};

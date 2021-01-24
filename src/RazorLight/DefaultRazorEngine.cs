@@ -25,7 +25,6 @@ namespace RazorLight
 					   NamespaceDirective.Register(builder);
 					   FunctionsDirective.Register(builder);
 					   InheritsDirective.Register(builder);
-					   
 				   }
 				   SectionDirective.Register(builder);
 
@@ -37,7 +36,7 @@ namespace RazorLight
 #endif
 				   //builder.Features.Add(new ViewComponentTagHelperPass());
 
-				   builder.AddTargetExtension(new TemplateTargetExtension()
+				   builder.AddTargetExtension(new TemplateTargetExtension
 				   {
 					   TemplateTypeName = "global::RazorLight.Razor.RazorLightHelperResult",
 				   });

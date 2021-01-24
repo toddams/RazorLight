@@ -67,7 +67,6 @@ namespace RazorLight.Compilation
 		public ICompilationService CompilationService => _compiler;
 
 		internal IMemoryCache Cache => _cache;
-		internal ConcurrentDictionary<string, string> NormalizedKeysCache => _normalizedKeysCache;
 
 		public Task<CompiledTemplateDescriptor> CompileAsync(string templateKey)
 		{
@@ -202,7 +201,7 @@ namespace RazorLight.Compilation
 				throw templateNotFoundException;
 			}
 
-			return new ViewCompilerWorkItem()
+			return new ViewCompilerWorkItem
 			{
 				SupportsCompilation = true,
 
@@ -222,7 +221,7 @@ namespace RazorLight.Compilation
 			var item = loader.LoadItems(assembly).SingleOrDefault();
 			var attribute = assembly.GetCustomAttribute<RazorLightTemplateAttribute>();
 
-			return new CompiledTemplateDescriptor()
+			return new CompiledTemplateDescriptor
 			{
 				Item = item,
 				TemplateKey = projectItem.Key,

@@ -16,16 +16,16 @@ namespace RazorLight.Tests
 		public async Task Ensure_PrerenderCallbacks_Are_Invoked()
 		{
 			//Assign
-			var page = TemplatePageTest.CreatePage((t) => t.Write("test"));
+			var page = TemplatePageTest.CreatePage(t => t.Write("test"));
 
 			bool triggered1 = false, triggered2 = false;
-			var callbacks = new List<Action<ITemplatePage>>()
+			var callbacks = new List<Action<ITemplatePage>>
 			{
-				(t) => triggered1 = true,
-				(t) => triggered2 = true
+				t => triggered1 = true,
+				t => triggered2 = true
 			};
 
-			var options = new RazorLightOptions() { PreRenderCallbacks = callbacks };
+			var options = new RazorLightOptions { PreRenderCallbacks = callbacks };
 			var engineMock = new Mock<IEngineHandler>();
 			engineMock.SetupGet(e => e.Options).Returns(options);
 
@@ -102,7 +102,7 @@ namespace RazorLight.Tests
 				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded")
 				.Build();
 
-			var model = new TestModel()
+			var model = new TestModel
 			{
 				Value = "123"
 			};

@@ -14,7 +14,7 @@ namespace RazorLight.Tests.Compilation
 			string templateKey = "testKey";
 
 			var templateFactoryProvider = new TemplateFactoryProvider();
-			var descriptor = new CompiledTemplateDescriptor()
+			var descriptor = new CompiledTemplateDescriptor
 			{
 				TemplateAttribute = new RazorLightTemplateAttribute(templateKey, typeof(TestFactoryClass)),
 				TemplateKey = templateKey

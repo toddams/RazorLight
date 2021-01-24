@@ -7,7 +7,7 @@ namespace Samples.EntityFrameworkProject
 {
 	class Program
 	{
-		static void Main(string[] args)
+		static void Main()
 		{
 			var options = new DbContextOptionsBuilder<AppDbContext>()
 			   .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -26,7 +26,7 @@ namespace Samples.EntityFrameworkProject
 
 			// As our key in database is integer, but engine takes string as a key - pass integer ID as a string
 			string templateKey = "2";
-			var model = new TestViewModel() { Name = "Johny", Age = 22 };
+			var model = new TestViewModel { Name = "Johny", Age = 22 };
 
 #if (NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0)
 			model.Age = 40;
@@ -40,7 +40,7 @@ namespace Samples.EntityFrameworkProject
 
 		static void FillDatabase(AppDbContext dbContext)
 		{
-			dbContext.Templates.Add(new TemplateEntity()
+			dbContext.Templates.Add(new TemplateEntity
 			{
 				Id = 1,
 				Content = @"
@@ -49,7 +49,7 @@ namespace Samples.EntityFrameworkProject
                     </html>"
 			});
 
-			dbContext.Templates.Add(new TemplateEntity()
+			dbContext.Templates.Add(new TemplateEntity
 			{
 				Id = 2,
 				Content = @"
