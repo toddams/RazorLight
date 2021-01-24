@@ -33,7 +33,7 @@ Install-Package RazorLight -Version 2.0.0-rc.3
 The simplest scenario is to create a template from string. Each template must have a ````templateKey```` that is associated with it, so you can render the same template next time without recompilation.
 
 <!-- snippet: simple -->
-<a id='snippet-simple'/></a>
+<a id='snippet-simple'></a>
 ```cs
 var engine = new RazorLightEngineBuilder()
 	// required to have a default RazorLightProject type,
@@ -48,13 +48,13 @@ ViewModel model = new ViewModel {Name = "John Doe"};
 
 string result = await engine.CompileRenderStringAsync("templateKey", template, model);
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L16-L30' title='File snippet `simple` was extracted from'>snippet source</a> | <a href='#snippet-simple' title='Navigate to start of snippet `simple`'>anchor</a></sup>
-<!-- endsnippet -->
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L16-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-simple' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
 
 To render a compiled template:
 
 <!-- snippet: RenderCompiledTemplate -->
-<a id='snippet-rendercompiledtemplate'/></a>
+<a id='snippet-rendercompiledtemplate'></a>
 ```cs
 var cacheResult = engine.Handler.Cache.RetrieveTemplate("templateKey");
 if(cacheResult.Success)
@@ -63,8 +63,8 @@ if(cacheResult.Success)
 	string result = await engine.RenderTemplateAsync(templatePage, model);
 }
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L37-L44' title='File snippet `rendercompiledtemplate` was extracted from'>snippet source</a> | <a href='#snippet-rendercompiledtemplate' title='Navigate to start of snippet `rendercompiledtemplate`'>anchor</a></sup>
-<!-- endsnippet -->
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L37-L44' title='Snippet source file'>snippet source</a> | <a href='#snippet-rendercompiledtemplate' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
 
 # Template sources
 
@@ -75,7 +75,7 @@ RazorLight can resolve templates from any source, but there are a built-in provi
 When resolving a template from filesystem, templateKey - is a relative path to the root folder, that you pass to RazorLightEngineBuilder.
 
 <!-- snippet: FileSource -->
-<a id='snippet-filesource'/></a>
+<a id='snippet-filesource'></a>
 ```cs
 var engine = new RazorLightEngineBuilder()
 	.UseFileSystemProject("C:/RootFolder/With/YourTemplates")
@@ -85,15 +85,15 @@ var engine = new RazorLightEngineBuilder()
 var model = new {Name = "John Doe"};
 string result = await engine.CompileRenderAsync("Subfolder/View.cshtml", model);
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L49-L58' title='File snippet `filesource` was extracted from'>snippet source</a> | <a href='#snippet-filesource' title='Navigate to start of snippet `filesource`'>anchor</a></sup>
-<!-- endsnippet -->
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L49-L58' title='Snippet source file'>snippet source</a> | <a href='#snippet-filesource' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
 
 ## EmbeddedResource source
 
 For embedded resource, key - is a namespace and key of the embedded resource relative to root Type. Then root type namespace and templateKey will be combined into YourAssembly.NamespaceOfRootType.Templates.View.cshtml
 
 <!-- snippet: EmbeddedResourceSource -->
-<a id='snippet-embeddedresourcesource'/></a>
+<a id='snippet-embeddedresourcesource'></a>
 ```cs
 var engine = new RazorLightEngineBuilder()
 	.UseEmbeddedResourcesProject(System.Reflection.Assembly.GetEntryAssembly())
@@ -103,8 +103,8 @@ var engine = new RazorLightEngineBuilder()
 var model = new SchoolForAnts();
 string result = await engine.CompileRenderAsync<object>("Views.Subfolder.SchoolForAnts", model);
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L63-L72' title='File snippet `embeddedresourcesource` was extracted from'>snippet source</a> | <a href='#snippet-embeddedresourcesource' title='Navigate to start of snippet `embeddedresourcesource`'>anchor</a></sup>
-<!-- endsnippet -->
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L63-L72' title='Snippet source file'>snippet source</a> | <a href='#snippet-embeddedresourcesource' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
 
 ## Custom source
 
