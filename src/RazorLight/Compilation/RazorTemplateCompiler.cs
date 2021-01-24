@@ -175,7 +175,7 @@ namespace RazorLight.Compilation
 
 				try
 				{
-					CompiledTemplateDescriptor descriptor = CompileAndEmit(item.ProjectItem);
+					CompiledTemplateDescriptor descriptor = await CompileAndEmitAsync(item.ProjectItem);
 					descriptor.ExpirationToken = cacheEntryOptions.ExpirationTokens.FirstOrDefault();
 					taskSource.SetResult(descriptor);
 				}
