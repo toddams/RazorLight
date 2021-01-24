@@ -61,7 +61,7 @@ namespace RazorLight.Tests.Integration
 		}
 
 		[Fact()]
-		public async Task Should_Fail_When_Required_Section_Is_Missing()
+		public Task Should_Fail_When_Required_Section_Is_Missing()
 		{
 			var path = DirectoryUtils.RootDirectory;
 
@@ -77,8 +77,8 @@ namespace RazorLight.Tests.Integration
 				Name = "RazorLight",
 				NumberOfItems = 300
 			};
-			var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () => await engine.CompileRenderAsync("template6.cshtml", model));
-			await Verifier.Verify(exception);
+			return Verifier.ThrowsTask(() => engine.CompileRenderAsync("template6.cshtml", model))
+				.ModifySerialization(_ => _.IgnoreMember<Exception>(exception => exception.StackTrace));
 		}
 
 		[Fact]

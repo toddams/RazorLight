@@ -1,5 +1,4 @@
 {
-  Message: 'Section header is not defined',
-  Data: {},
-  Source: 'RazorLight'
+  Type: InvalidOperationException,
+  Message: Section header is not defined
 }
