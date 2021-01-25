@@ -281,7 +281,7 @@ namespace RazorLight.Tests.Extensions
 
 			var project = provider.GetService<RazorLightProject>();
 			Assert.IsType<FileSystemRazorProject>(project);
-			var fileSystemProject = project as FileSystemRazorProject;
+			var fileSystemProject = (FileSystemRazorProject)project;
 			Assert.Equal(fileSystemProject.Root, _rootPath);
 
 			var engine = provider.GetService<IRazorLightEngine>();
@@ -373,7 +373,7 @@ namespace RazorLight.Tests.Extensions
 		}
 
 		[Fact]
-		public void Try_Render_With_DI_Extension()
+		public async Task Try_Render_With_DI_Extension()
 		{
 			var path = DirectoryUtils.RootDirectory;
 
@@ -386,8 +386,8 @@ namespace RazorLight.Tests.Extensions
 				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"));
 
 			var provider = services.BuildServiceProvider();
-			var engine = provider.GetService<IRazorLightEngine>();
-			var result = engine.CompileRenderAsync<object>("template1.cshtml", null).GetAwaiter().GetResult();
+			var engine = provider.GetRequiredService<IRazorLightEngine>();
+			var result = await engine.CompileRenderAsync<object>("template1.cshtml", null);
 		}
 	}
 }

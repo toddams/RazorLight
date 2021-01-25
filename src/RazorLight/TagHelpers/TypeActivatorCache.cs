@@ -5,13 +5,13 @@ using System.Collections.Concurrent;
 namespace RazorLight.TagHelpers
 {
 	/// <summary>
-	/// Caches <see cref="ObjectFactory"/> instances produced by 
+	/// Caches <see cref="ObjectFactory"/> instances produced by
 	/// <see cref="Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateFactory(Type, Type[])"/>.
 	/// </summary>
 	public class TypeActivatorCache : ITypeActivatorCache
 	{
 		private readonly Func<Type, ObjectFactory> _createFactory =
-			(type) => ActivatorUtilities.CreateFactory(type, Type.EmptyTypes);
+			type => ActivatorUtilities.CreateFactory(type, Type.EmptyTypes);
 
 		private readonly ConcurrentDictionary<Type, ObjectFactory> _typeActivatorCache =
 			   new ConcurrentDictionary<Type, ObjectFactory>();

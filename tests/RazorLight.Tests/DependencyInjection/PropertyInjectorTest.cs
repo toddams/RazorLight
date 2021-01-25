@@ -23,7 +23,7 @@ namespace RazorLight.Tests.DependencyInjection
 			var collection = new ServiceCollection();
 			string expectedValue = "TestValue";
 			string templateKey = "key";
-			collection.AddSingleton(new TestViewModel() { Title = expectedValue });
+			collection.AddSingleton(new TestViewModel { Title = expectedValue });
 			var propertyInjector = new PropertyInjector(collection.BuildServiceProvider());
 
 			var builder = new StringBuilder();
@@ -34,7 +34,7 @@ namespace RazorLight.Tests.DependencyInjection
 			var engine = new RazorLightEngineBuilder()
 				.UseEmbeddedResourcesProject(typeof(Root))
 				.SetOperatingAssembly(typeof(Root).Assembly)
-				.AddDynamicTemplates(new Dictionary<string, string>() { { templateKey, builder.ToString() } })
+				.AddDynamicTemplates(new Dictionary<string, string> { { templateKey, builder.ToString() } })
 				.Build();
 
 			ITemplatePage templatePage = await engine.CompileTemplateAsync(templateKey);
@@ -46,8 +46,8 @@ namespace RazorLight.Tests.DependencyInjection
 			var prop = templatePage.GetType().GetProperty("test").GetValue(templatePage);
 
 			Assert.NotNull(prop);
-			Assert.IsAssignableFrom<TestViewModel>(prop);
-			Assert.Equal((prop as TestViewModel).Title, expectedValue);
+			var model = Assert.IsAssignableFrom<TestViewModel>(prop);
+			Assert.Equal(model.Title, expectedValue);
 		}
 	}
 }

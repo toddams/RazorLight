@@ -36,13 +36,12 @@ namespace RazorLight.Extensions
 			});
 
 			return services;
-			
 		}
 
 		public static RazorLightDependencyBuilder AddRazorLight(this IServiceCollection services)
 		{
 			services = services ?? throw new ArgumentNullException(nameof(services));
-			services.AddOptions().Configure<RazorLightOptions>((options) => 
+			services.AddOptions().Configure<RazorLightOptions>(options =>
 			{
 				options.OperatingAssembly = options.OperatingAssembly ?? Assembly.GetEntryAssembly();
 			});

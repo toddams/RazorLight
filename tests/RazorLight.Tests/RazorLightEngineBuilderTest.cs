@@ -127,11 +127,11 @@ namespace RazorLight.Tests
 			Assert.Throws<RazorLightException>(() => engine.Build());
 
 			engine = GetEngine().EnableDebugMode()
-				.UseOptions(new RazorLightOptions() { EnableDebugMode = false });
+				.UseOptions(new RazorLightOptions { EnableDebugMode = false });
 			Assert.Throws<RazorLightException>(() => engine.Build());
 
 			engine = GetEngine().EnableDebugMode(false)
-				.UseOptions(new RazorLightOptions() { EnableDebugMode = true });
+				.UseOptions(new RazorLightOptions { EnableDebugMode = true });
 			Assert.Throws<RazorLightException>(() => engine.Build());
 		}
 

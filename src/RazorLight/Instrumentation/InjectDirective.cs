@@ -65,7 +65,7 @@ namespace RazorLight.Instrumentation
 
 					typeName = typeName.Replace("<TModel>", "<" + modelType + ">");
 
-					var injectNode = new InjectIntermediateNode()
+					var injectNode = new InjectIntermediateNode
 					{
 						TypeName = typeName,
 						MemberName = memberName,

@@ -518,7 +518,7 @@ namespace RazorLight.Tests
 
 			using (var writer = new StringWriter())
 			{
-				var context = new PageContext() { Writer = writer };
+				var context = new PageContext { Writer = writer };
 
 				var page = CreatePage(v =>
 				{
@@ -540,7 +540,7 @@ namespace RazorLight.Tests
 
 			using (var writer = new StringWriter())
 			{
-				var context = new PageContext() { Writer = writer };
+				var context = new PageContext { Writer = writer };
 				var page = CreatePage(v =>
 				{
 					v.DisableEncoding = true;
@@ -595,7 +595,7 @@ namespace RazorLight.Tests
 			var buffer = new ViewBuffer(bufferScope, viewPath ?? "TEST", 32);
 			writer = writer ?? new ViewBufferTextWriter(buffer, Encoding.UTF8);
 
-			return new PageContext()
+			return new PageContext
 			{
 				Writer = writer
 			};
