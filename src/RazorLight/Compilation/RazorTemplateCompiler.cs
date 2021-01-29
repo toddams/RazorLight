@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Hosting;
 using Microsoft.Extensions.Caching.Memory;
@@ -17,7 +18,7 @@ namespace RazorLight.Compilation
 {
 	public class RazorTemplateCompiler : IRazorTemplateCompiler
 	{
-		private readonly object _cacheLock = new object();
+		private readonly SemaphoreSlim  _cacheLock = new SemaphoreSlim(1, 1);
 
 		private RazorSourceGenerator _razorSourceGenerator;
 		private ICompilationService _compiler;
@@ -98,7 +99,7 @@ namespace RazorLight.Compilation
 		/// </summary>
 		internal Type ProjectType =>  _razorProject.GetType();
 
-		private Task<CompiledTemplateDescriptor> OnCacheMissAsync(string templateKey)
+		private async Task<CompiledTemplateDescriptor> OnCacheMissAsync(string templateKey)
 		{
 			ViewCompilerWorkItem item;
 			TaskCompletionSource<CompiledTemplateDescriptor> taskSource;
@@ -107,25 +108,26 @@ namespace RazorLight.Compilation
 			// Safe races cannot be allowed when compiling Razor pages. To ensure only one compilation request succeeds
 			// per file, we'll lock the creation of a cache entry. Creating the cache entry should be very quick. The
 			// actual work for compiling files happens outside the critical section.
-			lock (_cacheLock)
+			await _cacheLock.WaitAsync();
+			try
 			{
 				string normalizedKey = GetNormalizedKey(templateKey);
 
 				// Double-checked locking to handle a possible race.
 				if (_cache.TryGetValue(normalizedKey, out Task<CompiledTemplateDescriptor> result))
 				{
-					return result;
+					return await result;
 				}
 
 				if (_precompiledViews.TryGetValue(normalizedKey, out var precompiledView))
 				{
 					item = null;
-					// TODO: PrecompiledViews should be generatd from RazorLight.Precompile.csproj but it's a work in progress.
+					// TODO: PrecompiledViews should be generated from RazorLight.Precompile.csproj but it's a work in progress.
 					//item = CreatePrecompiledWorkItem(normalizedKey, precompiledView);
 				}
 				else
 				{
-					item = CreateRuntimeCompilationWorkItem(templateKey).GetAwaiter().GetResult();
+					item = await CreateRuntimeCompilationWorkItem(templateKey);
 				}
 
 				// At this point, we've decided what to do - but we should create the cache entry and
@@ -150,6 +152,10 @@ namespace RazorLight.Compilation
 
 				_cache.Set(item.NormalizedKey, taskSource.Task, cacheEntryOptions);
 			}
+			finally
+			{
+				_cacheLock.Release();
+			}
 
 			// Now the lock has been released so we can do more expensive processing.
 			if (item.SupportsCompilation)
@@ -168,7 +174,7 @@ namespace RazorLight.Compilation
 
 				try
 				{
-					CompiledTemplateDescriptor descriptor = CompileAndEmit(item.ProjectItem);
+					CompiledTemplateDescriptor descriptor = await CompileAndEmitAsync(item.ProjectItem);
 					descriptor.ExpirationToken = cacheEntryOptions.ExpirationTokens.FirstOrDefault();
 					taskSource.SetResult(descriptor);
 				}
@@ -178,7 +184,7 @@ namespace RazorLight.Compilation
 				}
 			}
 
-			return taskSource.Task;
+			return await taskSource.Task;
 		}
 
 		private async Task<ViewCompilerWorkItem> CreateRuntimeCompilationWorkItem(string templateKey)
@@ -211,9 +217,9 @@ namespace RazorLight.Compilation
 			};
 		}
 
-		protected virtual CompiledTemplateDescriptor CompileAndEmit(RazorLightProjectItem projectItem)
+		protected virtual async Task<CompiledTemplateDescriptor> CompileAndEmitAsync(RazorLightProjectItem projectItem)
 		{
-			IGeneratedRazorTemplate generatedTemplate = _razorSourceGenerator.GenerateCodeAsync(projectItem).GetAwaiter().GetResult();
+			IGeneratedRazorTemplate generatedTemplate = await _razorSourceGenerator.GenerateCodeAsync(projectItem);
 			Assembly assembly = _compiler.CompileAndEmit(generatedTemplate);
 
 			// Anything we compile from source will use Razor 2.1 and so should have the new metadata.
