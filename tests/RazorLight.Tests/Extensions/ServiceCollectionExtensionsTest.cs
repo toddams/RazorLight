@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 using RazorLight.Extensions;
 using System;
-using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
 using RazorLight.Compilation;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -16,6 +14,8 @@ using System.Dynamic;
 using System.IO;
 using RazorLight.Razor;
 using RazorLight.Tests.Utils;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace RazorLight.Tests.Extensions
 {
@@ -82,156 +82,6 @@ namespace RazorLight.Tests.Extensions
 				services.AddRazorLight(() => embeddedEngine);
 			}
 		}
-
-#if !(NETCOREAPP2_0 || NETFRAMEWORK)
-		[Fact]
-		public void Ensure_Works_With_Generic_Host()
-		{
-			static IHostBuilder CreateHostBuilder(string[] args)
-			{
-				return Host.CreateDefaultBuilder(args)
-					.ConfigureWebHostDefaults(webBuilder =>
-					{
-
-						webBuilder.UseStartup<EmbeddedEngineStartup>();
-					});
-			}
-
-			var hostBuilder = CreateHostBuilder(null);
-
-			Assert.NotNull(hostBuilder);
-			var host = hostBuilder.Build();
-			Assert.NotNull(host);
-			host.Services.GetService<IRazorLightEngine>();
-		}
-
-		[Fact]
-		public void Ensure_Works_With_Generic_Host_When_Resolving_IEngineHandler_Before_IRazorLightEngine()
-		{
-			static IHostBuilder CreateHostBuilder(string[] args)
-			{
-				return Host.CreateDefaultBuilder(args)
-					.ConfigureWebHostDefaults(webBuilder =>
-					{
-
-						webBuilder.UseStartup<EmbeddedEngineStartup>();
-					});
-			}
-
-			var hostBuilder = CreateHostBuilder(null);
-
-			Assert.NotNull(hostBuilder);
-			var host = hostBuilder.Build();
-			Assert.NotNull(host);
-			var exception = Assert.Throws<InvalidOperationException>(() => host.Services.GetService<IEngineHandler>());
-			Assert.Equal("This exception can only occur if you inject IEngineHandler directly using ServiceCollectionExtensions.AddRazorLight", exception.Message);
-			host.Services.GetService<IRazorLightEngine>();
-		}
-
-		[Fact()]
-		public void Ensure_Works_With_Generic_Host_and_DefaultServiceProvider()
-		{
-			static IHostBuilder CreateHostBuilder(string[] args)
-			{
-				return Host.CreateDefaultBuilder(args)
-					.UseDefaultServiceProvider((context, options) =>
-					{
-						options.ValidateScopes = false;
-						options.ValidateOnBuild = false;
-					})
-					.ConfigureWebHostDefaults(webBuilder =>
-					{
-
-						webBuilder.UseStartup<EmbeddedEngineStartup>();
-					});
-			}
-
-			var hostBuilder = CreateHostBuilder(null);
-
-			Assert.NotNull(hostBuilder);
-			var host = hostBuilder.Build();
-			Assert.NotNull(host);
-			host.Services.GetService<IRazorLightEngine>();
-		}
-
-		[Fact()]
-		public void Ensure_Works_With_Generic_Host_and_DefaultServiceProvider_ValidateScopes_ValidateOnBuild()
-		{
-			static IHostBuilder CreateHostBuilder(string[] args)
-			{
-				return Host.CreateDefaultBuilder(args)
-					.UseDefaultServiceProvider((context, options) =>
-					{
-						options.ValidateScopes = true;
-						options.ValidateOnBuild = true;
-					})
-					.ConfigureWebHostDefaults(webBuilder =>
-					{
-
-						webBuilder.UseStartup<EmbeddedEngineStartup>();
-					});
-			}
-
-			var hostBuilder = CreateHostBuilder(null);
-
-			Assert.NotNull(hostBuilder);
-			var host = hostBuilder.Build();
-			Assert.NotNull(host);
-			host.Services.GetService<IRazorLightEngine>();
-		}
-
-		[Fact()]
-		public void Ensure_Works_With_Generic_Host_and_DefaultServiceProvider_ValidateOnBuild()
-		{
-			static IHostBuilder CreateHostBuilder(string[] args)
-			{
-				return Host.CreateDefaultBuilder(args)
-					.UseDefaultServiceProvider((context, options) =>
-					{
-						options.ValidateScopes = false;
-						options.ValidateOnBuild = true;
-					})
-					.ConfigureWebHostDefaults(webBuilder =>
-					{
-
-						webBuilder.UseStartup<EmbeddedEngineStartup>();
-					});
-			}
-
-			var hostBuilder = CreateHostBuilder(null);
-
-			Assert.NotNull(hostBuilder);
-			var host = hostBuilder.Build();
-			Assert.NotNull(host);
-			host.Services.GetService<IRazorLightEngine>();
-		}
-
-		[Fact()]
-		public void Ensure_Works_With_Generic_Host_and_DefaultServiceProvider_ValidateScopes()
-		{
-			static IHostBuilder CreateHostBuilder(string[] args)
-			{
-				return Host.CreateDefaultBuilder(args)
-					.UseDefaultServiceProvider((context, options) =>
-					{
-						options.ValidateScopes = true;
-						options.ValidateOnBuild = false;
-					})
-					.ConfigureWebHostDefaults(webBuilder =>
-					{
-
-						webBuilder.UseStartup<EmbeddedEngineStartup>();
-					});
-			}
-
-			var hostBuilder = CreateHostBuilder(null);
-
-			Assert.NotNull(hostBuilder);
-			var host = hostBuilder.Build();
-			Assert.NotNull(host);
-			host.Services.GetService<IRazorLightEngine>();
-		}
-#endif
 
 		[Fact]
 		public void Ensure_RazorLightEngineWithFileSystemFactory_Is_Called()

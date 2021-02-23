@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorLight.WebTests", "tests\RazorLight.WebTests\RazorLight.WebTests.csproj", "{007FFC54-3373-44B6-B155-9CBC1BF88D3C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{AD9A02F6-8078-4DFF-AFA6-4DE8674D5C76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD9A02F6-8078-4DFF-AFA6-4DE8674D5C76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD9A02F6-8078-4DFF-AFA6-4DE8674D5C76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{007FFC54-3373-44B6-B155-9CBC1BF88D3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{007FFC54-3373-44B6-B155-9CBC1BF88D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{007FFC54-3373-44B6-B155-9CBC1BF88D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{007FFC54-3373-44B6-B155-9CBC1BF88D3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 		{63EE1F3F-C71E-48DA-8135-9E602D6B7206} = {CDB1D407-71F7-44D6-8B35-F0013D1717A6}
 		{C9B26DF6-F8E6-481A-B497-C8999641A99D} = {61D04B29-43F8-4FE3-A12E-BB16743BFB65}
 		{AD9A02F6-8078-4DFF-AFA6-4DE8674D5C76} = {25F57564-58FD-4FD2-8CDA-98261E5BEEEC}
+		{007FFC54-3373-44B6-B155-9CBC1BF88D3C} = {CDB1D407-71F7-44D6-8B35-F0013D1717A6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {590C5541-E5A7-41ED-AFC7-D4A52E594191}
