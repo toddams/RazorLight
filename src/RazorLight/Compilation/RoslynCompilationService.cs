@@ -116,20 +116,23 @@ namespace RazorLight.Compilation
 					StringBuilder builder = new StringBuilder();
 					builder.AppendLine("Failed to compile generated Razor template:");
 
-					var errorMessages = new List<string>();
+					var compilationDiagnostics = new List<TemplateCompilationDiagnostic>();
+					
 					foreach (Diagnostic diagnostic in errorsDiagnostics)
 					{
 						FileLinePositionSpan lineSpan = diagnostic.Location.SourceTree.GetMappedLineSpan(diagnostic.Location.SourceSpan);
 						string errorMessage = diagnostic.GetMessage();
 						string formattedMessage = $"- ({lineSpan.StartLinePosition.Line}:{lineSpan.StartLinePosition.Character}) {errorMessage}";
 
-						errorMessages.Add(formattedMessage);
+						var compilationDiagnostic = new TemplateCompilationDiagnostic(errorMessage, formattedMessage, lineSpan);
+						compilationDiagnostics.Add(compilationDiagnostic);
+
 						builder.AppendLine(formattedMessage);
 					}
 
 					builder.AppendLine("\nSee CompilationErrors for detailed information");
 
-					throw new TemplateCompilationException(builder.ToString(), errorMessages);
+					throw new TemplateCompilationException(builder.ToString(),compilationDiagnostics);
 				}
 
 				assemblyStream.Seek(0, SeekOrigin.Begin);
