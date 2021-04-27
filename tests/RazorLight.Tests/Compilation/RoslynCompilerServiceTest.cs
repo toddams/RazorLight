@@ -275,6 +275,8 @@ namespace RazorLight.Tests.Compilation
 
 			var ex = Assert.Throws<TemplateCompilationException>(() => compiler.CompileAndEmit(template));
 			Assert.NotEmpty(ex.CompilationErrors);
+			Assert.NotEmpty(ex.CompilationDiagnostics);
+			Assert.Equal(1, ex.CompilationDiagnostics.Count);
 			Assert.Equal(1, ex.CompilationErrors.Count);
 		}
 
