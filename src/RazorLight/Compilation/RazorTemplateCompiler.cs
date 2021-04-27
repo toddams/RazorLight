@@ -139,11 +139,9 @@ namespace RazorLight.Compilation
 				}
 
 				taskSource = new TaskCompletionSource<CompiledTemplateDescriptor>();
-				if (item.SupportsCompilation)
-				{
-					// We'll compile in just a sec, be patient.
-				}
-				else
+
+				// We'll compile in just a sec, be patient.
+				if (!item.SupportsCompilation)
 				{
 					// If we can't compile, we should have already created the descriptor
 					Debug.Assert(item.Descriptor != null);

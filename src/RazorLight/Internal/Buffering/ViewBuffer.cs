@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Html;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Html;
 
 namespace RazorLight.Internal.Buffering
 {

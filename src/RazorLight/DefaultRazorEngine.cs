@@ -55,7 +55,6 @@ namespace RazorLight
 				throw new System.NotImplementedException();
 			}
 
-
 #if (NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0)
 			[System.Obsolete]
 #endif

@@ -1,19 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
-    <TargetFrameworks>net472;netcoreapp2.0;netcoreapp3.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
-    <TargetFrameworks>netcoreapp2.0;netcoreapp3.1;net5.0</TargetFrameworks>
-  </PropertyGroup>
-  <PropertyGroup>
-    <IsPackable>false</IsPackable>
-    <PreserveCompilationContext>true</PreserveCompilationContext>
-    <DefineConstants>$(DefineConstants);SOME_TEST_DEFINE</DefineConstants>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
     <MdTargetDir>$(SolutionDir)</MdTargetDir>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -56,20 +52,6 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
-    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="16.8.3" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.1.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.1.0" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.5" />
@@ -85,5 +67,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\RazorLight\RazorLight.csproj" />
   </ItemGroup>
-
 </Project>
