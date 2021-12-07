@@ -1,0 +1,53 @@
+name: .NET Pack and Push to Nuget.org
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }} 
+    strategy:
+      matrix:
+        os: [windows-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Setup .NET Core 2.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.1.803
+  
+    - name: Setup .NET Core 3.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+      
+    - name: Setup .NET 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.100'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+
+    - name: Test
+      run: dotnet test --verbosity normal
+      
+  package:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Publish RazorLight
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+          PROJECT_FILE_PATH: src/RazorLight/RazorLight.csproj
+          VERSION_STATIC: 2.0.0-rc.4
+          INCLUDE_SYMBOLS: true
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+  
