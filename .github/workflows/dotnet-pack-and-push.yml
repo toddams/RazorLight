@@ -41,7 +41,7 @@ jobs:
       
   package:
     runs-on: windows-latest
-    
+    needs: build
     steps:
     - name: Publish RazorLight
       uses: brandedoutcast/publish-nuget@v2.5.5
