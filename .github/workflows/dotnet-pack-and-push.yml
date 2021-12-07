@@ -43,10 +43,21 @@ jobs:
     runs-on: windows-latest
     needs: build
     steps:
+    - name: Check file existence w/ backslash path separator
+      id: check_files_backslash
+      uses: andstor/file-existence-action@v1
+      with:
+        files: "src\\RazorLight\\RazorLight.csproj"
+    - name: Check file existence w/ forward slash path separator
+      id: check_files_forwardslash
+      uses: andstor/file-existence-action@v1
+      with:
+        files: "src/RazorLight/RazorLight.csproj"
+    
     - name: Publish RazorLight
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
-        PROJECT_FILE_PATH: src/RazorLight/RazorLight.csproj
+        PROJECT_FILE_PATH: src\RazorLight\RazorLight.csproj
         VERSION_STATIC: 2.0.0-rc.4
         INCLUDE_SYMBOLS: true
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
