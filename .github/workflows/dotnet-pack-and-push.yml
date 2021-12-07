@@ -1,9 +1,7 @@
-name: .NET
+name: .NET Pack and Push to Nuget.org
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
     branches: [ master ]
 
 jobs:
@@ -12,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }} 
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest]
 
     steps:
     - uses: actions/checkout@v2
@@ -41,3 +39,15 @@ jobs:
     - name: Test
       run: dotnet test --verbosity normal
       
+  package:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Publish RazorLight
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+          PROJECT_FILE_PATH: src/RazorLight/RazorLight.csproj
+          VERSION_STATIC: 2.0.0-rc.4
+          INCLUDE_SYMBOLS: true
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+  
