@@ -46,8 +46,8 @@ jobs:
     - name: Publish RazorLight
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
-          PROJECT_FILE_PATH: src/RazorLight/RazorLight.csproj
-          VERSION_STATIC: 2.0.0-rc.4
-          INCLUDE_SYMBOLS: true
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+        PROJECT_FILE_PATH: src/RazorLight/RazorLight.csproj
+        VERSION_STATIC: 2.0.0-rc.4
+        INCLUDE_SYMBOLS: true
+        NUGET_KEY: ${{secrets.NUGET_API_KEY}}
   
