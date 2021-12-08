@@ -7,10 +7,7 @@ on:
 jobs:
   build:
 
-    runs-on: ${{ matrix.os }} 
-    strategy:
-      matrix:
-        os: [windows-latest]
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -40,8 +37,10 @@ jobs:
       run: dotnet test --verbosity normal
       
   package:
+  
     runs-on: windows-latest
     needs: build
+    
     steps:
     - name: Check src directory existence
       id: check_src_directory
