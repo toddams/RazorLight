@@ -1,6 +1,12 @@
 name: .NET Pack and Push to Nuget.org
 
-on: workflow_call
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'NuGet.org Version'     
+        required: true
+        default: '2.0.0-rc.4'
 
 jobs:
   build:
