@@ -70,7 +70,7 @@ jobs:
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
         PROJECT_FILE_PATH: src\RazorLight\RazorLight.csproj
-        VERSION_STATIC: 2.0.0-rc.4
+        VERSION_STATIC: ${{ github.event.inputs.version }}
         INCLUDE_SYMBOLS: true
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
   
