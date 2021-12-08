@@ -35,11 +35,16 @@ jobs:
       run: dotnet test --verbosity normal
       
   package:
-  
+    defaults:
+      run:
+        working-directory: .
     runs-on: windows-latest
     needs: build
     
     steps:
+    - name: Check working-directory existence
+      id: check_workdir
+      uses: andstor/file-existence-action@v1
     - name: Check src directory existence
       id: check_src_directory
       uses: andstor/file-existence-action@v1
