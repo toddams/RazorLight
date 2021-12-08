@@ -48,6 +48,8 @@ jobs:
     needs: build
     
     steps:
+    - uses: actions/checkout@v2
+    
     - name: Check working-directory existence
       id: check_workdir
       uses: andstor/file-existence-action@v1
