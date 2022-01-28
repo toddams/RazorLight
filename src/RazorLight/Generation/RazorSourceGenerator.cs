@@ -71,7 +71,8 @@ namespace RazorLight.Generation
 
 			if (!projectItem.Exists)
 			{
-				throw new TemplateNotFoundException($"Project can not find template with key {projectItem.Key}");
+				throw new InvalidOperationException($"{nameof(RazorLightProjectItem)} of type " +
+					$"{projectItem.GetType().FullName} with key {projectItem.Key} does not exist.");
 			}
 
 			RazorCodeDocument codeDocument = await CreateCodeDocumentAsync(projectItem);
@@ -108,7 +109,8 @@ namespace RazorLight.Generation
 
 			if (!projectItem.Exists)
 			{
-				throw new InvalidOperationException($"Project can not find template with key {projectItem.Key}");
+				throw new InvalidOperationException($"{nameof(RazorLightProjectItem)} of type " +
+					$"{projectItem.GetType().FullName} with key {projectItem.Key} does not exist.");
 			}
 
 			using (var stream = projectItem.Read())

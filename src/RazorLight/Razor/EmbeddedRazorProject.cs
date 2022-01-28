@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RazorLight.Razor
@@ -54,6 +52,21 @@ namespace RazorLight.Razor
 		public override Task<IEnumerable<RazorLightProjectItem>> GetImportsAsync(string templateKey)
 		{
 			return Task.FromResult(Enumerable.Empty<RazorLightProjectItem>());
+		}
+
+		public override Task<IEnumerable<string>> GetKnownKeysAsync()
+		{
+			var ignoredPrefix = string.IsNullOrEmpty(RootNamespace) ? Assembly.GetName().FullName : RootNamespace;
+			if (!ignoredPrefix.EndsWith(".")) ignoredPrefix += ".";
+
+			var fullResourceNames = this.Assembly.GetManifestResourceNames()
+				.Where(x => x.StartsWith(ignoredPrefix) && x.EndsWith(Extension));
+
+			var keys = fullResourceNames
+				.Select(x => x.Remove(0, ignoredPrefix.Length)) // Remove prefix
+				.Select(x => x.Remove(x.Length - Extension.Length, Extension.Length)); // Remove extension
+
+			return Task.FromResult(keys);
 		}
 	}
 }

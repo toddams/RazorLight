@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis.Emit;
 using RazorLight.Generation;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace RazorLight.Compilation
 {

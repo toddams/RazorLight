@@ -87,7 +87,7 @@ namespace RazorLight.Internal
 			}
 
 			var properties = type.GetRuntimeProperties()
-				.Where((property) =>
+				.Where(property =>
 				{
 					return
 						property.IsDefined(activateAttributeType) &&

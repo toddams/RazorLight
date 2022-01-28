@@ -8,3 +8,12 @@ indent_style = tab
 
 # CS1591: Missing XML comment for publicly visible type or member
 dotnet_diagnostic.CS1591.severity = none
+
+[*.{xml,xsd,csproj}]
+max_line_length = off
+end_of_line = crlf
+indent_style = space
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+indent_size = 2

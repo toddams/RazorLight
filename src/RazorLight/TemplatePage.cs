@@ -100,7 +100,7 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="name">The name of the section to render.</param>
 		/// <returns>An empty <see cref="IHtmlContent"/>.</returns>
-		/// <remarks>The method writes to the <see cref="RazorPageBase.Output"/> and the value returned is a token
+		/// <remarks>The method writes to the <see cref="TemplatePageBase.Output"/> and the value returned is a token
 		/// value that allows the Write (produced due to @RenderSection(..)) to succeed. However the
 		/// value does not represent the rendered content.</remarks>
 		public HtmlString RenderSection(string name)
@@ -119,7 +119,7 @@ namespace RazorLight
 		/// <param name="name">The section to render.</param>
 		/// <param name="required">Indicates if this section must be rendered.</param>
 		/// <returns>An empty <see cref="IHtmlContent"/>.</returns>
-		/// <remarks>The method writes to the <see cref="RazorPageBase.Output"/> and the value returned is a token
+		/// <remarks>The method writes to the <see cref="TemplatePageBase.Output"/> and the value returned is a token
 		/// value that allows the Write (produced due to @RenderSection(..)) to succeed. However the
 		/// value does not represent the rendered content.</remarks>
 		public HtmlString RenderSection(string name, bool required)
@@ -142,7 +142,7 @@ namespace RazorLight
 		/// <returns>
 		/// A <see cref="Task{HtmlString}"/> that on completion returns an empty <see cref="IHtmlContent"/>.
 		/// </returns>
-		/// <remarks>The method writes to the <see cref="RazorPageBase.Output"/> and the value returned is a token
+		/// <remarks>The method writes to the <see cref="TemplatePageBase.Output"/> and the value returned is a token
 		/// value that allows the Write (produced due to @RenderSection(..)) to succeed. However the
 		/// value does not represent the rendered content.</remarks>
 		public Task<HtmlString> RenderSectionAsync(string name)
@@ -164,7 +164,7 @@ namespace RazorLight
 		/// <returns>
 		/// A <see cref="Task{HtmlString}"/> that on completion returns an empty <see cref="IHtmlContent"/>.
 		/// </returns>
-		/// <remarks>The method writes to the <see cref="RazorPageBase.Output"/> and the value returned is a token
+		/// <remarks>The method writes to the <see cref="TemplatePageBase.Output"/> and the value returned is a token
 		/// value that allows the Write (produced due to @RenderSection(..)) to succeed. However the
 		/// value does not represent the rendered content.</remarks>
 		/// <exception cref="InvalidOperationException">if <paramref name="required"/> is <c>true</c> and the section

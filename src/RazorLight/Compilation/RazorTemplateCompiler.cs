@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Hosting;
 using Microsoft.Extensions.Caching.Memory;
@@ -16,10 +18,10 @@ namespace RazorLight.Compilation
 {
 	public class RazorTemplateCompiler : IRazorTemplateCompiler
 	{
-		private readonly object _cacheLock = new object();
+		private readonly SemaphoreSlim  _cacheLock = new SemaphoreSlim(1, 1);
 
 		private RazorSourceGenerator _razorSourceGenerator;
-		private RoslynCompilationService _compiler;
+		private ICompilationService _compiler;
 
 		private readonly RazorLightOptions _razorLightOptions;
 		private readonly RazorLightProject _razorProject;
@@ -29,12 +31,12 @@ namespace RazorLight.Compilation
 
 		public RazorTemplateCompiler(
 			RazorSourceGenerator sourceGenerator,
-			RoslynCompilationService roslynCompilationService,
+			ICompilationService compilationService,
 			RazorLightProject razorLightProject,
 			RazorLightOptions razorLightOptions)
 		{
 			_razorSourceGenerator = sourceGenerator ?? throw new ArgumentNullException(nameof(sourceGenerator));
-			_compiler = roslynCompilationService ?? throw new ArgumentNullException(nameof(roslynCompilationService));
+			_compiler = compilationService ?? throw new ArgumentNullException(nameof(compilationService));
 			_razorProject = razorLightProject ?? throw new ArgumentNullException(nameof(razorLightProject));
 			_razorLightOptions = razorLightOptions ?? throw new ArgumentNullException(nameof(razorLightOptions));
 
@@ -54,10 +56,18 @@ namespace RazorLight.Compilation
 				StringComparer.OrdinalIgnoreCase);
 		}
 
+		public RazorTemplateCompiler(
+			RazorSourceGenerator sourceGenerator,
+			ICompilationService compilationService,
+			RazorLightProject razorLightProject,
+			IOptions<RazorLightOptions> options) : this(sourceGenerator, compilationService, razorLightProject, options.Value)
+		{
+
+		}
+
 		public ICompilationService CompilationService => _compiler;
 
 		internal IMemoryCache Cache => _cache;
-		internal ConcurrentDictionary<string, string> NormalizedKeysCache => _normalizedKeysCache;
 
 		public Task<CompiledTemplateDescriptor> CompileAsync(string templateKey)
 		{
@@ -84,7 +94,12 @@ namespace RazorLight.Compilation
 			return cachedResult;
 		}
 
-		private Task<CompiledTemplateDescriptor> OnCacheMissAsync(string templateKey)
+		/// <summary>
+		/// For testing purposes only.
+		/// </summary>
+		internal Type ProjectType =>  _razorProject.GetType();
+
+		private async Task<CompiledTemplateDescriptor> OnCacheMissAsync(string templateKey)
 		{
 			ViewCompilerWorkItem item;
 			TaskCompletionSource<CompiledTemplateDescriptor> taskSource;
@@ -93,24 +108,26 @@ namespace RazorLight.Compilation
 			// Safe races cannot be allowed when compiling Razor pages. To ensure only one compilation request succeeds
 			// per file, we'll lock the creation of a cache entry. Creating the cache entry should be very quick. The
 			// actual work for compiling files happens outside the critical section.
-			lock (_cacheLock)
+			await _cacheLock.WaitAsync();
+			try
 			{
 				string normalizedKey = GetNormalizedKey(templateKey);
 
 				// Double-checked locking to handle a possible race.
 				if (_cache.TryGetValue(normalizedKey, out Task<CompiledTemplateDescriptor> result))
 				{
-					return result;
+					return await result;
 				}
 
 				if (_precompiledViews.TryGetValue(normalizedKey, out var precompiledView))
 				{
 					item = null;
+					// TODO: PrecompiledViews should be generated from RazorLight.Precompile.csproj but it's a work in progress.
 					//item = CreatePrecompiledWorkItem(normalizedKey, precompiledView);
 				}
 				else
 				{
-					item = CreateRuntimeCompilationWorkItem(templateKey).GetAwaiter().GetResult();
+					item = await CreateRuntimeCompilationWorkItem(templateKey);
 				}
 
 				// At this point, we've decided what to do - but we should create the cache entry and
@@ -135,6 +152,10 @@ namespace RazorLight.Compilation
 
 				_cache.Set(item.NormalizedKey, taskSource.Task, cacheEntryOptions);
 			}
+			finally
+			{
+				_cacheLock.Release();
+			}
 
 			// Now the lock has been released so we can do more expensive processing.
 			if (item.SupportsCompilation)
@@ -153,7 +174,7 @@ namespace RazorLight.Compilation
 
 				try
 				{
-					CompiledTemplateDescriptor descriptor = CompileAndEmit(item.ProjectItem);
+					CompiledTemplateDescriptor descriptor = await CompileAndEmitAsync(item.ProjectItem);
 					descriptor.ExpirationToken = cacheEntryOptions.ExpirationTokens.FirstOrDefault();
 					taskSource.SetResult(descriptor);
 				}
@@ -163,12 +184,12 @@ namespace RazorLight.Compilation
 				}
 			}
 
-			return taskSource.Task;
+			return await taskSource.Task;
 		}
 
 		private async Task<ViewCompilerWorkItem> CreateRuntimeCompilationWorkItem(string templateKey)
 		{
-			RazorLightProjectItem projectItem = null;
+			RazorLightProjectItem projectItem;
 
 			if (_razorLightOptions.DynamicTemplates.TryGetValue(templateKey, out string templateContent))
 			{
@@ -182,10 +203,11 @@ namespace RazorLight.Compilation
 
 			if (!projectItem.Exists)
 			{
-				throw new TemplateNotFoundException($"Project can not find template with key {projectItem.Key}");
+				var templateNotFoundException = await CreateTemplateNotFoundException(projectItem);
+				throw templateNotFoundException;
 			}
 
-			return new ViewCompilerWorkItem()
+			return new ViewCompilerWorkItem
 			{
 				SupportsCompilation = true,
 
@@ -195,9 +217,9 @@ namespace RazorLight.Compilation
 			};
 		}
 
-		protected virtual CompiledTemplateDescriptor CompileAndEmit(RazorLightProjectItem projectItem)
+		protected virtual async Task<CompiledTemplateDescriptor> CompileAndEmitAsync(RazorLightProjectItem projectItem)
 		{
-			IGeneratedRazorTemplate generatedTemplate = _razorSourceGenerator.GenerateCodeAsync(projectItem).GetAwaiter().GetResult();
+			IGeneratedRazorTemplate generatedTemplate = await _razorSourceGenerator.GenerateCodeAsync(projectItem);
 			Assembly assembly = _compiler.CompileAndEmit(generatedTemplate);
 
 			// Anything we compile from source will use Razor 2.1 and so should have the new metadata.
@@ -205,7 +227,7 @@ namespace RazorLight.Compilation
 			var item = loader.LoadItems(assembly).SingleOrDefault();
 			var attribute = assembly.GetCustomAttribute<RazorLightTemplateAttribute>();
 
-			return new CompiledTemplateDescriptor()
+			return new CompiledTemplateDescriptor
 			{
 				Item = item,
 				TemplateKey = projectItem.Key,
@@ -230,11 +252,11 @@ namespace RazorLight.Compilation
 				return templateKey;
 			}
 
-			if (!_normalizedKeysCache.TryGetValue(templateKey, out var normalizedPath))
-			{
-				normalizedPath = NormalizeKey(templateKey);
-				_normalizedKeysCache[templateKey] = normalizedPath;
-			}
+			if (_normalizedKeysCache.TryGetValue(templateKey, out var normalizedPath))
+				return normalizedPath;
+
+			normalizedPath = NormalizeKey(templateKey);
+			_normalizedKeysCache[templateKey] = normalizedPath;
 
 			return normalizedPath;
 		}
@@ -260,7 +282,7 @@ namespace RazorLight.Compilation
 				length++;
 			}
 
-			var builder = new InplaceStringBuilder(length);
+			var builder = new StringBuilder(length);
 			if (addLeadingSlash)
 			{
 				builder.Append('/');
@@ -279,6 +301,33 @@ namespace RazorLight.Compilation
 			return builder.ToString();
 		}
 
+		internal async Task<TemplateNotFoundException> CreateTemplateNotFoundException(RazorLightProjectItem projectItem)
+		{
+			var msg = $"{nameof(RazorLightProjectItem)} of type {projectItem.GetType().FullName} with key {projectItem.Key} could not be found by the " +
+				$"{ nameof(RazorLightProject)} of type { _razorProject.GetType().FullName} and does not exist in dynamic templates. ";
+
+			var propNames = $"\"{nameof(TemplateNotFoundException.KnownDynamicTemplateKeys)}\" and \"{nameof(TemplateNotFoundException.KnownProjectTemplateKeys)}\"";
+
+			if (_razorLightOptions.EnableDebugMode ?? false)
+			{
+				msg += $"See the {propNames} properties for known template keys.";
+
+				var dynamicKeys = _razorLightOptions.DynamicTemplates.Keys.ToList();
+
+				var projectKeys = await _razorProject.GetKnownKeysAsync();
+				projectKeys = projectKeys?.ToList() ?? Enumerable.Empty<string>();
+
+				return new TemplateNotFoundException(msg, dynamicKeys, projectKeys);
+			}
+			else
+			{
+				msg += $"Set {nameof(RazorLightOptions)}.{nameof(RazorLightOptions.EnableDebugMode)} to true to allow " +
+					$"the {propNames} properties on this exception to be set.";
+
+				return new TemplateNotFoundException(msg);
+			}
+		}
+
 		private class ViewCompilerWorkItem
 		{
 			public bool SupportsCompilation { get; set; }
@@ -287,6 +336,7 @@ namespace RazorLight.Compilation
 
 			public IChangeToken ExpirationToken { get; set; }
 
+			// ReSharper disable once UnusedAutoPropertyAccessor.Local
 			public CompiledTemplateDescriptor Descriptor { get; set; }
 
 			public RazorLightProjectItem ProjectItem { get; set; }

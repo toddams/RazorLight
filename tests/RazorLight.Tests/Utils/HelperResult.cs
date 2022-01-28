@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Html;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Html;
 
-namespace RazorLight.Tests
+namespace RazorLight.Tests.Utils
 {
 	/// <summary>
 	/// Represents a deferred write operation in a <see cref="TemplatePage"/>.

@@ -1,6 +1,7 @@
 ﻿using RazorLight.Razor;
 using System;
 using System.IO;
+using RazorLight.Tests.Utils;
 using Xunit;
 
 namespace RazorLight.Tests.Razor

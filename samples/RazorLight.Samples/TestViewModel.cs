@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Samples.EntityFrameworkProject
+﻿namespace Samples.EntityFrameworkProject
 {
 	public class TestViewModel
 	{

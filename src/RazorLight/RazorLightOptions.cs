@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System;
 using RazorLight.Caching;
+using System.Reflection;
 
 namespace RazorLight
 {
@@ -15,7 +16,6 @@ namespace RazorLight
 			AdditionalMetadataReferences = new HashSet<MetadataReference>();
 			ExcludedAssemblies = new HashSet<string>();
 			PreRenderCallbacks = new List<Action<ITemplatePage>>();
-			DisableEncoding = false;
 		}
 
 		public ISet<string> Namespaces { get; set; }
@@ -30,11 +30,18 @@ namespace RazorLight
 
 		public ICachingProvider CachingProvider { get; set; }
 
+		public Assembly OperatingAssembly { get; set; }
+
 		/// <summary>
 		/// Settings this to <c>true</c> will disable HTML encoding in all templates.
 		/// It can be re-enabled by setting <c>DisableEncoding = false</c> in the
 		/// template.
 		/// </summary>
-		public bool DisableEncoding { get; set; }
+		public bool? DisableEncoding { get; set; }
+
+		/// <summary>
+		/// Setting this to <c>true</c> provides more information in exceptions.
+		/// </summary>
+		public bool? EnableDebugMode { get; set; }
 	}
 }

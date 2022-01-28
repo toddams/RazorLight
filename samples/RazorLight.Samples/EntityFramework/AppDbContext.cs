@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Samples.EntityFrameworkProject
+namespace Samples.EntityFrameworkProject.EntityFramework
 {
 	public class AppDbContext : DbContext
 	{
