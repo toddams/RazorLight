@@ -5,18 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Options;
 using RazorLight.Generation;
 using RazorLight.Internal;
-using RazorLight.Razor;
 using DependencyContextCompilationOptions = Microsoft.Extensions.DependencyModel.CompilationOptions;
 
 namespace RazorLight.Compilation
@@ -25,15 +21,14 @@ namespace RazorLight.Compilation
 	{
 		private readonly IMetadataReferenceManager metadataReferenceManager;
 		private readonly bool isDevelopment;
-		private readonly Assembly operatingAssembly;
 		private readonly List<MetadataReference> metadataReferences = new List<MetadataReference>();
 
 		public RoslynCompilationService(IMetadataReferenceManager referenceManager, Assembly operatingAssembly)
 		{
 			this.metadataReferenceManager = referenceManager ?? throw new ArgumentNullException(nameof(referenceManager));
-			this.operatingAssembly = operatingAssembly ?? throw new ArgumentNullException(nameof(operatingAssembly));
+			this.OperatingAssembly = operatingAssembly ?? throw new ArgumentNullException(nameof(operatingAssembly));
 
-			isDevelopment = IsAssemblyDebugBuild(OperatingAssembly);
+			isDevelopment = AssemblyDebugModeUtility.IsAssemblyDebugBuild(OperatingAssembly);
 			var pdbFormat = SymbolsUtility.SupportsFullPdbGeneration() ?
 				DebugInformationFormat.Pdb :
 				DebugInformationFormat.PortablePdb;
@@ -41,15 +36,15 @@ namespace RazorLight.Compilation
 			EmitOptions = new EmitOptions(debugInformationFormat: pdbFormat);
 		}
 
+		public RoslynCompilationService(IMetadataReferenceManager referenceManager, IOptions<RazorLightOptions> options) :this(referenceManager, options.Value.OperatingAssembly)
+		{
+			
+		}
+
 		#region Options
 
-		public virtual Assembly OperatingAssembly
-		{
-			get
-			{
-				return operatingAssembly;
-			}
-		}
+		public virtual Assembly OperatingAssembly { get; }
+
 		public virtual EmitOptions EmitOptions { get; }
 		public virtual CSharpCompilationOptions CSharpCompilationOptions
 		{
@@ -121,20 +116,23 @@ namespace RazorLight.Compilation
 					StringBuilder builder = new StringBuilder();
 					builder.AppendLine("Failed to compile generated Razor template:");
 
-					var errorMessages = new List<string>();
+					var compilationDiagnostics = new List<TemplateCompilationDiagnostic>();
+					
 					foreach (Diagnostic diagnostic in errorsDiagnostics)
 					{
 						FileLinePositionSpan lineSpan = diagnostic.Location.SourceTree.GetMappedLineSpan(diagnostic.Location.SourceSpan);
 						string errorMessage = diagnostic.GetMessage();
 						string formattedMessage = $"- ({lineSpan.StartLinePosition.Line}:{lineSpan.StartLinePosition.Character}) {errorMessage}";
 
-						errorMessages.Add(formattedMessage);
+						var compilationDiagnostic = new TemplateCompilationDiagnostic(errorMessage, formattedMessage, lineSpan);
+						compilationDiagnostics.Add(compilationDiagnostic);
+
 						builder.AppendLine(formattedMessage);
 					}
 
 					builder.AppendLine("\nSee CompilationErrors for detailed information");
 
-					throw new TemplateCompilationException(builder.ToString(), errorMessages);
+					throw new TemplateCompilationException(builder.ToString(),compilationDiagnostics);
 				}
 
 				assemblyStream.Seek(0, SeekOrigin.Begin);
@@ -195,7 +193,7 @@ namespace RazorLight.Compilation
 				new Dictionary<string, ReportDiagnostic>
 				{
 					{"CS1701", ReportDiagnostic.Suppress}, // Binding redirects
-                    {"CS1702", ReportDiagnostic.Suppress},
+					{"CS1702", ReportDiagnostic.Suppress},
 					{"CS1705", ReportDiagnostic.Suppress}
 				});
 
@@ -251,11 +249,6 @@ namespace RazorLight.Compilation
 			}
 
 			return parseOptions;
-		}
-
-		private bool IsAssemblyDebugBuild(Assembly assembly)
-		{
-			return assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Select(da => da.IsJITTrackingEnabled).FirstOrDefault();
 		}
 	}
 }

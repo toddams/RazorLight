@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Razor.Language;
-using RazorLight.Razor;
+﻿using RazorLight.Razor;
 
 namespace RazorLight.Generation
 {

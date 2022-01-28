@@ -25,7 +25,6 @@ namespace RazorLight
 					   NamespaceDirective.Register(builder);
 					   FunctionsDirective.Register(builder);
 					   InheritsDirective.Register(builder);
-					   
 				   }
 				   SectionDirective.Register(builder);
 
@@ -37,7 +36,7 @@ namespace RazorLight
 #endif
 				   //builder.Features.Add(new ViewComponentTagHelperPass());
 
-				   builder.AddTargetExtension(new TemplateTargetExtension()
+				   builder.AddTargetExtension(new TemplateTargetExtension
 				   {
 					   TemplateTypeName = "global::RazorLight.Razor.RazorLightHelperResult",
 				   });
@@ -57,7 +56,7 @@ namespace RazorLight
 			}
 
 
-#if (NETCOREAPP3_0 || NETCOREAPP3_1)
+#if (NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0)
 			[System.Obsolete]
 #endif
 			public override RazorProjectItem GetItem(string path)
@@ -65,7 +64,7 @@ namespace RazorLight
 				throw new System.NotImplementedException();
 			}
 
-#if (NETCOREAPP3_0 || NETCOREAPP3_1)
+#if (NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0)
 			public override RazorProjectItem GetItem(string path, string fileKind)
 			{
 				throw new System.NotImplementedException();

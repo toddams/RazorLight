@@ -3,9 +3,10 @@ using System.Dynamic;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using RazorLight.Caching;
 using RazorLight.Compilation;
-using RazorLight.Internal;
+using RazorLight.Internal.Buffering;
 
 namespace RazorLight
 {
@@ -24,6 +25,16 @@ namespace RazorLight
 			Cache = cache;
 		}
 
+		public EngineHandler(
+			IOptions<RazorLightOptions> options,
+			IRazorTemplateCompiler compiler,
+			ITemplateFactoryProvider factoryProvider,
+			ICachingProvider cache) : this(options.Value, compiler, factoryProvider, cache)
+		{
+			
+
+		}
+
 		public RazorLightOptions Options { get; }
 		public ICachingProvider Cache { get; }
 		public IRazorTemplateCompiler Compiler { get; }
@@ -35,32 +46,35 @@ namespace RazorLight
 		/// Search and compile a template with a given key
 		/// </summary>
 		/// <param name="key">Unique key of the template</param>
-		/// <param name="compileIfNotCached">If true - it will try to get a template with a specified key and compile it</param>
 		/// <returns>An instance of a template</returns>
 		public async Task<ITemplatePage> CompileTemplateAsync(string key)
 		{
+			ITemplatePage templatePage = null;
 			if (IsCachingEnabled)
 			{
 				var cacheLookupResult = Cache.RetrieveTemplate(key);
 				if (cacheLookupResult.Success)
 				{
-					return cacheLookupResult.Template.TemplatePageFactory();
+					templatePage = cacheLookupResult.Template.TemplatePageFactory();
 				}
 			}
 
-			CompiledTemplateDescriptor templateDescriptor = await Compiler.CompileAsync(key);
-			Func<ITemplatePage> templateFactory = FactoryProvider.CreateFactory(templateDescriptor);
-
-			if (IsCachingEnabled)
+			if(templatePage == null)
 			{
-				Cache.CacheTemplate(
-				key,
-				templateFactory,
-				templateDescriptor.ExpirationToken);
+				CompiledTemplateDescriptor templateDescriptor = await Compiler.CompileAsync(key);
+				Func<ITemplatePage> templateFactory = FactoryProvider.CreateFactory(templateDescriptor);
+
+				if(IsCachingEnabled) {
+					Cache.CacheTemplate(
+					key,
+					templateFactory,
+					templateDescriptor.ExpirationToken);
+				}
+
+				templatePage = templateFactory();
 			}
 
-			ITemplatePage templatePage = templateFactory();
-			templatePage.DisableEncoding = Options.DisableEncoding;
+			templatePage.DisableEncoding = Options.DisableEncoding ?? false;
 			return templatePage;
 		}
 
@@ -69,7 +83,6 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="templatePage">Instance of a template</param>
 		/// <param name="model">Template model</param>
-		/// <param name="modelType">Type of the model</param>
 		/// <param name="viewBag">Dynamic viewBag of the template</param>
 		/// <returns>Rendered string</returns>
 		public async Task<string> RenderTemplateAsync<T>(ITemplatePage templatePage, T model, ExpandoObject viewBag = null)
@@ -87,7 +100,6 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="templatePage">Instance of a template</param>
 		/// <param name="model">Template model</param>
-		/// <param name="modelType">Type of the model</param>
 		/// <param name="viewBag">Dynamic viewBag of the page</param>
 		/// <param name="textWriter">Output</param>
 		public async Task RenderTemplateAsync<T>(
@@ -121,7 +133,6 @@ namespace RazorLight
 		/// </summary>
 		/// <param name="key">Unique key of the template</param>
 		/// <param name="model">Template model</param>
-		/// <param name="modelType">Type of the model</param>
 		/// <param name="viewBag">Dynamic ViewBag (can be null)</param>
 		/// <returns></returns>
 		public async Task<string> CompileRenderAsync<T>(string key, T model, ExpandoObject viewBag = null)
@@ -137,7 +148,6 @@ namespace RazorLight
 		/// <param name="key">Unique key of the template</param>
 		/// <param name="content">Content of the template</param>
 		/// <param name="model">Template model</param>
-		/// <param name="modelType">Type of the model</param>
 		/// <param name="viewBag">Dynamic ViewBag</param>
 		public Task<string> CompileRenderStringAsync<T>(
 			string key,

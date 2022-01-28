@@ -1,7 +1,9 @@
 ﻿using RazorLight.Razor;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using RazorLight.Tests.Utils;
 using Xunit;
 
 namespace RazorLight.Tests.Razor
@@ -11,9 +13,9 @@ namespace RazorLight.Tests.Razor
 		[Fact]
 		public void NotExiting_RootDirectory_Throws()
 		{
-			Action action = () => new FileSystemRazorProject(@"C:/Not/Existing/Folder/Here");
+			void Action() => _ = new FileSystemRazorProject(@"C:/Not/Existing/Folder/Here");
 
-			Assert.Throws<DirectoryNotFoundException>(action);
+			Assert.Throws<DirectoryNotFoundException>(Action);
 		}
 
 		[Fact]
@@ -66,6 +68,43 @@ namespace RazorLight.Tests.Razor
 
 			Assert.NotNull(item);
 			Assert.EndsWith(templateKey + project.Extension, item.Key);
+		}
+
+		[Fact]
+		public async Task Ensure_GetKnownKeysAsync_Returns_Existing_Keys()
+		{
+			var project = new FileSystemRazorProject(DirectoryUtils.RootDirectory);
+
+			var knownKeys = (await project.GetKnownKeysAsync()).ToList();
+			Assert.NotNull(knownKeys);
+			Assert.NotEmpty(knownKeys);
+
+			foreach (var key in knownKeys)
+			{
+				var projectItem = await project.GetItemAsync(key);
+				Assert.True(projectItem.Exists);
+			}
+		}
+
+		[Fact]
+		public async Task Ensure_GetKnownKeysAsync_Returns_Expected_Keys()
+		{
+			var subsetToCheck = new[]
+			{
+				"Assets/Files/Empty.cshtml",
+				"Assets/Files/Layout.cshtml"
+			};
+
+			var project = new FileSystemRazorProject(DirectoryUtils.RootDirectory);
+
+			var knownKeys = (await project.GetKnownKeysAsync()).ToList();
+			Assert.NotNull(knownKeys);
+			Assert.NotEmpty(knownKeys);
+
+			foreach (var key in subsetToCheck)
+			{
+				Assert.Contains(key, knownKeys);
+			}
 		}
 	}
 }

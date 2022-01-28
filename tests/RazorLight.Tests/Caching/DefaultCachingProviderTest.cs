@@ -69,6 +69,28 @@ namespace RazorLight.Tests.Caching
 			Assert.False(templateResult.Success);
 		}
 
+		[Fact]
+		public void Respects_DisabledEncoding_On_CachedTemplates()
+		{
+			string templateKey = "Assets.Embedded.Empty.cshtml";
+		
+			var engine = new RazorLightEngineBuilder()
+				.DisableEncoding()
+				.UseMemoryCachingProvider()
+				.SetOperatingAssembly(typeof(Root).Assembly)
+				.UseEmbeddedResourcesProject(typeof(Root))
+				
+				.Build();
+			var testCompileToCache = engine.CompileTemplateAsync(templateKey).Result;
+		
+			Assert.True(testCompileToCache.DisableEncoding);
+		
+			var cachedCompile = engine.CompileTemplateAsync(templateKey).Result;
+		
+			Assert.True(cachedCompile.DisableEncoding);
+		
+		}
+
 		private Func<ITemplatePage> GetTestFactory(string key = "key")
 		{
 			var moq = new Mock<ITemplatePage>();

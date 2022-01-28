@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RazorLight.Razor
@@ -18,5 +19,14 @@ namespace RazorLight.Razor
 		/// <param name="templateKey"></param>
 		/// <returns></returns>
 		public abstract Task<IEnumerable<RazorLightProjectItem>> GetImportsAsync(string templateKey);
+
+		/// <summary>
+		/// Looks up all template keys known by the project
+		/// </summary>
+		/// <returns></returns>
+		public virtual Task<IEnumerable<string>> GetKnownKeysAsync()
+		{
+			return Task.FromResult(Enumerable.Empty<string>());
+		}
 	}
 }

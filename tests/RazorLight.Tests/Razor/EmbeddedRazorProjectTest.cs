@@ -1,6 +1,6 @@
 ﻿using RazorLight.Razor;
 using System;
-using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -44,6 +44,73 @@ namespace RazorLight.Tests.Razor
 
 			Assert.NotNull(item);
 			Assert.Equal(item.Key, EMPTY_TEMPLATE + project.Extension);
+		}
+
+		[Fact]
+		public async Task Ensure_GetKnownKeysAsync_Returns_Expected_Keys()
+		{
+			var subsetToCheck = new[]
+			{
+				"Assets.Embedded.Empty",
+				"Assets.Embedded.Layout"
+			};
+
+			var knownKeys = await new EmbeddedRazorProject(typeof(Root)).GetKnownKeysAsync();
+
+			foreach (var key in subsetToCheck)
+			{
+				Assert.Contains(key, knownKeys);
+			}
+		}
+
+		[Fact]
+		public async Task Ensure_GetKnownKeysAsync_Returns_Expected_Keys_When_RootNamespace_Set()
+		{
+			var subsetToCheck = new[]
+			{
+				"Empty",
+				"Layout"
+			};
+
+			var knownKeys = await new EmbeddedRazorProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded")
+				.GetKnownKeysAsync();
+
+			foreach (var key in subsetToCheck)
+			{
+				Assert.Contains(key, knownKeys);
+			}
+		}
+
+		[Fact]
+		public async Task Ensure_GetKnownKeysAsync_Returns_Existing_Keys()
+		{
+			var project = new EmbeddedRazorProject(typeof(Root));
+
+			var knownKeys = await project.GetKnownKeysAsync();
+			Assert.NotNull(knownKeys);
+			Assert.True(knownKeys.Count() > 0);
+
+			foreach (var key in knownKeys)
+			{
+				var projectItem = await project.GetItemAsync(key);
+				Assert.True(projectItem.Exists);
+			}
+		}
+
+		[Fact]
+		public async Task Ensure_GetKnownKeysAsync_Returns_Existing_Keys_When_RootNamespace_Set()
+		{
+			var project = new EmbeddedRazorProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded");
+
+			var knownKeys = await project.GetKnownKeysAsync();
+			Assert.NotNull(knownKeys);
+			Assert.True(knownKeys.Count() > 0);
+
+			foreach (var key in knownKeys)
+			{
+				var projectItem = await project.GetItemAsync(key);
+				Assert.True(projectItem.Exists);
+			}
 		}
 	}
 }

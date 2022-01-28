@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Moq;
-using RazorLight.Internal;
+using RazorLight.Internal.Buffering;
 using Xunit;
 
 namespace RazorLight.Tests
@@ -17,16 +16,16 @@ namespace RazorLight.Tests
 		public async Task Ensure_PrerenderCallbacks_Are_Invoked()
 		{
 			//Assign
-			var page = TemplatePageTest.CreatePage((t) => t.Write("test"));
+			var page = TemplatePageTest.CreatePage(t => t.Write("test"));
 
 			bool triggered1 = false, triggered2 = false;
-			var callbacks = new List<Action<ITemplatePage>>()
+			var callbacks = new List<Action<ITemplatePage>>
 			{
-				(t) => triggered1 = true,
-				(t) => triggered2 = true
+				t => triggered1 = true,
+				t => triggered2 = true
 			};
 
-			var options = new RazorLightOptions() { PreRenderCallbacks = callbacks };
+			var options = new RazorLightOptions { PreRenderCallbacks = callbacks };
 			var engineMock = new Mock<IEngineHandler>();
 			engineMock.SetupGet(e => e.Options).Returns(options);
 
@@ -97,10 +96,13 @@ namespace RazorLight.Tests
 		public async Task Template_Shares_Model_With_Layout()
 		{
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded")
 				.Build();
 
-			var model = new TestModel()
+			var model = new TestModel
 			{
 				Value = "123"
 			};
@@ -119,6 +121,9 @@ namespace RazorLight.Tests
 			// See https://github.com/aspnet/Razor/issues/715
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded")
 				.Build();
 
@@ -136,6 +141,9 @@ namespace RazorLight.Tests
 			// See https://github.com/aspnet/Razor/issues/715
 
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded")
 				.Build();
 
@@ -152,6 +160,9 @@ namespace RazorLight.Tests
 		{
 			// https://github.com/aspnet/AspNetCore/issues/5076
 			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 				.UseEmbeddedResourcesProject(typeof(Root).Assembly, "RazorLight.Tests.Assets.Embedded")
 				.Build();
 

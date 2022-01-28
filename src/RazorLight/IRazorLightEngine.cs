@@ -61,5 +61,18 @@ namespace RazorLight
 
 		[Obsolete("Please, use generic version of RenderTemplateAsync", true)]
 		Task RenderTemplateAsync(ITemplatePage templatePage, object model, Type modelType, TextWriter textWriter, ExpandoObject viewBag = null);
+
+		/// <summary>
+		/// Renders a template to the specified <paramref name="textWriter"/>
+		/// </summary>
+		/// <param name="templatePage">Instance of a template</param>
+		/// <param name="model">Template model</param>
+		/// <param name="viewBag">Dynamic viewBag of the page</param>
+		/// <param name="textWriter">Output</param>
+		Task RenderTemplateAsync<T>(
+			ITemplatePage templatePage,
+			T model,
+			TextWriter textWriter,
+			ExpandoObject viewBag = null);
 	}
 }

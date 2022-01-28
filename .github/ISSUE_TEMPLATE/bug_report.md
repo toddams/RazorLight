@@ -12,6 +12,7 @@ Steps to reproduce the behavior:
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
+_If you're getting an assembly not found error, you need to include a sample csproj, as there is no way to know why this occurs without seeing how you set-up your project._
 
 **Information (please complete the following information):**
  - OS: [ e.g Ubuntu 16.04, Windows Server 2016, etc ]

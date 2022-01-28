@@ -20,7 +20,7 @@ Use Razor to build templates from Files / EmbeddedResources / Strings / Database
 Install the nuget package using following command:
 
 ````
-Install-Package RazorLight -Version 2.0.0-beta9
+Install-Package RazorLight -Version 2.0.0-rc.3
 ````
 
 The simplest scenario is to create a template from string. Each template must have a ````templateKey```` that is associated with it, so you can render the same template next time without recompilation.
@@ -243,6 +243,8 @@ For Azure Functions 3.0.4-3.0.5, the known workaround is to disable "Azure Funct
   <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
 </PropertyGroup>
 ```
+
+In addition, Azure Functions has an open pull request outstanding to update `runtimeAssemblies.json`: https://github.com/Azure/azure-functions-vs-build-sdk/issues/422
 
 ## Unsupported Scenarios
 

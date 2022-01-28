@@ -1,24 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text;
+﻿using System.IO;
 using System.Threading.Tasks;
+using RazorLight.Tests.Utils;
 using Xunit;
 
-namespace RazorLight.Tests.Integrational
+namespace RazorLight.Tests.Integration
 {
 	public class RaceConditionTests
 	{
 		[Fact]
 		public async Task Multiple_Simultaneous_Compilations_RaceCondition_Test()
 		{
-			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var path = DirectoryUtils.RootDirectory;
 
 
-			for (int i = 0; i < 1000; i++)
+			for (int i = 0; i < 100; i++)
 			{
 				var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+					.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
 					.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
 					.Build();
 

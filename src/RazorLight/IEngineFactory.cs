@@ -39,9 +39,10 @@ namespace RazorLight
 		RazorLightEngine Create(RazorLightOptions options = null);
 
 		/// <summary>
-		///Creates RazorLightEngine with a custom RazorLightProject
+		/// Creates RazorLightEngine with a custom RazorLightProject
 		/// </summary>
 		/// <param name="project">The project</param>
+		/// <param name="options">Options for configuring the RazorLightEngine.</param>
 		/// <returns>Instance of RazorLightEngine</returns>
 		RazorLightEngine Create(RazorLightProject project, RazorLightOptions options);
 	}

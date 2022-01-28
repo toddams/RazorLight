@@ -28,23 +28,34 @@ namespace RazorLight
 
 		protected ICachingProvider cachingProvider;
 
-		private bool disableEncoding = false;
+		private bool? disableEncoding;
+
+		private bool? enableDebugMode;
 
 		private RazorLightOptions options;
 
-		/// <summary>
-		/// Configures RazorLight to use a project.  Use UseEmbeddedResourcesProject 
-		/// </summary>
-		/// <param name="project"></param>
-		/// <returns></returns>
-		public virtual RazorLightEngineBuilder UseProject(RazorLightProject project)
-		{
-			if (project == null)
-			{
-				throw new ArgumentNullException(nameof(project));
-			}
 
-			this.project = project;
+		/// <summary>
+		/// Configures RazorLight to use a project.
+		/// </summary>
+		/// <remarks>
+		/// Use this if implementing a custom <see cref="RazorLightProject"/>.
+		/// </remarks>
+		/// <param name="razorLightProject"></param>
+		/// <returns></returns>
+		public virtual RazorLightEngineBuilder UseProject(RazorLightProject razorLightProject)
+		{
+			project = razorLightProject ?? throw new ArgumentNullException(nameof(razorLightProject), $"Use {nameof(NoRazorProject)} instead of null.  See also {nameof(UseNoProject)}.");
+
+			return this;
+		}
+
+		/// <summary>
+		/// Configures RazorLight to use a project whose persistent store is a "null device".
+		/// </summary>
+		public RazorLightEngineBuilder UseNoProject()
+		{
+			project = new NoRazorProject();
 
 			return this;
 		}
@@ -81,6 +92,8 @@ namespace RazorLight
 		/// <returns><see cref="EmbeddedRazorProject"/></returns>
 		public RazorLightEngineBuilder UseEmbeddedResourcesProject(Type rootType)
 		{
+			if (rootType == null) throw new ArgumentNullException(nameof(rootType));
+
 			project = new EmbeddedRazorProject(rootType);
 
 			return this;
@@ -102,7 +115,6 @@ namespace RazorLight
 		public RazorLightEngineBuilder UseOptions(RazorLightOptions razorLightOptions)
 		{
 			options = razorLightOptions;
-
 			return this;
 		}
 
@@ -121,6 +133,9 @@ namespace RazorLight
 		/// <returns>A <see cref="RazorLightEngineBuilder"/></returns>
 		public RazorLightEngineBuilder DisableEncoding()
 		{
+			if (disableEncoding.HasValue)
+				throw new RazorLightException($"{nameof(disableEncoding)} has already been set");
+
 			disableEncoding = true;
 			return this;
 		}
@@ -140,6 +155,8 @@ namespace RazorLight
 		/// <returns>A <see cref="RazorLightEngineBuilder"/></returns>
 		public RazorLightEngineBuilder EnableEncoding()
 		{
+			if (disableEncoding.HasValue)
+				throw new RazorLightException($"{nameof(disableEncoding)} has already been set");
 			disableEncoding = false;
 			return this;
 		}
@@ -250,43 +267,86 @@ namespace RazorLight
 			return this;
 		}
 
+		public virtual RazorLightEngineBuilder EnableDebugMode(bool enableDebugMode = true)
+		{
+			this.enableDebugMode = enableDebugMode;
+			return this;
+		}
+
 		public virtual RazorLightEngine Build()
 		{
-			//options = options ?? new RazorLightOptions();
-			var options = new RazorLightOptions();
+			options = options ?? new RazorLightOptions();
+			project = project ?? new NoRazorProject();
 
 			if (namespaces != null)
 			{
+				if(namespaces.Count > 0 && options.Namespaces.Count > 0)
+					ThrowIfHasBeenSetExplicitly(nameof(namespaces));
+				
 				options.Namespaces = namespaces;
 			}
 
 			if (dynamicTemplates != null)
 			{
+				if(dynamicTemplates.Count > 0 && options.DynamicTemplates.Count > 0)
+					ThrowIfHasBeenSetExplicitly(nameof(dynamicTemplates));
+
 				options.DynamicTemplates = dynamicTemplates;
 			}
 
 			if (metadataReferences != null)
 			{
+				if (metadataReferences.Count > 0 && options.AdditionalMetadataReferences.Count > 0)
+					ThrowIfHasBeenSetExplicitly(nameof(metadataReferences));
+
 				options.AdditionalMetadataReferences = metadataReferences;
 			}
 
 			if (excludedAssemblies != null)
 			{
+				if(excludedAssemblies.Count > 0 && options.ExcludedAssemblies.Count > 0)
+					ThrowIfHasBeenSetExplicitly(nameof(excludedAssemblies));
+
 				options.ExcludedAssemblies = excludedAssemblies;
 			}
 
 			if (prerenderCallbacks != null)
 			{
+				if(prerenderCallbacks.Count > 0 && options.PreRenderCallbacks.Count > 0)
+					ThrowIfHasBeenSetExplicitly(nameof(prerenderCallbacks));
+
 				options.PreRenderCallbacks = prerenderCallbacks;
 			}
 
 			if (cachingProvider != null)
 			{
+				if(options.CachingProvider != null)
+					ThrowIfHasBeenSetExplicitly(nameof(cachingProvider));
+
 				options.CachingProvider = cachingProvider;
 			}
 
-			options.DisableEncoding = disableEncoding;
+			if (disableEncoding.HasValue)
+			{
+				if(options.DisableEncoding != null)
+					ThrowIfHasBeenSetExplicitly(nameof(disableEncoding));
 
+				options.DisableEncoding = options.DisableEncoding ?? disableEncoding ?? false;
+			}
+			else
+			{
+				if (!options.DisableEncoding.HasValue)
+					options.DisableEncoding = false;
+			}
+
+			if (enableDebugMode.HasValue && options.EnableDebugMode.HasValue)
+			{
+				ThrowIfHasBeenSetExplicitly(nameof(enableDebugMode));
+			}
+			else
+			{
+				options.EnableDebugMode = options.EnableDebugMode ?? enableDebugMode ?? false;
+			}
 
 			var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences, options.ExcludedAssemblies);
 			var assembly = operatingAssembly ?? Assembly.GetEntryAssembly();
@@ -299,6 +359,11 @@ namespace RazorLight
 			var engineHandler = new EngineHandler(options, templateCompiler, templateFactoryProvider, cachingProvider);
 
 			return new RazorLightEngine(engineHandler);
+		}
+
+		private void ThrowIfHasBeenSetExplicitly(string option)
+		{
+			throw new RazorLightException($"{option} has conflicting settings, configure using either fluent configuration or setting an Options object.");
 		}
 	}
 }
