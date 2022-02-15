@@ -56,7 +56,9 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: Publish RazorLight
-      uses: brandedoutcast/publish-nuget@v2.5.5
+      # https://github.com/brandedoutcast/publish-nuget/issues/58#issuecomment-986196000
+      # uses: brandedoutcast/publish-nuget@v2.5.5
+      uses: alirezanet/publish-nuget@v3.0.0
       with:
         PROJECT_FILE_PATH: src\RazorLight\RazorLight.csproj
         VERSION_FILE_PATH: src\Directory.Build.props
