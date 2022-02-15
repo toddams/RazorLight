@@ -54,7 +54,8 @@ jobs:
     if: needs.build.result == 'success'
     
     steps:
-    - uses: actions/checkout@v2
+    # Commented out b/c implicit from 'needs: build' requirement. Otherwise, this will cause a clean checkout and thus clean build obj/bin directory contents
+    #- uses: actions/checkout@v2
     
     - name: Publish RazorLight
       # https://github.com/brandedoutcast/publish-nuget/issues/58#issuecomment-986196000
