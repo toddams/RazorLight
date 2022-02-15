@@ -51,6 +51,7 @@ jobs:
         working-directory: .
     runs-on: windows-latest
     needs: build
+    if: needs.build.result == 'success'
     
     steps:
     - uses: actions/checkout@v2
