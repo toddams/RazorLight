@@ -6,7 +6,7 @@ on:
       version:
         description: 'NuGet.org Version'     
         required: true
-        default: '2.0.0-rc.4'
+        default: '2.0.0-rc.5'
 
 jobs:
   build:
@@ -57,12 +57,12 @@ jobs:
     
     steps:
     # Commented out b/c implicit from 'needs: build' requirement. Otherwise, this will cause a clean checkout and thus clean build obj/bin directory contents
-    #- uses: actions/checkout@v2
+    - uses: actions/checkout@v2
     
     - name: Publish RazorLight
       # https://github.com/brandedoutcast/publish-nuget/issues/58#issuecomment-986196000
-      uses: brandedoutcast/publish-nuget@v2.5.5
-      # uses: alirezanet/publish-nuget@v3.0.0
+      # uses: brandedoutcast/publish-nuget@v2.5.5
+      uses: alirezanet/publish-nuget@v3.0.0
 
       with:
         PROJECT_FILE_PATH: src\RazorLight\RazorLight.csproj
