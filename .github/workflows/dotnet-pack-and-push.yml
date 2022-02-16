@@ -52,6 +52,8 @@ jobs:
     runs-on: windows-latest
     needs: build
     if: needs.build.result == 'success'
+    env:
+      INPUT_PROJECT_FILE_PATH: src\RazorLight\RazorLight.csproj
     
     steps:
     # Commented out b/c implicit from 'needs: build' requirement. Otherwise, this will cause a clean checkout and thus clean build obj/bin directory contents
@@ -61,8 +63,7 @@ jobs:
       # https://github.com/brandedoutcast/publish-nuget/issues/58#issuecomment-986196000
       uses: brandedoutcast/publish-nuget@v2.5.5
       # uses: alirezanet/publish-nuget@v3.0.0
-      env:
-        INPUT_PROJECT_FILE_PATH: src\RazorLight\RazorLight.csproj
+
       with:
         PROJECT_FILE_PATH: src\RazorLight\RazorLight.csproj
         VERSION_FILE_PATH: src\Directory.Build.props
