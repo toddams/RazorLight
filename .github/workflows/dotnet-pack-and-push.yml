@@ -65,8 +65,8 @@ jobs:
       uses: alirezanet/publish-nuget@v3.0.0
 
       with:
-        PROJECT_FILE_PATH: src\RazorLight\RazorLight.csproj
-        VERSION_FILE_PATH: src\Directory.Build.props
+        PROJECT_FILE_PATH: src/RazorLight/RazorLight.csproj
+        VERSION_FILE_PATH: src/Directory.Build.props
         INCLUDE_SYMBOLS: true
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
   
