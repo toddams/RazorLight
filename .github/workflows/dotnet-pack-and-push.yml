@@ -46,9 +46,7 @@ jobs:
       run: dotnet test --verbosity normal
       
   package:
-    defaults:
-      run:
-        working-directory: .
+
     runs-on: windows-latest
     needs: build
     if: needs.build.result == 'success'
