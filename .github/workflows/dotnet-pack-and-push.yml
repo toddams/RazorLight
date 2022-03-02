@@ -6,7 +6,7 @@ on:
       version:
         description: 'NuGet.org Version'     
         required: true
-        default: '2.0.0-rc.4'
+        default: '2.0.0-rc.5'
 
 jobs:
   build:
@@ -31,6 +31,11 @@ jobs:
       with:
         dotnet-version: '5.0.100'
 
+    - name: Setup .NET 6
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.x'
+
     - name: Restore dependencies
       run: dotnet restore
 
@@ -41,20 +46,32 @@ jobs:
       run: dotnet test --verbosity normal
       
   package:
-    defaults:
-      run:
-        working-directory: .
+
     runs-on: windows-latest
     needs: build
+    if: needs.build.result == 'success'
+    env:
+      INPUT_PROJECT_FILE_PATH: src\RazorLight\RazorLight.csproj
     
     steps:
+    # Commented out b/c implicit from 'needs: build' requirement. Otherwise, this will cause a clean checkout and thus clean build obj/bin directory contents
     - uses: actions/checkout@v2
-    
-    - name: Publish RazorLight
-      uses: brandedoutcast/publish-nuget@v2.5.5
+ 
+    # To avoid NETSDK1004 error, we need to install the latest major version of the .NET SDK.
+    # See: https://docs.microsoft.com/en-us/dotnet/core/tools/sdk-errors/netsdk1004
+    - name: Setup .NET 6
+      uses: actions/setup-dotnet@v1
       with:
-        PROJECT_FILE_PATH: src\RazorLight\RazorLight.csproj
-        VERSION_FILE_PATH: src\Directory.Build.props
+        dotnet-version: '6.0.x'
+        
+    - name: Publish RazorLight
+      # https://github.com/brandedoutcast/publish-nuget/issues/58#issuecomment-986196000
+      # uses: brandedoutcast/publish-nuget@v2.5.5
+      uses: alirezanet/publish-nuget@v3.0.0
+
+      with:
+        PROJECT_FILE_PATH: src/RazorLight/RazorLight.csproj
+        VERSION_FILE_PATH: src/Directory.Build.props
         INCLUDE_SYMBOLS: true
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
   
