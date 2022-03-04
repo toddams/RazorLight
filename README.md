@@ -24,6 +24,7 @@ Dear friends, my name is Ivan, I am the guy who created this library. I live in 
 Please, don't stand aside, we need your help. If you are able to donate - you are contributing to saving peace, **you are saving human lives**.
 I am creating a discord channel, where I will post everything I buy, share the progress and keep a communication with you. Every penny I recieve will go to the Ukrainian Army and TO.
 
+Here I am attaching my bank details, every penny would be so much appreciated! 
 
 <details>
   <summary>EUR (Inside EU and SEPA)</summary>
