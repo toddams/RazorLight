@@ -6,7 +6,7 @@ on:
       version:
         description: 'NuGet.org Version'     
         required: true
-        default: '2.0.0-rc.5'
+        default: '2.0.0'
 
 jobs:
   build:
@@ -71,7 +71,7 @@ jobs:
 
       with:
         PROJECT_FILE_PATH: src/RazorLight/RazorLight.csproj
-        VERSION_FILE_PATH: src/Directory.Build.props
+        VERSION_STATIC: ${{ inputs.version }}
         INCLUDE_SYMBOLS: true
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
   
