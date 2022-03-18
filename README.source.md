@@ -79,7 +79,7 @@ United States
 Install the nuget package using following command:
 
 ````
-Install-Package RazorLight -Version 2.0.0-rc.6
+Install-Package RazorLight -Version 2.0.0
 ````
 
 The simplest scenario is to create a template from string. Each template must have a ````templateKey```` that is associated with it, so you can render the same template next time without recompilation.
