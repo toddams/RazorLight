@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'NuGet.org Version'     
-        required: true
+        description: 'NuGet.org Version (informational only - use src/Directory.Build.props Version for nuget package version)'     
+        required: false
         default: '2.0.0'
 
 jobs:
@@ -71,7 +71,7 @@ jobs:
 
       with:
         PROJECT_FILE_PATH: src/RazorLight/RazorLight.csproj
-        VERSION_STATIC: ${{ inputs.version }}
+        VERSION_FILE_PATH: src/Directory.Build.props
         INCLUDE_SYMBOLS: true
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
   
