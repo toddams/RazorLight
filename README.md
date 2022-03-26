@@ -191,6 +191,7 @@ var model = new Model();
 string html = await engine.CompileRenderAsync("Body", model);
 ```
 <sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L77-L86' title='Snippet source file'>snippet source</a> | <a href='#snippet-embeddedresourcesourcewithrootnamespace' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
 
 ## Custom source
 
