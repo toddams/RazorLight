@@ -3,6 +3,8 @@ using Xunit;
 
 namespace RazorLight.Tests.Snippets
 {
+	using Core;
+
 	public class Snippets
 	{
 		public class ViewModel
@@ -62,18 +64,38 @@ namespace RazorLight.Tests.Snippets
 		{
 			#region EmbeddedResourceSource
 			var engine = new RazorLightEngineBuilder()
-				.UseEmbeddedResourcesProject(System.Reflection.Assembly.GetEntryAssembly())
+				.UseEmbeddedResourcesProject(typeof(SomeService).Assembly)
 				.UseMemoryCachingProvider()
 				.Build();
 
-			var model = new SchoolForAnts();
-			string result = await engine.CompileRenderAsync<object>("Views.Subfolder.SchoolForAnts", model);
+			var model = new Model();
+			string html = await engine.CompileRenderAsync("EmailTemplates.Body", model);
 
 			#endregion
 		}
 
-		public class SchoolForAnts
+		async Task EmbeddedResourceSourceWithRootNamespace()
+		{
+			#region EmbeddedResourceSourceWithRootNamespace
+			var engine = new RazorLightEngineBuilder()
+				.UseEmbeddedResourcesProject(typeof(SomeService).Assembly, "Project.Core.EmailTemplates")
+				.UseMemoryCachingProvider()
+				.Build();
+
+			var model = new Model();
+			string html = await engine.CompileRenderAsync("Body", model);
+
+			#endregion
+		}
+
+		public class Model
 		{
 		}
+	}
+}
+namespace RazorLight.Tests.Snippets.Core
+{
+	public class SomeService
+	{
 	}
 }
