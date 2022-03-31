@@ -102,9 +102,26 @@ snippet: FileSource
 
 ## EmbeddedResource source
 
-For embedded resource, key - is a namespace and key of the embedded resource relative to root Type. Then root type namespace and templateKey will be combined into YourAssembly.NamespaceOfRootType.Templates.View.cshtml
+For embedded resource, the key is the namespace of the project where the template exists combined with the template's file name.
+
+The following examples are using this project structure:
+```
+Project/
+  Model.cs
+  Program.cs
+  Project.csproj
+Project.Core/
+  EmailTemplates/
+    Body.cshtml
+  Project.Core.csproj
+  SomeService.cs
+````
 
 snippet: EmbeddedResourceSource
+
+Setting the root namespace allows you to leave that piece off when providing the template name as the key:
+
+snippet: EmbeddedResourceSourceWithRootNamespace
 
 ## Custom source
 
