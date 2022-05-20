@@ -16,7 +16,7 @@ namespace RazorLight.Tests.Compilation
 		}
 
 		[Fact]
-		public void Ensure_AdditionalMetadata_IsApplied()
+		public void Ensure_GetAssemblyDirectory_Works_On_All_OperatingSystems()
 		{
 			var assembly = typeof(DefaultAssemblyDirectoryFormatterTest).Assembly;
 			var formatter = new DefaultAssemblyDirectoryFormatter();
