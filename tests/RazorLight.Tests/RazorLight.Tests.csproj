@@ -44,6 +44,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <!-- Required to detect OS to ignore certain tests. -->
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" Condition=" '$(TargetFramework)' == 'net452' " />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
