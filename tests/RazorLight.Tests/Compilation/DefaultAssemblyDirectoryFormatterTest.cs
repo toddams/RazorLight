@@ -19,7 +19,7 @@ namespace RazorLight.Tests.Compilation
 		[SkippableFact]
 		public void Ensure_GetAssemblyDirectory_Works_On_All_OperatingSystems()
 		{
-			Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+			Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX));
 			var assembly = typeof(DefaultAssemblyDirectoryFormatterTest).Assembly;
 			var formatter = new DefaultAssemblyDirectoryFormatter();
 			_testOutputHelper.WriteLine(assembly.Location);
