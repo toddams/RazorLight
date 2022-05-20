@@ -17,8 +17,9 @@ namespace RazorLight.Tests.Compilation
 		}
 
 		[SkippableFact]
-		public void Ensure_GetAssemblyDirectory_Works_On_All_OperatingSystems()
+		public void Ensure_GetAssemblyDirectory_Works_On_Windows()
 		{
+			// #481 System.UriFormatException: Invalid URI: The hostname could not be parsed
 			Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX));
 			var assembly = typeof(DefaultAssemblyDirectoryFormatterTest).Assembly;
 			var formatter = new DefaultAssemblyDirectoryFormatter();
