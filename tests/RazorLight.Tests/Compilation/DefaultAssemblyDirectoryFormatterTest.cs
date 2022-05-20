@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 using RazorLight.Compilation;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,9 +16,10 @@ namespace RazorLight.Tests.Compilation
 			_testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
 		}
 
-		[Fact]
+		[SkippableFact]
 		public void Ensure_GetAssemblyDirectory_Works_On_All_OperatingSystems()
 		{
+			Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
 			var assembly = typeof(DefaultAssemblyDirectoryFormatterTest).Assembly;
 			var formatter = new DefaultAssemblyDirectoryFormatter();
 			_testOutputHelper.WriteLine(assembly.Location);
