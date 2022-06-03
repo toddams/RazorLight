@@ -78,7 +78,7 @@ namespace RazorLight.Tests.Integration
 				NumberOfItems = 300
 			};
 			return Verifier.ThrowsTask(() => engine.CompileRenderAsync("template6.cshtml", model))
-				.ModifySerialization(_ => _.IgnoreMember<Exception>(exception => exception.StackTrace));
+				.IgnoreStackTrack();
 		}
 
 		[Fact]
