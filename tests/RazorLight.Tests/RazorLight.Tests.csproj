@@ -37,7 +37,7 @@
     <PackageReference Include="MarkdownSnippets.MsBuild" Version="22.0.3" />
     <PackageReference Include="Moq" Version="4.7.99" />
     <PackageReference Include="Pose" Version="1.2.1" />
-    <PackageReference Include="Verify.Xunit" Version="10.0.0-beta.3" />
+    <PackageReference Include="Verify.Xunit" Version="17.1.1" />
     <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
