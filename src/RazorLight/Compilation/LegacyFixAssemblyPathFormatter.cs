@@ -3,9 +3,9 @@ using System.Reflection;
 
 namespace RazorLight.Compilation
 {
-	public class LegacyFixAssemblyDirectoryFormatter : IAssemblyDirectoryFormatter
+	public class LegacyFixAssemblyPathFormatter : IAssemblyPathFormatter
 	{
-		public string GetAssemblyDirectory(Assembly assembly)
+		public string GetAssemblyPath(Assembly assembly)
 		{
 			string codeBase = assembly.CodeBase;
 			UriBuilder uriBuilder = new UriBuilder(codeBase);

@@ -276,8 +276,8 @@ namespace RazorLight.Tests.Extensions
 			}));
 
 			var provider = services.BuildServiceProvider();
-			var directoryFormatter = provider.GetService<IAssemblyDirectoryFormatter>();
-			Assert.IsType<LegacyFixAssemblyDirectoryFormatter>(directoryFormatter);
+			var directoryFormatter = provider.GetService<IAssemblyPathFormatter>();
+			Assert.IsType<LegacyFixAssemblyPathFormatter>(directoryFormatter);
 
 			var project = provider.GetService<RazorLightProject>();
 			Assert.IsType<FileSystemRazorProject>(project);

@@ -55,10 +55,10 @@ namespace RazorLight
 
 		public RazorLightDependencyBuilder UseNetFrameworkLegacyFix()
 		{
-			_services.RemoveAll<IAssemblyDirectoryFormatter>();
-			IAssemblyDirectoryFormatter formatter = new LegacyFixAssemblyDirectoryFormatter();
+			_services.RemoveAll<IAssemblyPathFormatter>();
+			IAssemblyPathFormatter formatter = new LegacyFixAssemblyPathFormatter();
 			// ReSharper disable once RedundantTypeArgumentsOfMethod
-			_services.AddSingleton<IAssemblyDirectoryFormatter>(formatter);
+			_services.AddSingleton<IAssemblyPathFormatter>(formatter);
 			return this;
 		}
 

@@ -12,7 +12,7 @@ namespace RazorLight.Compilation
 {
 	public class DefaultMetadataReferenceManager : IMetadataReferenceManager
 	{
-		private readonly IAssemblyDirectoryFormatter _directoryFormatter = new DefaultAssemblyDirectoryFormatter();
+		private readonly IAssemblyPathFormatter _pathFormatter = new DefaultAssemblyPathFormatter();
 		public HashSet<MetadataReference> AdditionalMetadataReferences { get; }
 		public HashSet<string> ExcludedAssemblies { get; }
 
@@ -22,9 +22,9 @@ namespace RazorLight.Compilation
 			ExcludedAssemblies = new HashSet<string>();
 		}
 
-		public DefaultMetadataReferenceManager(IOptions<RazorLightOptions> options, IAssemblyDirectoryFormatter directoryFormatter) : this(options.Value.AdditionalMetadataReferences, options.Value.ExcludedAssemblies)
+		public DefaultMetadataReferenceManager(IOptions<RazorLightOptions> options, IAssemblyPathFormatter pathFormatter) : this(options.Value.AdditionalMetadataReferences, options.Value.ExcludedAssemblies)
 		{
-			_directoryFormatter = directoryFormatter;
+			_pathFormatter = pathFormatter;
 		}
 
 		public DefaultMetadataReferenceManager(HashSet<MetadataReference> metadataReferences)
@@ -54,7 +54,7 @@ namespace RazorLight.Compilation
 			{
 				var context = new HashSet<string>();
 				var x = GetReferencedAssemblies(assembly, ExcludedAssemblies, context).Union(new[] { assembly }).ToArray();
-				references = x.Select(p => _directoryFormatter.GetAssemblyDirectory(p)).ToList();
+				references = x.Select(p => _pathFormatter.GetAssemblyPath(p)).ToList();
 			}
 			else
 			{
