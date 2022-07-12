@@ -15,7 +15,7 @@ namespace RazorLight.Tests.Compilation
 			_testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
 		}
 
-		[SkippableFact]
+		[Fact]
 		public void Ensure_GetAssemblyPath_Works()
 		{
 			var assembly = typeof(DefaultAssemblyPathFormatterTest).Assembly;
@@ -24,7 +24,7 @@ namespace RazorLight.Tests.Compilation
 			Assert.NotNull(directory);
 		}
 
-		[SkippableFact]
+		[Fact]
 		public void Ensure_GetAssemblyPath_MatchesLegacy()
 		{
 			var assembly = typeof(DefaultAssemblyPathFormatterTest).Assembly;
