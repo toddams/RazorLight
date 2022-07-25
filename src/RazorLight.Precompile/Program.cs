@@ -1,16 +1,34 @@
-﻿using System;
+﻿using ManyConsole;
+using System;
+using System.IO;
 
 namespace RazorLight.Precompile
 {
-	class Program
+	public class Program
 	{
-		private readonly static Type ProgramType = typeof(Program);
+		public static TextWriter ConsoleOut { get; set; } = Console.Out;
 
-		static int Main(string[] args)
+		public static int Main(string[] args)
 		{
-			var app = new PrecompilationApplication(ProgramType);
-			new PrecompileRunCommand().Configure(app);
-			return app.Execute(args);
+			try
+			{
+				return DoRun(args);
+			}
+			catch (Exception exc)
+			{
+				Console.Error.WriteLine(exc);
+				return 1;
+			}
+		}
+
+		public static int DoRun(string[] args)
+		{
+			var commands = ConsoleCommandDispatcher.FindCommandsInSameAssemblyAs(typeof(Program));
+			foreach (var c in commands)
+			{
+				c.SkipsCommandSummaryBeforeRunning();
+			}
+			return ConsoleCommandDispatcher.DispatchCommand(commands, args, Console.Out);
 		}
 	}
 }
