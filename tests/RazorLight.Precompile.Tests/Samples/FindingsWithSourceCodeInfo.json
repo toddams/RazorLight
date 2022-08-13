@@ -1,0 +1,110 @@
+[
+    {
+        "issue_id": 123,
+        "scan_type": "STATIC",
+        "description": "<span>This database query contains a SQL injection flaw.  The call to system_data_dll.System.Data.Common.DbCommand.ExecuteReaderAsync() constructs a dynamic SQL query using a variable derived from untrusted input.  An attacker could exploit this flaw to execute arbitrary SQL queries against the database. ExecuteReaderAsync() was called on the \\<command\\>5__1 object, which contains tainted data. The tainted data originated from earlier calls to vacationbidding_dll.VirtualController.vc_wcfentry, and system_data_dll.System.Data.SqlClient.SqlCommand.ExecuteReader.</span> <span>Avoid dynamically constructing SQL queries.  Instead, use parameterized prepared statements to prevent the database from interpreting the contents of bind variables as part of the query.  Always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.</span> <span>References: <a href=\"https://cwe.mitre.org/data/definitions/89.html\">CWE</a> <a href=\"https://owasp.org/www-community/attacks/SQL_Injection\">OWASP</a></span>",
+        "count": 23,
+        "context_type": "APPLICATION",
+        "context_guid": "4ba52443-07df-433e-9717-21b603b72145",
+        "violates_policy": true,
+        "finding_status": {
+            "first_found_date": "2021-09-09T15:35:49.818Z",
+            "status": "OPEN",
+            "resolution": "UNRESOLVED",
+            "mitigation_review_status": "NONE",
+            "new": false,
+            "resolution_status": "NONE",
+            "last_seen_date": "2022-07-22T23:47:15.187Z"
+        },
+        "finding_details": {
+            "severity": 4,
+            "cwe": {
+                "id": 89,
+                "name": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+                "href": "https://api.veracode.com/appsec/v1/cwes/89"
+            },
+            "file_name": "_sqlutil.async.cs",
+            "relative_location": 60,
+            "finding_category": {
+                "id": 19,
+                "name": "SQL Injection",
+                "href": "https://api.veracode.com/appsec/v1/categories/19"
+            },
+            "exploitability": 0,
+        },
+        "build_id": 1234,
+        "SourceCodeInfo": {
+            "Module": "Architecture",
+            "Key": 123,
+            "FilePath": "src/_sqlutil.async.cs",
+            "LineNo": 251,
+            "TypeName": "SharpTop.Common.Utils._SqlUtil",
+            "MemberName": "GetReaderSource",
+            "SourceCodeUrl": "https://www.youtube.com/watch?v=Rhc5jXWu55c&t=4815s"
+        }
+    },
+    {
+        "issue_id": 987,
+        "scan_type": "STATIC",
+        "description": "<span>This call to system_data_dll.System.Data.SqlClient.SqlConnection.!newinit_0_1() allows external control of system settings.  The argument to the function is constructed using untrusted input, which can disrupt service or cause an application to behave in unexpected ways. The first argument to !newinit_0_1() contains tainted data from the variable m_connectionString. The tainted data originated from an earlier call to backgroundjobs_dll.VirtualController.vc_wcfentry.</span> <span>Never allow untrusted or otherwise untrusted data to control system-level settings.  Always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.</span> <span>References: <a href=\"https://cwe.mitre.org/data/definitions/15.html\">CWE</a></span>",
+        "count": 2,
+        "context_type": "APPLICATION",
+        "context_guid": "4ba52443-07df-433e-9717-21b603b72145",
+        "violates_policy": true,
+        "finding_status": {
+            "first_found_date": "2020-07-10T19:00:28.539Z",
+            "status": "CLOSED",
+            "resolution": "MITIGATED",
+            "mitigation_review_status": "NONE",
+            "new": false,
+            "resolution_status": "APPROVED",
+            "last_seen_date": "2022-07-15T01:33:23.129Z"
+        },
+        "finding_details": {
+            "severity": 4,
+            "cwe": {
+                "id": 15,
+                "name": "External Control of System or Configuration Setting",
+                "href": "https://api.veracode.com/appsec/v1/cwes/15"
+            },
+            "file_name": "sqlconnectioncontext.cs",
+            "relative_location": 16,
+            "finding_category": {
+                "id": 24,
+                "name": "Untrusted Initialization",
+                "href": "https://api.veracode.com/appsec/v1/categories/24"
+            },
+            "exploitability": 0,
+        },
+        "annotations": [
+            {
+                "comment": "Approved per rationale provided and John Smith' review and approval on 3/30.",
+                "action": "APPROVED",
+                "created": "2021-03-31T18:44:12.294Z",
+                "user_name": "Michael Jackson"
+            },
+            {
+                "comment": "Mitigation statements reviewed. Recommend for closure and approval",
+                "action": "COMMENT",
+                "created": "2021-03-31T18:42:26.222Z",
+                "user_name": "John Smith"
+            },
+            {
+                "comment": "Some explanation",
+                "action": "APPDESIGN",
+                "created": "2020-10-22T18:58:56.880Z",
+                "user_name": "Li Jet"
+            }
+        ],
+        "build_id": 9876,
+        "SourceCodeInfo": {
+            "Module": "Architecture",
+            "Key": 987,
+            "FilePath": "src/sqlconnectioncontext.cs",
+            "LineNo": 35,
+            "TypeName": "xyz.UtilitySuite.DbUpgrade.SqlConnectionContext",
+            "MemberName": "CreateConnectionAsync",
+            "SourceCodeUrl": "https://www.youtube.com/watch?v=Rhc5jXWu55c&t=4815s"
+        }
+    }
+]

@@ -1,0 +1,29 @@
+Issue Id: @Model.issue_id
+<br />
+<a href="@Model.SourceCodeInfo.SourceCodeUrl">@Model.SourceCodeInfo.FilePath:@Model.SourceCodeInfo.LineNo</a>
+<br />
+@Raw(@Model.description)
+<br />
+Module: @Model.SourceCodeInfo.Module
+<br />
+Type Name: @Model.SourceCodeInfo.TypeName
+<br />
+Member Name: @Model.SourceCodeInfo.MemberName
+<br />
+First Found Date: @Model.finding_status.first_found_date
+<br />
+@if (Model.annotations == null || Model.annotations.Count == 0)
+{
+    <span>Found no annotations.</span>
+}
+else
+{
+    <span>Found @Model.annotations.Count annotations:</span>
+    <table>
+        <tr><th>Action</th><th>Created</th><th>User Name</th><th>Comment</th></tr>
+        @foreach (var annotation in Model.annotations)
+        {
+            <tr><td>@annotation.action</td><td>@annotation.created</td><td>@annotation.user_name</td><td>@annotation.comment</td></tr>
+        }
+    </table>
+}
