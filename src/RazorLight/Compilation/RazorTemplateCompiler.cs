@@ -150,7 +150,7 @@ namespace RazorLight.Compilation
 					taskSource.SetResult(item.Descriptor);
 				}
 
-				_cache.Set(item.NormalizedKey, taskSource.Task, cacheEntryOptions);
+				_ = _cache.Set(item.NormalizedKey, taskSource.Task, cacheEntryOptions);
 			}
 			finally
 			{

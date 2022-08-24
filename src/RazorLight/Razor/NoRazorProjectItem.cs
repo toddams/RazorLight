@@ -26,7 +26,7 @@ namespace RazorLight.Razor
 			return string.Equals(Key, other?.Key);
 		}
 
-		protected bool Equals(NoRazorProjectItem other)
+		private bool Equals(NoRazorProjectItem other)
 		{
 			return Key == other?.Key;
 		}
