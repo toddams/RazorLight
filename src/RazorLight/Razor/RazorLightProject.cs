@@ -28,5 +28,7 @@ namespace RazorLight.Razor
 		{
 			return Task.FromResult(Enumerable.Empty<string>());
 		}
+
+		public virtual string NormalizeKey(string templateKey) => templateKey;
 	}
 }

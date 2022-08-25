@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace RazorLight.Razor
@@ -47,7 +48,7 @@ namespace RazorLight.Razor
 				templateKey = templateKey + Extension;
 			}
 
-			string absolutePath = NormalizeKey(templateKey);
+			string absolutePath = GetAbsoluteFilePathFromKey(templateKey);
 			var item = new FileSystemRazorProjectItem(templateKey, new FileInfo(absolutePath));
 
 			if (item.Exists)
@@ -63,7 +64,7 @@ namespace RazorLight.Razor
 		/// </summary>
 		public string Root { get; }
 
-		protected string NormalizeKey(string templateKey)
+		protected string GetAbsoluteFilePathFromKey(string templateKey)
 		{
 			if (string.IsNullOrEmpty(templateKey))
 			{
@@ -100,5 +101,6 @@ namespace RazorLight.Razor
 
 			return Task.FromResult(files);
 		}
+		public override string NormalizeKey(string templateKey) => FileSystemRazorProjectHelper.NormalizeKey(templateKey);
 	}
 }
