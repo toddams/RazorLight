@@ -4,7 +4,6 @@ using RazorLight.Generation;
 using RazorLight.Razor;
 using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 
 namespace RazorLight.Caching
@@ -39,6 +38,7 @@ namespace RazorLight.Caching
 
 		public void CacheTemplate(string key, Func<ITemplatePage> pageFactory, IChangeToken expirationToken)
 		{
+			m_cache.CacheTemplate(key, pageFactory, expirationToken);
 		}
 
 		public bool Contains(string key) => m_fileSystemCachingStrategy.GetCachedFileInfo(key, Path.Combine(m_baseDir, key), m_cacheDir).UpToDate;

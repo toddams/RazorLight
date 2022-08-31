@@ -86,7 +86,29 @@ Approved per rationale provided and John Smith&#x27; review and approval on 3/30
 				"-p",
 				precompiledFilePath,
 				"-m",
-				"Samples\\" + "FindingsWithSourceCodeInfo.json"
+				"Samples\\FindingsWithSourceCodeInfo.json"
+			};
+			if (jsonQuery != null)
+			{
+				commandLineArgs.AddRange(new[] { "-q", jsonQuery });
+			}
+
+			var actual = Helper.RunCommand(commandLineArgs.ToArray()).ToString();
+			Assert.AreEqual(expected, actual);
+		}
+
+		[TestCaseSource(nameof(s_testCases))]
+		public void PrecompileAndRender(string templateFilePath, string jsonQuery, string expected)
+		{
+			templateFilePath = "Samples\\" + templateFilePath;
+
+			var commandLineArgs = new List<string>
+			{
+				"precompile",
+				"-t",
+				templateFilePath,
+				"-m",
+				"Samples\\FindingsWithSourceCodeInfo.json"
 			};
 			if (jsonQuery != null)
 			{

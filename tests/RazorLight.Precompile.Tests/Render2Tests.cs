@@ -128,11 +128,31 @@ First Found Date: 7/10/2020 7:00:28 PM
 				"-p",
 				precompiledFilePath,
 				"-m",
-				"Samples\\" + "FindingsWithSourceCodeInfo.json",
+				"Samples\\FindingsWithSourceCodeInfo.json",
 				"-k",
 				key
 			};
 			commandLineArgs.AddRange(args);
+
+			var actual = Helper.RunCommand(commandLineArgs.ToArray()).ToString();
+			Assert.AreEqual(expected, actual);
+		}
+
+		[TestCaseSource(nameof(s_testCases))]
+		public void PrecompileAndRender(string templateFilePath, string _, IFileSystemCachingStrategy s, string expected)
+		{
+			var commandLineArgs = new List<string>
+			{
+				"precompile",
+				"-t",
+				templateFilePath,
+				"-b",
+				"Samples",
+				"-s",
+				s.Name,
+				"-m",
+				"Samples\\FindingsWithSourceCodeInfo.json"
+			};
 
 			var actual = Helper.RunCommand(commandLineArgs.ToArray()).ToString();
 			Assert.AreEqual(expected, actual);

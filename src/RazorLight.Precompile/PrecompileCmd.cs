@@ -1,6 +1,7 @@
 ﻿using ManyConsole;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RazorLight.Caching;
-using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -24,6 +25,8 @@ namespace RazorLight.Precompile
 		private string m_cacheDir;
 		private string m_baseDir;
 		private StrategyName m_strategyName = StrategyName.FileHash;
+		private string m_modelFilePath;
+		private string m_jsonQuery;
 
 		public PrecompileCmd()
 		{
@@ -36,8 +39,13 @@ namespace RazorLight.Precompile
 			HasOption("b|base=", "The razor template base directory. Defaults to the home directory of the given template. " +
 				"If given and the template file path is relative, then it is relative to this base directory.", v => m_baseDir = v);
 			HasOption("s|strategy=", "The file system caching strategy. The default strategy is " + m_strategyName, (StrategyName v) => m_strategyName = v);
+			HasOption("m|model=", "The path to a JSON file representing the model object to be rendered against the given template.", v => m_modelFilePath = v);
+			HasOption("q|jsonQuery=", "Renders the first item returned by the given JSON query.", v => m_jsonQuery = v);
 
-			HasLongDescription("Precompiles the given razor template into the given cache directory. Returns the path to the precompiled assembly.");
+			HasLongDescription(
+				"Precompiles the given razor template into the given cache directory. " +
+				"When the --model argument is given the command also renders the given model and outputs the result to the stdout. " +
+				"Otherwise the command outputs the path to the precompiled assembly.");
 		}
 
 		public override int? OverrideAfterHandlingArgumentsBeforeRun(string[] remainingArguments)
@@ -100,9 +108,21 @@ namespace RazorLight.Precompile
 				.UseCachingProvider(provider)
 				.Build();
 
-			engine.CompileTemplateAsync(templateKey).GetAwaiter().GetResult();
-			Program.ConsoleOut.WriteLine(provider.GetAssemblyFilePath(templateKey, m_templateFile));
-
+			if (m_modelFilePath == null)
+			{
+				engine.CompileTemplateAsync(templateKey).GetAwaiter().GetResult();
+				Program.ConsoleOut.WriteLine(provider.GetAssemblyFilePath(templateKey, m_templateFile));
+			}
+			else
+			{
+				var o = JsonConvert.DeserializeObject<JToken>(File.ReadAllText(m_modelFilePath));
+				if (m_jsonQuery != null)
+				{
+					o = o.SelectToken(m_jsonQuery);
+				}
+				var model = JsonModel.New(o);
+				Program.ConsoleOut.WriteLine(engine.CompileRenderAsync(templateKey, model).GetAwaiter().GetResult());
+			}
 			return 0;
 		}
 	}

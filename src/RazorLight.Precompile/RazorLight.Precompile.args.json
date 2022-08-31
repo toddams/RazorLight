@@ -1,0 +1,10 @@
+{
+  "FileVersion": 2,
+  "Id": "ad9a02f6-8078-4dff-afa6-4de8674d5c76",
+  "Items": [
+    {
+      "Id": "774f5eb8-c718-4f33-a70a-42f6eca8eae3",
+      "Command": "precompile -t .\\Samples\\FullMessage.cshtml -c .cache -m .\\Samples\\FindingsWithSourceCodeInfo.json -s Simple"
+    }
+  ]
+}
