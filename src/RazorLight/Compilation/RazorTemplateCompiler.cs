@@ -150,7 +150,7 @@ namespace RazorLight.Compilation
 					taskSource.SetResult(item.Descriptor);
 				}
 
-				_cache.Set(item.NormalizedKey, taskSource.Task, cacheEntryOptions);
+				_ = _cache.Set(item.NormalizedKey, taskSource.Task, cacheEntryOptions);
 			}
 			finally
 			{
@@ -255,50 +255,10 @@ namespace RazorLight.Compilation
 			if (_normalizedKeysCache.TryGetValue(templateKey, out var normalizedPath))
 				return normalizedPath;
 
-			normalizedPath = NormalizeKey(templateKey);
+			normalizedPath = _razorProject.NormalizeKey(templateKey);
 			_normalizedKeysCache[templateKey] = normalizedPath;
 
 			return normalizedPath;
-		}
-
-		protected string NormalizeKey(string templateKey)
-		{
-			if (!(_razorProject is FileSystemRazorProject))
-			{
-				return templateKey;
-			}
-
-			var addLeadingSlash = templateKey[0] != '\\' && templateKey[0] != '/';
-			var transformSlashes = templateKey.IndexOf('\\') != -1;
-
-			if (!addLeadingSlash && !transformSlashes)
-			{
-				return templateKey;
-			}
-
-			var length = templateKey.Length;
-			if (addLeadingSlash)
-			{
-				length++;
-			}
-
-			var builder = new StringBuilder(length);
-			if (addLeadingSlash)
-			{
-				builder.Append('/');
-			}
-
-			for (var i = 0; i < templateKey.Length; i++)
-			{
-				var ch = templateKey[i];
-				if (ch == '\\')
-				{
-					ch = '/';
-				}
-				builder.Append(ch);
-			}
-
-			return builder.ToString();
 		}
 
 		internal async Task<TemplateNotFoundException> CreateTemplateNotFoundException(RazorLightProjectItem projectItem)

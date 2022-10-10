@@ -6,6 +6,7 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <DefineConstants>$(DefineConstants);SOME_TEST_DEFINE</DefineConstants>
     <GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
+    <NoWarn>NU1701;CS0618</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>

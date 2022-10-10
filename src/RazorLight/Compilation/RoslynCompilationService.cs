@@ -22,11 +22,13 @@ namespace RazorLight.Compilation
 		private readonly IMetadataReferenceManager metadataReferenceManager;
 		private readonly bool isDevelopment;
 		private readonly List<MetadataReference> metadataReferences = new List<MetadataReference>();
+		private readonly IPrecompileCallback precompileCallback;
 
-		public RoslynCompilationService(IMetadataReferenceManager referenceManager, Assembly operatingAssembly)
+		public RoslynCompilationService(IMetadataReferenceManager referenceManager, Assembly operatingAssembly, IPrecompileCallback precompileCallback = null)
 		{
 			this.metadataReferenceManager = referenceManager ?? throw new ArgumentNullException(nameof(referenceManager));
 			this.OperatingAssembly = operatingAssembly ?? throw new ArgumentNullException(nameof(operatingAssembly));
+			this.precompileCallback = precompileCallback;
 
 			isDevelopment = AssemblyDebugModeUtility.IsAssemblyDebugBuild(OperatingAssembly);
 			var pdbFormat = SymbolsUtility.SupportsFullPdbGeneration() ?
@@ -36,7 +38,8 @@ namespace RazorLight.Compilation
 			EmitOptions = new EmitOptions(debugInformationFormat: pdbFormat);
 		}
 
-		public RoslynCompilationService(IMetadataReferenceManager referenceManager, IOptions<RazorLightOptions> options) :this(referenceManager, options.Value.OperatingAssembly)
+		public RoslynCompilationService(IMetadataReferenceManager referenceManager, IOptions<RazorLightOptions> options, IPrecompileCallback precompileCallback = null) :
+			this(referenceManager, options.Value.OperatingAssembly, precompileCallback)
 		{
 			
 		}
@@ -138,7 +141,10 @@ namespace RazorLight.Compilation
 				assemblyStream.Seek(0, SeekOrigin.Begin);
 				pdbStream.Seek(0, SeekOrigin.Begin);
 
-				var assembly = Assembly.Load(assemblyStream.ToArray(), pdbStream.ToArray());
+				var rawAssembly = assemblyStream.ToArray();
+				var rawSymbolStore = pdbStream.ToArray();
+				precompileCallback?.Invoke(razorTemplate, rawAssembly, rawSymbolStore);
+				var assembly = Assembly.Load(rawAssembly, rawSymbolStore);
 
 				return assembly;
 			}

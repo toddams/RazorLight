@@ -350,7 +350,7 @@ namespace RazorLight
 
 			var metadataReferenceManager = new DefaultMetadataReferenceManager(options.AdditionalMetadataReferences, options.ExcludedAssemblies);
 			var assembly = operatingAssembly ?? Assembly.GetEntryAssembly();
-			var compiler = new RoslynCompilationService(metadataReferenceManager, assembly);
+			var compiler = new RoslynCompilationService(metadataReferenceManager, assembly, cachingProvider as IPrecompileCallback);
 
 			var sourceGenerator = new RazorSourceGenerator(DefaultRazorEngine.Instance, project, options.Namespaces);
 			var templateCompiler = new RazorTemplateCompiler(sourceGenerator, compiler, project, options);

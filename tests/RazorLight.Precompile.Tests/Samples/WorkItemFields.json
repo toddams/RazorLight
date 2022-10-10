@@ -1,0 +1,14 @@
+{
+    "Title": "Veracode Issue @Model.issue_id",
+    "HyperLinks": [
+        {
+            "url": "@Model.SourceCodeInfo.SourceCodeUrl",
+            "comment": "@Model.SourceCodeInfo.FilePath:@Model.SourceCodeInfo.LineNo"
+        }
+    ],
+    "Tags": [
+        "@Model.finding_details.finding_category.name",
+        "resolution:@Model.finding_status.resolution",
+        "status:@Model.finding_status.status"
+    ]
+}

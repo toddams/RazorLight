@@ -13,7 +13,7 @@ namespace RazorLight.TagHelpers
 	{
 		private readonly ITagHelperActivator _activator;
 		private readonly ConcurrentDictionary<Type, PropertyActivator<PageContext>[]> _injectActions;
-		private readonly Func<Type, PropertyActivator<PageContext>[]> _getPropertiesToActivate;
+		//private readonly Func<Type, PropertyActivator<PageContext>[]> _getPropertiesToActivate;
 		private static readonly Func<PropertyInfo, PropertyActivator<PageContext>> _createActivateInfo = CreateActivateInfo;
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace RazorLight.TagHelpers
 
 			var propertiesToActivate = _injectActions.GetOrAdd(
 				tagHelper.GetType(),
-				_getPropertiesToActivate);
+				default(PropertyActivator<PageContext>[]));// _getPropertiesToActivate);
 
 			for (var i = 0; i < propertiesToActivate.Length; i++)
 			{
