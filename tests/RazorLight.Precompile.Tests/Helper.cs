@@ -8,7 +8,7 @@ namespace RazorLight.Precompile.Tests
 		public static string RunCommandTrimNewline(params string[] args)
 		{
 			var sb = RunCommand(args);
-			sb.Replace("\r\n", "");
+			sb.Replace(Environment.NewLine, "");
 			return sb.ToString();
 		}
 

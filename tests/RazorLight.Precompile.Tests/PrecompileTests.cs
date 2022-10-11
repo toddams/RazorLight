@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace RazorLight.Precompile.Tests
 {
-	public class PrecompileTests
+	public class PrecompileTests : TestWithCulture
 	{
 		[TestCaseSource(typeof(PrecompileTestCases), nameof(PrecompileTestCases.TestCases))]
 		public void PrecompileFromScratch(string templateFilePath, TestScenario scenario)

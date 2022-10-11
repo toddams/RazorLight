@@ -3,6 +3,6 @@ Count of issues with the source information: @Model.Count
 @foreach (var item in Model)
 {
     <p>
-    @{await IncludeAsync("folder\\MessageItem.cshtml", item);}
+    @{await IncludeAsync("folder/MessageItem.cshtml", item);}
     </p>
 }

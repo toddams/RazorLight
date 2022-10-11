@@ -2,7 +2,7 @@
 
 namespace RazorLight.Precompile.Tests
 {
-	public class Render1Tests
+	public class Render1Tests : TestWithCulture
 	{
 		private static TestCaseData T(string templateFilePath, string? jsonQuery, string expected) =>
 			new(templateFilePath, jsonQuery, expected) { TestName = "{m}({0},{1})" };
@@ -22,9 +22,8 @@ namespace RazorLight.Precompile.Tests
         ""resolution:UNRESOLVED"",
         ""status:OPEN""
     ]
-}
-"),
-			T("folder\\MessageItem.cshtml", "[0]", @"Issue Id: 123
+}" + Environment.NewLine),
+			T("folder/MessageItem.cshtml", "[0]", @"Issue Id: 123
 <br />
 <a href=""https://www.youtube.com/watch?v=Rhc5jXWu55c&amp;t=4815s"">src/_sqlutil.async.cs:251</a>
 <br />
@@ -39,9 +38,8 @@ Member Name: GetReaderSource
 First Found Date: 9/9/2021 3:35:49 PM
 <br />
     <span>Found no annotations.</span>
-
-"),
-			T("folder\\MessageItem.cshtml", "[1]", @"Issue Id: 987
+" + Environment.NewLine),
+			T("folder/MessageItem.cshtml", "[1]", @"Issue Id: 987
 <br />
 <a href=""https://www.youtube.com/watch?v=Rhc5jXWu55c&amp;t=4815s"">src/sqlconnectioncontext.cs:35</a>
 <br />
@@ -62,21 +60,19 @@ First Found Date: 7/10/2020 7:00:28 PM
             <tr><td>COMMENT</td><td>3/31/2021 6:42:26 PM</td><td>John Smith</td><td>Mitigation statements reviewed. Recommend for closure and approval</td></tr>
             <tr><td>APPDESIGN</td><td>10/22/2020 6:58:56 PM</td><td>Li Jet</td><td>Some explanation</td></tr>
     </table>
-
-"),
+" + Environment.NewLine),
 			T("WorkItemComment.cshtml", "[1].annotations[0]", @"Action: APPROVED
 Created: 3/31/2021 6:44:12 PM
 User name: Michael Jackson
 
 Approved per rationale provided and John Smith&#x27; review and approval on 3/30.
-
-")
+" + Environment.NewLine)
 		};
 
 		[TestCaseSource(nameof(s_testCases))]
 		public void Render(string templateFilePath, string jsonQuery, string expected)
 		{
-			templateFilePath = "Samples\\" + templateFilePath;
+			templateFilePath = "Samples/" + templateFilePath;
 
 			string precompiledFilePath = Helper.RunCommandTrimNewline("precompile", "-t", templateFilePath);
 
@@ -86,7 +82,7 @@ Approved per rationale provided and John Smith&#x27; review and approval on 3/30
 				"-p",
 				precompiledFilePath,
 				"-m",
-				"Samples\\FindingsWithSourceCodeInfo.json"
+				"Samples/FindingsWithSourceCodeInfo.json"
 			};
 			if (jsonQuery != null)
 			{
@@ -100,7 +96,7 @@ Approved per rationale provided and John Smith&#x27; review and approval on 3/30
 		[TestCaseSource(nameof(s_testCases))]
 		public void PrecompileAndRender(string templateFilePath, string jsonQuery, string expected)
 		{
-			templateFilePath = "Samples\\" + templateFilePath;
+			templateFilePath = "Samples/" + templateFilePath;
 
 			var commandLineArgs = new List<string>
 			{
@@ -108,7 +104,7 @@ Approved per rationale provided and John Smith&#x27; review and approval on 3/30
 				"-t",
 				templateFilePath,
 				"-m",
-				"Samples\\FindingsWithSourceCodeInfo.json"
+				"Samples/FindingsWithSourceCodeInfo.json"
 			};
 			if (jsonQuery != null)
 			{
