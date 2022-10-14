@@ -3,12 +3,12 @@ using RazorLight.Caching;
 
 namespace RazorLight.Precompile.Tests
 {
-	public class Render2Tests
+	public class Render2Tests : TestWithCulture
 	{
 		private static TestCaseData T(string templateFilePath, string templateFilePath2, IFileSystemCachingStrategy s, string expected) =>
 			new(templateFilePath, templateFilePath2, s, expected) { TestName = "{m}({0},{1},{2})" };
 
-		private const string EXPECTED = @"Count of issues with the source information: 2
+		private static readonly string s_expected = @"Count of issues with the source information: 2
 
     <p>
 Issue Id: 123
@@ -50,13 +50,12 @@ First Found Date: 7/10/2020 7:00:28 PM
             <tr><td>APPDESIGN</td><td>10/22/2020 6:58:56 PM</td><td>Li Jet</td><td>Some explanation</td></tr>
     </table>
     </p>
-
-";
+" + Environment.NewLine;
 
 		private static readonly TestCaseData[] s_testCases = new TestCaseData[]
 		{
-			T("FullMessage.cshtml", "folder\\MessageItem.cshtml", FileHashCachingStrategy.Instance, EXPECTED),
-			T("FullMessage.cshtml", "folder\\MessageItem.cshtml", SimpleFileCachingStrategy.Instance, EXPECTED),
+			T("FullMessage.cshtml", "folder/MessageItem.cshtml", FileHashCachingStrategy.Instance, s_expected),
+			T("FullMessage.cshtml", "folder/MessageItem.cshtml", SimpleFileCachingStrategy.Instance, s_expected),
 		};
 
 		[SetUp]
@@ -86,7 +85,7 @@ First Found Date: 7/10/2020 7:00:28 PM
 		{
 			Precompile(key, key2, s);
 
-			Run(key, expected, "**\\*.dll");
+			Run(key, expected, "**/*.dll");
 		}
 
 		[TestCaseSource(nameof(s_testCases))]
@@ -111,7 +110,7 @@ First Found Date: 7/10/2020 7:00:28 PM
 		{
 			Precompile(key, key2, s);
 
-			var exc = Assert.Throws<RazorLightException>(() => Run(key, expected, "Samples\\*.dll"));
+			var exc = Assert.Throws<RazorLightException>(() => Run(key, expected, "Samples/*.dll"));
 			Assert.AreEqual("No precompiled template found for the key /folder/MessageItem.cshtml", exc.Message);
 		}
 
@@ -128,7 +127,7 @@ First Found Date: 7/10/2020 7:00:28 PM
 				"-p",
 				precompiledFilePath,
 				"-m",
-				"Samples\\FindingsWithSourceCodeInfo.json",
+				"Samples/FindingsWithSourceCodeInfo.json",
 				"-k",
 				key
 			};
@@ -151,7 +150,7 @@ First Found Date: 7/10/2020 7:00:28 PM
 				"-s",
 				s.Name,
 				"-m",
-				"Samples\\FindingsWithSourceCodeInfo.json"
+				"Samples/FindingsWithSourceCodeInfo.json"
 			};
 
 			var actual = Helper.RunCommand(commandLineArgs.ToArray()).ToString();

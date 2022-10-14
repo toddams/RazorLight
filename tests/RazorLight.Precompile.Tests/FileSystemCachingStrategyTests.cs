@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using RazorLight.Caching;
+using System.Runtime.InteropServices;
 
 namespace RazorLight.Precompile.Tests
 {
@@ -11,19 +12,34 @@ namespace RazorLight.Precompile.Tests
 			SimpleFileCachingStrategy.Instance,
 		};
 
-		private static readonly string[] s_firstSepOptions = { "", "/", "\\" };
-		private static readonly string[] s_secondSepOptions = { "/", "\\" };
+		private static readonly string[] s_firstSepOptionsWindows = { "", "/", "\\" };
+		private static readonly string[] s_secondSepOptionsWindows = { "/", "\\" };
+		private static readonly string[] s_firstSepOptionsUnix = { "", "/" };
+		private static readonly string[] s_secondSepOptionsUnix = { "/" };
+
 		private static readonly IEnumerable<string[]> s_sepCombinations = GetSeparatorCombinations();
 
 		private static IEnumerable<string[]> GetSeparatorCombinations()
 		{
-			foreach (var s11 in s_firstSepOptions)
+			string[] firstSepOptions, secondSepOptions;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
-				foreach (var s12 in s_firstSepOptions)
+				firstSepOptions = s_firstSepOptionsWindows;
+				secondSepOptions = s_secondSepOptionsWindows;
+			}
+			else
+			{
+				firstSepOptions = s_firstSepOptionsUnix;
+				secondSepOptions = s_secondSepOptionsUnix;
+			}
+
+			foreach (var s11 in firstSepOptions)
+			{
+				foreach (var s12 in firstSepOptions)
 				{
-					foreach (var s21 in s_secondSepOptions)
+					foreach (var s21 in secondSepOptions)
 					{
-						foreach (var s22 in s_secondSepOptions)
+						foreach (var s22 in secondSepOptions)
 						{
 							if (s11 != s12 || s21 != s22)
 							{
@@ -38,9 +54,9 @@ namespace RazorLight.Precompile.Tests
 		[TestCaseSource(nameof(s_testCases))]
 		public void DifferentKey(IFileSystemCachingStrategy s)
 		{
-			var templateFilePath = "Samples\\folder\\MessageItem.cshtml";
-			var o1 = s.GetCachedFileInfo("folder\\MessageItem.cshtml", templateFilePath, "X:\\");
-			var o2 = s.GetCachedFileInfo("MessageItem.cshtml", templateFilePath, "X:\\");
+			var templateFilePath = "Samples/folder/MessageItem.cshtml";
+			var o1 = s.GetCachedFileInfo("folder/MessageItem.cshtml", templateFilePath, "X:/");
+			var o2 = s.GetCachedFileInfo("MessageItem.cshtml", templateFilePath, "X:/");
 			Assert.AreNotEqual(o1.AssemblyFilePath, o2.AssemblyFilePath);
 		}
 
@@ -65,12 +81,12 @@ namespace RazorLight.Precompile.Tests
 
 		private static (string, string) GetAsmFilePaths(IFileSystemCachingStrategy s, string[] sepCombination)
 		{
-			var templateFilePath = "Samples\\folder\\MessageItem.cshtml";
+			var templateFilePath = "Samples/folder/MessageItem.cshtml";
 			string key1 = $"{sepCombination[0]}folder{sepCombination[1]}MessageItem.cshtml";
 			string key2 = $"{sepCombination[2]}folder{sepCombination[3]}MessageItem.cshtml";
 			Assert.AreNotEqual(key1, key2);
-			var asmFilePath1 = s.GetCachedFileInfo(key1, templateFilePath, "X:\\").AssemblyFilePath;
-			var asmFilePath2 = s.GetCachedFileInfo(key2, templateFilePath, "X:\\").AssemblyFilePath;
+			var asmFilePath1 = s.GetCachedFileInfo(key1, templateFilePath, "X:/").AssemblyFilePath;
+			var asmFilePath2 = s.GetCachedFileInfo(key2, templateFilePath, "X:/").AssemblyFilePath;
 			return (asmFilePath1, asmFilePath2);
 		}
 	}
