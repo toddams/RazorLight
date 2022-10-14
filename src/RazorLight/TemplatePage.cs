@@ -23,7 +23,7 @@ namespace RazorLight
 
 			if (IncludeFunc == null)
 			{
-				throw new InvalidOperationException(nameof(IncludeFunc) + "is not set");
+				throw new InvalidOperationException(nameof(IncludeFunc) + " is not set");
 			}
 
 			await IncludeFunc(key, model);
