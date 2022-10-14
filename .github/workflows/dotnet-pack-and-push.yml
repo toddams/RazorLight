@@ -63,6 +63,17 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '6.0.x'
+
+    - name: Publish RazorLight.Precompile
+      # https://github.com/brandedoutcast/publish-nuget/issues/58#issuecomment-986196000
+      # uses: brandedoutcast/publish-nuget@v2.5.5
+      uses: alirezanet/publish-nuget@v3.0.0
+
+      with:
+        PROJECT_FILE_PATH: src/RazorLight.Precompile/RazorLight.Precompile.csproj
+        VERSION_FILE_PATH: src/Directory.Build.props
+        INCLUDE_SYMBOLS: true
+        NUGET_KEY: ${{secrets.NUGET_API_KEY}}
         
     - name: Publish RazorLight
       # https://github.com/brandedoutcast/publish-nuget/issues/58#issuecomment-986196000
