@@ -81,7 +81,7 @@ jobs:
     needs: build
     if: needs.build.result == 'success'
     env:
-      INPUT_PROJECT_FILE_PATH: src\RazorLight\RazorLight.csproj
+      INPUT_PROJECT_FILE_PATH: src/RazorLight.Precompile/RazorLight.Precompile.csproj
     
     steps:
     # Commented out b/c implicit from 'needs: build' requirement. Otherwise, this will cause a clean checkout and thus clean build obj/bin directory contents
