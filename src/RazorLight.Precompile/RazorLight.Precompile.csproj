@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <IsPackable>false</IsPackable>
+    <IsPackable>true</IsPackable>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <Authors>Mark Kharitonov</Authors>
   </PropertyGroup>
