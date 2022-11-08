@@ -13,61 +13,10 @@ Use Razor to build templates from Files / EmbeddedResources / Strings / Database
   [![NuGet Pre Release](https://img.shields.io/nuget/vpre/RazorLight.svg?maxAge=2592000?style=flat-square)](https://www.nuget.org/packages/RazorLight/) [![NuGet downloads](https://img.shields.io/nuget/dt/RazorLight.svg)](https://www.nuget.org/packages/RazorLight/) [![Join the chat at https://gitter.im/gitterHQ/gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Razor-Light)
 
 # Solidarity with Ukraine 
-![Ukraine](https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Flag_of_Ukraine.svg/1200px-Flag_of_Ukraine.svg.png)
-Dear friends, my name is Ivan, I am the guy who created this library. I live in Ukraine, and if you are reading this message - I really hope you and your family are safe and healthy. 24 February Russia invaded my country with a series of missle atacks across entire Ukraine, from East to West. They started with destroying military infrastructure, and so-called "special operation", as they call it, in fact is a full scale war against us. They planned for a 3 days Blitzkrieg, but as we are standing for 9 days already, you can clearly see how strong ukrainians are. Citizens of the cities are joining the Teritorial Defence, office workers, waiters, lawyers, software engineers, we are ready to defend our land. **Putin started to bomb civilians** with air strikes and missles from Russian and Belarus. **This is not about military infrastructure anymore**. People are duying! Tomorrow the war can knock to your house, but Ukraine is the border between civilized West and Russia. Please stay safe and thank you for your support!
+![ComeBackAlive](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Come_Back_Alive_Logo_09.2022.svg/1200px-Come_Back_Alive_Logo_09.2022.svg.png)
+Dear friends, my name is Ivan, I am the guy who created this library. I live in Ukraine, and if you are reading this message - I really hope you and your family are safe and healthy. 24 February Russia invaded my country with a series of missle atacks across entire Ukraine, from East to West. They started with destroying military infrastructure, and so-called "special operation", as they call it, in fact is a full scale war against us. 
 
-
-
-**I am a volunteer** who is helping our Teritorial Defence (TO) to get radio communication, first aid kits, clothes, etc abroad. All these really important goods are not in stock in Ukraine already, so I am doing my best to find it anywhere in the Europe. We have logistics, we have transport across the border, we have everything. 
-
-
-## I am begging for your help
-Please, don't stand aside, we need your help. If you are able to donate - you are contributing to saving peace, **you are saving human lives**.
-I am creating a discord channel, where I will post everything I buy, share the progress and keep a communication with you. Every penny I recieve will go to the Ukrainian Army and TO.
-
-
-<details>
-  <summary>EUR (Inside EU and SEPA)</summary>
-Account holder: Ivan Balan Balan  
- 
-BIC: TRWIBEB1XXX  
-IBAN: BE69 9672 7063 1578  
-Address:  
-Avenue Louise 54, Room S52
-Brussels
-1050
-Belgium
-</details>
-
-<details>
-    <Summary>EUR (Outside EU and SEPA)</Summary>
-Account Holder: Ivan Balan Balan  
-
-SWIFT/BIC: TRWIBEB1XXX  
-IBAN: BE69 9672 7063 1578  
-Address:  
-Avenue Louise 54, Room S52
-Brussels
-1050
-Belgium
-</details>
-
-<details>
-    <summary>USD (Inside the US only)</summary>
-Account holder: Ivan Balan Balan
-
-Routing number: 084009519
-
-Account number: 9600002966507311
-
-Account type: Checking
-
-Address:
-
-19 W 24th Street
-New York NY 10010
-United States
-</details>
+*Update:* it's been a long time since I first posted this message. Thank you for your enormous support, I am removing my volunteer donation account and instead providing you with the largest and proven charity organization in Ukraine - [ComeBackAlive](https://savelife.in.ua/en/donate-en/). If you have the possibility and desire to help Ukraine - that is the right place for your valuable donations. Thank you. Be safe
 
 
 
