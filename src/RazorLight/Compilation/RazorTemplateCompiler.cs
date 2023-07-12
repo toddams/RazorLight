@@ -67,7 +67,7 @@ namespace RazorLight.Compilation
 
 		public ICompilationService CompilationService => _compiler;
 
-		internal IMemoryCache Cache => _cache;
+		public IMemoryCache Cache => _cache;
 
 		public Task<CompiledTemplateDescriptor> CompileAsync(string templateKey)
 		{
