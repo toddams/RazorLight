@@ -5,6 +5,17 @@ Source File: /README.source.md
 To change this file edit the source file and then run MarkdownSnippets.
 -->
 
+The only difference from RazorLight 2.3.1 is that IRazorTemplateCompiler's Cache property is now public and you can remove entries from it which allows to clear the cache which wasn't working on original version.
+You can do it like this:
+<!-- snippet: simple -->
+<a id='snippet-simple'></a>
+```cs
+engine.Handler.Cache.Remove("testTemplate"); // Removing from handler cache
+engine.Handler.Compiler.Cache.Remove("testTemplate"); // Removing from compiler cache
+```
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L18-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-simple' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
 # RazorLight
 
 Use Razor to build templates from Files / EmbeddedResources / Strings / Database or your custom source outside of ASP.NET MVC. No redundant dependencies and workarounds in pair with excellent performance and **.NET Standard 2.0** and **.NET Core 3.0** support.
