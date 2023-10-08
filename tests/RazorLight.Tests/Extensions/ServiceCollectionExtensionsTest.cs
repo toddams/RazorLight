@@ -334,6 +334,11 @@ namespace RazorLight.Tests.Extensions
 				throw new NotImplementedException();
 			}
 
+			public Task<string> CompileRenderModelAsync<T>(T model, ExpandoObject viewBag = null)
+			{
+				throw new NotImplementedException();
+			}
+
 			public Task<string> CompileRenderAsync(string key, object model, Type modelType, ExpandoObject viewBag = null)
 			{
 				throw new NotImplementedException();

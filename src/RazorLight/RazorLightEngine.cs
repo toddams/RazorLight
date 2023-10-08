@@ -53,6 +53,12 @@ namespace RazorLight
 			return _handler.CompileRenderAsync(key, model, viewBag);
 		}
 
+		public Task<string> CompileRenderModelAsync<T>(T model, ExpandoObject viewBag = null)
+		{
+			var key = _handler.Options.EnableModelFullTypeNameAsTemplateKey ?? false ? typeof(T).FullName : typeof(T).Name;
+			return CompileRenderAsync(key, model, viewBag);
+		}
+
 		/// <inheritdoc cref="IRazorLightEngine"/>
 		public Task<string> CompileRenderStringAsync<T>(
 			string key,

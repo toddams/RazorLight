@@ -143,5 +143,51 @@ namespace RazorLight.Tests.Integration
 			var renderedResult = await engine.CompileRenderAsync("template8.cshtml", model);
 			await Verifier.Verify(renderedResult);
 		}
+		
+		[Fact]
+		public async Task Should_Render_By_Model_ShortTypeName_Async()
+		{
+			var path = DirectoryUtils.RootDirectory;
+
+			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
+				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
+				.Build();
+
+			var model = new TestViewModel
+			{
+				Name = "RazorLight",
+				NumberOfItems = 400
+			};
+			var renderedResult = await engine.CompileRenderModelAsync(model);
+			await Verifier.Verify(renderedResult);
+		}
+		
+		[Fact]
+		public async Task Should_Render_By_Model_FullTypeName_Async()
+		{
+			var path = DirectoryUtils.RootDirectory;
+
+			var engine = new RazorLightEngineBuilder()
+#if NETFRAMEWORK
+				.SetOperatingAssembly(typeof(Root).Assembly)
+#endif
+				.UseFileSystemProject(Path.Combine(path, "Assets", "Files"))
+				.UseOptions(new RazorLightOptions
+				{
+					EnableModelFullTypeNameAsTemplateKey = true
+				})
+				.Build();
+
+			var model = new TestViewModel
+			{
+				Name = "RazorLight",
+				NumberOfItems = 400
+			};
+			var renderedResult = await engine.CompileRenderModelAsync(model);
+			await Verifier.Verify(renderedResult);
+		}
 	}
 }

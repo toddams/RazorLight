@@ -43,5 +43,11 @@ namespace RazorLight
 		/// Setting this to <c>true</c> provides more information in exceptions.
 		/// </summary>
 		public bool? EnableDebugMode { get; set; }
+		
+		/// <summary>
+		/// Setting this to <c>true</c> will use fully qualified type's name of the model as template key
+		/// By default the short name of the type is used. 
+		/// </summary>
+		public bool? EnableModelFullTypeNameAsTemplateKey { get; set; }
 	}
 }
