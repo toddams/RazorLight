@@ -32,7 +32,7 @@ Install-Package RazorLight -Version 2.3.0
 
 The simplest scenario is to create a template from string. Each template must have a ````templateKey```` that is associated with it, so you can render the same template next time without recompilation.
 
-snippet: simple
+snippet: Simple
 
 To render a compiled template:
 

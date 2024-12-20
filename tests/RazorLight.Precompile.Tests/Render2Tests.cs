@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using RazorLight.Caching;
 
 namespace RazorLight.Precompile.Tests
@@ -102,7 +103,7 @@ First Found Date: 7/10/2020 7:00:28 PM
 			Precompile(key, key2, s);
 
 			var exc = Assert.Throws<RazorLightException>(() => Run(key, expected, "Samples"));
-			Assert.AreEqual("No precompiled template found for the key /folder/MessageItem.cshtml", exc.Message);
+			ClassicAssert.AreEqual("No precompiled template found for the key /folder/MessageItem.cshtml", exc.Message);
 		}
 
 		[TestCaseSource(nameof(s_testCases))]
@@ -111,7 +112,7 @@ First Found Date: 7/10/2020 7:00:28 PM
 			Precompile(key, key2, s);
 
 			var exc = Assert.Throws<RazorLightException>(() => Run(key, expected, "Samples/*.dll"));
-			Assert.AreEqual("No precompiled template found for the key /folder/MessageItem.cshtml", exc.Message);
+			ClassicAssert.AreEqual("No precompiled template found for the key /folder/MessageItem.cshtml", exc.Message);
 		}
 
 		private static (string, string) Precompile(string key, string key2, IFileSystemCachingStrategy s) => (
@@ -134,7 +135,7 @@ First Found Date: 7/10/2020 7:00:28 PM
 			commandLineArgs.AddRange(args);
 
 			var actual = Helper.RunCommand(commandLineArgs.ToArray()).ToString();
-			Assert.AreEqual(expected, actual);
+			ClassicAssert.AreEqual(expected, actual);
 		}
 
 		[TestCaseSource(nameof(s_testCases))]
@@ -154,7 +155,7 @@ First Found Date: 7/10/2020 7:00:28 PM
 			};
 
 			var actual = Helper.RunCommand(commandLineArgs.ToArray()).ToString();
-			Assert.AreEqual(expected, actual);
+			ClassicAssert.AreEqual(expected, actual);
 		}
 	}
 }

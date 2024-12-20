@@ -10,15 +10,13 @@ To change this file edit the source file and then run MarkdownSnippets.
 Use Razor to build templates from Files / EmbeddedResources / Strings / Database or your custom source outside of ASP.NET MVC. No redundant dependencies and workarounds in pair with excellent performance and **.NET Standard 2.0** and **.NET Core 3.0** support.
 
 ![Build Status](https://github.com/toddams/RazorLight/actions/workflows/dotnet.yml/badge.svg)
-  [![NuGet Pre Release](https://img.shields.io/nuget/vpre/RazorLight.svg?maxAge=2592000?style=flat-square)](https://www.nuget.org/packages/RazorLight/) [![NuGet downloads](https://img.shields.io/nuget/dt/RazorLight.svg)](https://www.nuget.org/packages/RazorLight/) [![Join the chat at https://gitter.im/gitterHQ/gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Razor-Light)
+[![NuGet Pre Release](https://img.shields.io/nuget/vpre/RazorLight.svg?maxAge=2592000?style=flat-square)](https://www.nuget.org/packages/RazorLight/) [![NuGet downloads](https://img.shields.io/nuget/dt/RazorLight.svg)](https://www.nuget.org/packages/RazorLight/) [![Join the chat at https://gitter.im/gitterHQ/gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Razor-Light)
 
 # Solidarity with Ukraine 
 ![ComeBackAlive](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Come_Back_Alive_Logo_09.2022.svg/1200px-Come_Back_Alive_Logo_09.2022.svg.png)
 Dear friends, my name is Ivan, I am the guy who created this library. I live in Ukraine, and if you are reading this message - I really hope you and your family are safe and healthy. 24 February Russia invaded my country with a series of missle atacks across entire Ukraine, from East to West. They started with destroying military infrastructure, and so-called "special operation", as they call it, in fact is a full scale war against us. 
 
 *Update:* it's been a long time since I first posted this message. Thank you for your enormous support, I am removing my volunteer donation account and instead providing you with the largest and proven charity organization in Ukraine - [ComeBackAlive](https://savelife.in.ua/en/donate-en/). If you have the possibility and desire to help Ukraine - that is the right place for your valuable donations. Thank you. Be safe
-
-
 
 # Table of contents
 - [Quickstart](#quickstart)
@@ -41,8 +39,8 @@ Install-Package RazorLight -Version 2.3.0
 
 The simplest scenario is to create a template from string. Each template must have a ````templateKey```` that is associated with it, so you can render the same template next time without recompilation.
 
-<!-- snippet: simple -->
-<a id='snippet-simple'></a>
+<!-- snippet: Simple -->
+<a id='snippet-Simple'></a>
 ```cs
 var engine = new RazorLightEngineBuilder()
 	// required to have a default RazorLightProject type,
@@ -57,13 +55,13 @@ ViewModel model = new ViewModel {Name = "John Doe"};
 
 string result = await engine.CompileRenderStringAsync("templateKey", template, model);
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L18-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-simple' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L18-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-Simple' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 To render a compiled template:
 
 <!-- snippet: RenderCompiledTemplate -->
-<a id='snippet-rendercompiledtemplate'></a>
+<a id='snippet-RenderCompiledTemplate'></a>
 ```cs
 var cacheResult = engine.Handler.Cache.RetrieveTemplate("templateKey");
 if(cacheResult.Success)
@@ -72,7 +70,7 @@ if(cacheResult.Success)
 	string result = await engine.RenderTemplateAsync(templatePage, model);
 }
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L39-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-rendercompiledtemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L39-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-RenderCompiledTemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 # Template sources
@@ -84,7 +82,7 @@ RazorLight can resolve templates from any source, but there are a built-in provi
 When resolving a template from filesystem, templateKey - is a relative path to the root folder, that you pass to RazorLightEngineBuilder.
 
 <!-- snippet: FileSource -->
-<a id='snippet-filesource'></a>
+<a id='snippet-FileSource'></a>
 ```cs
 var engine = new RazorLightEngineBuilder()
 	.UseFileSystemProject("C:/RootFolder/With/YourTemplates")
@@ -94,7 +92,7 @@ var engine = new RazorLightEngineBuilder()
 var model = new {Name = "John Doe"};
 string result = await engine.CompileRenderAsync("Subfolder/View.cshtml", model);
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L51-L60' title='Snippet source file'>snippet source</a> | <a href='#snippet-filesource' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L51-L60' title='Snippet source file'>snippet source</a> | <a href='#snippet-FileSource' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ## EmbeddedResource source
@@ -115,7 +113,7 @@ Project.Core/
 ````
 
 <!-- snippet: EmbeddedResourceSource -->
-<a id='snippet-embeddedresourcesource'></a>
+<a id='snippet-EmbeddedResourceSource'></a>
 ```cs
 var engine = new RazorLightEngineBuilder()
 	.UseEmbeddedResourcesProject(typeof(SomeService).Assembly)
@@ -125,13 +123,13 @@ var engine = new RazorLightEngineBuilder()
 var model = new Model();
 string html = await engine.CompileRenderAsync("EmailTemplates.Body", model);
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L65-L74' title='Snippet source file'>snippet source</a> | <a href='#snippet-embeddedresourcesource' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L65-L74' title='Snippet source file'>snippet source</a> | <a href='#snippet-EmbeddedResourceSource' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Setting the root namespace allows you to leave that piece off when providing the template name as the key:
 
 <!-- snippet: EmbeddedResourceSourceWithRootNamespace -->
-<a id='snippet-embeddedresourcesourcewithrootnamespace'></a>
+<a id='snippet-EmbeddedResourceSourceWithRootNamespace'></a>
 ```cs
 var engine = new RazorLightEngineBuilder()
 	.UseEmbeddedResourcesProject(typeof(SomeService).Assembly, "Project.Core.EmailTemplates")
@@ -141,7 +139,7 @@ var engine = new RazorLightEngineBuilder()
 var model = new Model();
 string html = await engine.CompileRenderAsync("Body", model);
 ```
-<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L79-L88' title='Snippet source file'>snippet source</a> | <a href='#snippet-embeddedresourcesourcewithrootnamespace' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/tests/RazorLight.Tests/Snippets/Snippets.cs#L79-L88' title='Snippet source file'>snippet source</a> | <a href='#snippet-EmbeddedResourceSourceWithRootNamespace' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ## Custom source

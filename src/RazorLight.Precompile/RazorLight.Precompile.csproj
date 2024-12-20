@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ToolCommandName>razorlight-precompile</ToolCommandName>
     <PackAsTool>true</PackAsTool>
     <PreserveCompilationContext>true</PreserveCompilationContext>
@@ -12,8 +12,14 @@
   <ItemGroup>
     <PackageReference Include="Glob" Version="1.1.9" />
     <PackageReference Include="ManyConsole" Version="2.0.1" />
-    <PackageReference Include="Mono.Cecil" Version="0.11.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="8.0.0" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>

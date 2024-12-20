@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using System.Text;
 
 namespace RazorLight.Precompile.Tests
@@ -17,7 +18,7 @@ namespace RazorLight.Precompile.Tests
 			var sw = new StringWriter();
 			Program.ConsoleOut = sw;
 			var exitCode = Program.DoRun(args);
-			Assert.Zero(exitCode);
+			ClassicAssert.Zero(exitCode);
 			sw.Close();
 
 			return sw.GetStringBuilder();

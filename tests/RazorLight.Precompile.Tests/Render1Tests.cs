@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 namespace RazorLight.Precompile.Tests
 {
@@ -90,7 +91,7 @@ Approved per rationale provided and John Smith&#x27; review and approval on 3/30
 			}
 
 			var actual = Helper.RunCommand(commandLineArgs.ToArray()).ToString();
-			Assert.AreEqual(expected, actual);
+			ClassicAssert.AreEqual(expected, actual);
 		}
 
 		[TestCaseSource(nameof(s_testCases))]
@@ -112,7 +113,7 @@ Approved per rationale provided and John Smith&#x27; review and approval on 3/30
 			}
 
 			var actual = Helper.RunCommand(commandLineArgs.ToArray()).ToString();
-			Assert.AreEqual(expected, actual);
+			ClassicAssert.AreEqual(expected, actual);
 		}
 	}
 }

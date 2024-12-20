@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <DefineConstants>$(DefineConstants);SOME_TEST_DEFINE</DefineConstants>
@@ -35,13 +35,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MarkdownSnippets.MsBuild" Version="22.0.3" />
-    <PackageReference Include="Moq" Version="4.7.99" />
+    <PackageReference Include="MarkdownSnippets.MsBuild" Version="27.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="Pose" Version="1.2.1" />
-    <PackageReference Include="Verify.Xunit" Version="17.1.1" />
-    <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+    <PackageReference Include="Verify.Xunit" Version="28.6.1" />
+    <PackageReference Include="Xunit.SkippableFact" Version="1.5.23" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -49,6 +59,7 @@
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" Condition=" '$(TargetFramework)' == 'net452' " />
   </ItemGroup>
 
+  <!--
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
@@ -56,9 +67,9 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.5" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.5" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
@@ -72,9 +83,16 @@
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
   </ItemGroup>
-
+ -->
   <ItemGroup>
     <ProjectReference Include="..\..\src\RazorLight\RazorLight.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
   </ItemGroup>
 
 </Project>

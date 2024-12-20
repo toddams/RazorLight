@@ -50,11 +50,12 @@ namespace RazorLight.Tests.Razor
 		}
 
 		[Fact]
-		public void Null_TemplateKey_ThrowsOn_GetItem()
+		public async void Null_TemplateKey_ThrowsOn_GetItem()
 		{
 			var project = new FileSystemRazorProject(DirectoryUtils.RootDirectory);
 
-			Assert.ThrowsAsync<ArgumentNullException>(async () => await project.GetItemAsync("not-existing-key"));
+			//Maybe you want to check if the file exists and then throw an exception if it doesn't?
+			await Assert.ThrowsAsync<ArgumentNullException>(async () => await project.GetItemAsync("not-existing-key"));
 		}
 
 		[Fact]

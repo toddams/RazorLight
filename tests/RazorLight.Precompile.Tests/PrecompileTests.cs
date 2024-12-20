@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using System.Diagnostics;
 
 namespace RazorLight.Precompile.Tests
@@ -60,7 +61,7 @@ namespace RazorLight.Precompile.Tests
 			commandLineArgs.AddRange(scenario.ExtraCommandLineArgs);
 
 			var precompiledFilePath = Helper.RunCommandTrimNewline(commandLineArgs.ToArray());
-			Assert.AreEqual(expectedPrecompiledFilePath, precompiledFilePath);
+			ClassicAssert.AreEqual(expectedPrecompiledFilePath, precompiledFilePath);
 			FileAssert.Exists(precompiledFilePath);
 		}
 	}

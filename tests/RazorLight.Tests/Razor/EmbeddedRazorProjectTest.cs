@@ -17,11 +17,11 @@ namespace RazorLight.Tests.Razor
 		}
 
 		[Fact]
-		public void Ensure_Throws_OnNullTemplateKey()
+		public async void Ensure_Throws_OnNullTemplateKey()
 		{
 			var project = new EmbeddedRazorProject(typeof(EmbeddedRazorProject));
 
-			Assert.ThrowsAsync<ArgumentNullException>(async () => { await project.GetItemAsync(null); });
+			await Assert.ThrowsAsync<ArgumentNullException>(async () => { await project.GetItemAsync(null); });
 		}
 
 		[Fact]
