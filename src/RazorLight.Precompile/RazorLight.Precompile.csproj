@@ -12,8 +12,8 @@
   <ItemGroup>
     <PackageReference Include="Glob" Version="1.1.9" />
     <PackageReference Include="ManyConsole" Version="2.0.1" />
-    <PackageReference Include="Mono.Cecil" Version="0.11.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
