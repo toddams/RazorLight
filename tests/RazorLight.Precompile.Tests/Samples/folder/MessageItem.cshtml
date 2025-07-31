@@ -10,7 +10,7 @@ Type Name: @Model.SourceCodeInfo.TypeName
 <br />
 Member Name: @Model.SourceCodeInfo.MemberName
 <br />
-First Found Date: @Model.finding_status.first_found_date
+First Found Date: @Model.finding_status.first_found_date.ToString("M/d/yyyy h:mm:ss tt")
 <br />
 @if (Model.annotations == null || Model.annotations.Count == 0)
 {
@@ -23,7 +23,7 @@ else
         <tr><th>Action</th><th>Created</th><th>User Name</th><th>Comment</th></tr>
         @foreach (var annotation in Model.annotations)
         {
-            <tr><td>@annotation.action</td><td>@annotation.created</td><td>@annotation.user_name</td><td>@annotation.comment</td></tr>
+            <tr><td>@annotation.action</td><td>@annotation.created.ToString("M/d/yyyy h:mm:ss tt")</td><td>@annotation.user_name</td><td>@annotation.comment</td></tr>
         }
     </table>
 }

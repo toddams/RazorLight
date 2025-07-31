@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ToolCommandName>razorlight-precompile</ToolCommandName>
     <PackAsTool>true</PackAsTool>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <Authors>Mark Kharitonov</Authors>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
